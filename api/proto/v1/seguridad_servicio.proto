@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+// Servicio gRPC para autenticación, RBAC y validación de tokens
+service SeguridadService {
+  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc ValidarToken (ValidarTokenRequest) returns (ValidarTokenResponse);
+  rpc VerificarPermiso (VerificarPermisoRequest) returns (VerificarPermisoResponse);
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+  int64 expires_in = 3;
+  string token_type = 4;
+}
+
+message ValidarTokenRequest {
+  string token = 1;
+}
+
+message ValidarTokenResponse {
+  bool es_valido = 1;
+  string usuario_id = 2;
+  string username = 3;
+  string rol = 4;
+}
+
+message VerificarPermisoRequest {
+  string usuario_id = 1;
+  string recurso = 2;
+  string accion = 3;
+}
+
+message VerificarPermisoResponse {
+  bool permitido = 1;
+  string razon = 2;
+}

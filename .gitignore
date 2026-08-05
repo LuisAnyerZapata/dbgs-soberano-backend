@@ -1,0 +1,54 @@
+# Archivos ejecutables y binarios
+/bin/
+*.exe
+*.exe?
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Configuraciones locales con credenciales sensibles
+config/config.json
+!config/config.example.json
+
+# Archivos de claves, certificados y secretos locales
+*.key
+*.pem
+*.crt
+*.csr
+
+# Dependencias vendorizadas / directorios externos
+vendor/
+
+# Archivos de log y temporales
+*.log
+*.tmp
+*.bak
+
+# Reportes de cobertura y pruebas
+coverage.out
+coverage.html
+
+# Archivos de entorno o secretos
+.env
+.env.*
+
+# Respalda dumps de base de datos
+db/backup/dumps/
+*.dump
+*.sql.gz
+
+# Archivos de evidencia o capturas locales
+evidence/*
+!evidence/.gitkeep
+
+# Carpetas de IDEs y editores
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Artefactos de herramientas de desarrollo (Ej. Air / Live Reload)
+tmp/

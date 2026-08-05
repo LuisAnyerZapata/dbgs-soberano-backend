@@ -1,0 +1,21 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 50051,
+    "enable_reflection": true
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "user": "dbgs_user",
+    "password": "dbgs_secure_password",
+    "name": "dbgs_soberano",
+    "ssl_mode": "disable",
+    "max_conns": 15,
+    "min_conns": 3
+  },
+  "security": {
+    "jwt_secret": "SU_CLAVE_SECRETA_JWT_MUY_SEGURA_AQUI",
+    "token_ttl_minutes": 480
+  }
+}

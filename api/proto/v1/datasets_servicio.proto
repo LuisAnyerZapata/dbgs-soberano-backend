@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/protobuf/timestamp.proto";
+
+enum ClasificacionSeguridad {
+  CLASIFICACION_UNSPECIFIED = 0;
+  PUBLICO = 1;
+  RESTRINGIDO = 2;
+  CONFIDENCIAL = 3;
+  SECRETO = 4;
+}
+
+// Servicio gRPC para la administración de conjuntos de datos (datasets)
+service DatasetsService {
+  rpc CrearDataset (CrearDatasetRequest) returns (DatasetResponse);
+  rpc ObtenerDatasetPorID (ObtenerDatasetPorIDRequest) returns (DatasetResponse);
+  rpc ListarDatasets (ListarDatasetsRequest) returns (ListarDatasetsResponse);
+  rpc ActualizarDataset (ActualizarDatasetRequest) returns (DatasetResponse);
+}
+
+message Dataset {
+  string id = 1;
+  string fuente_dato_id = 2;
+  string nombre = 3;
+  string proposito = 4;
+  string propietario_dato = 5;
+  ClasificacionSeguridad clasificacion = 6;
+  bool estado = 7;
+  string created_by = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message CrearDatasetRequest {
+  string fuente_dato_id = 1;
+  string nombre = 2;
+  string proposito = 3;
+  string propietario_dato = 4;
+  ClasificacionSeguridad clasificacion = 5;
+}
+
+message ObtenerDatasetPorIDRequest {
+  string id = 1;
+}
+
+message ListarDatasetsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  ClasificacionSeguridad filtro_clasificacion = 3;
+}
+
+message ListarDatasetsResponse {
+  repeated Dataset datasets = 1;
+  int32 total_records = 2;
+}
+
+message ActualizarDatasetRequest {
+  string id = 1;
+  string nombre = 2;
+  string proposito = 3;
+  ClasificacionSeguridad clasificacion = 4;
+  bool estado = 5;
+}
+
+message DatasetResponse {
+  Dataset dataset = 1;
+}

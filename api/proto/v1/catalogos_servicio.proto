@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Servicio gRPC para la gestión de catálogos maestras
+service CatalogosService {
+  rpc CrearCatalogo (CrearCatalogoRequest) returns (CatalogoResponse);
+  rpc ObtenerCatalogoPorID (ObtenerCatalogoPorIDRequest) returns (CatalogoResponse);
+  rpc ListarCatalogos (ListarCatalogosRequest) returns (ListarCatalogosResponse);
+  rpc ActualizarCatalogo (ActualizarCatalogoRequest) returns (CatalogoResponse);
+  rpc EliminarCatalogo (EliminarCatalogoRequest) returns (EliminarCatalogoResponse);
+}
+
+message Catalogo {
+  string id = 1;
+  string codigo = 2;
+  string nombre = 3;
+  string descripcion = 4;
+  bool estado = 5;
+  string created_by = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message CrearCatalogoRequest {
+  string codigo = 1;
+  string nombre = 2;
+  string descripcion = 3;
+}
+
+message ObtenerCatalogoPorIDRequest {
+  string id = 1;
+}
+
+message ListarCatalogosRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  bool solo_activos = 3;
+}
+
+message ListarCatalogosResponse {
+  repeated Catalogo catalogos = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message ActualizarCatalogoRequest {
+  string id = 1;
+  string nombre = 2;
+  string descripcion = 3;
+  bool estado = 4;
+}
+
+message EliminarCatalogoRequest {
+  string id = 1;
+}
+
+message EliminarCatalogoResponse {
+  bool exitoso = 1;
+  string mensaje = 2;
+}
+
+message CatalogoResponse {
+  Catalogo catalogo = 1;
+}

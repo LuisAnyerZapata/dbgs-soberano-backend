@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/protobuf/timestamp.proto";
+
+// Servicio gRPC para la consulta y registro de eventos de auditoría
+service AuditoriaService {
+  rpc RegistrarEvento (RegistrarEventoRequest) returns (RegistrarEventoResponse);
+  rpc ConsultarEventos (ConsultarEventosRequest) returns (ConsultarEventosResponse);
+}
+
+message EventoAuditoria {
+  string id = 1;
+  string usuario_id = 2;
+  string username = 3;
+  string operacion = 4;
+  string recurso = 5;
+  string detalles = 6;
+  string resultado = 7;
+  string ip_origen = 8;
+  google.protobuf.Timestamp fecha_creacion = 9;
+}
+
+message RegistrarEventoRequest {
+  string usuario_id = 1;
+  string username = 2;
+  string operacion = 3;
+  string recurso = 4;
+  string detalles = 5;
+  string resultado = 6;
+  string ip_origen = 7;
+}
+
+message RegistrarEventoResponse {
+  string evento_id = 1;
+  bool registrado = 2;
+}
+
+message ConsultarEventosRequest {
+  string usuario_id = 1;
+  string operacion = 2;
+  google.protobuf.Timestamp fecha_inicio = 3;
+  google.protobuf.Timestamp fecha_fin = 4;
+  int32 limit = 5;
+  int32 offset = 6;
+}
+
+message ConsultarEventosResponse {
+  repeated EventoAuditoria eventos = 1;
+  int32 total = 2;
+}
