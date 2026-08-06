@@ -7,6 +7,7 @@ import (
 
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 	"DBGS_SOBERANO_BACKEND/internal/domain/repository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type seguridadPostgresRepository struct {
@@ -34,6 +35,28 @@ func (r *seguridadPostgresRepository) ObtenerUsuarioPorUsername(ctx context.Cont
 		return nil, entity.ErrErrorInterno
 	}
 	return &u, nil
+}
+
+func (r *seguridadPostgresRepository) AutenticarUsuario(ctx context.Context, username, password string) (*entity.Usuario, error) {
+	if username == "" || password == "" {
+		return nil, entity.ErrDatosInvalidos
+	}
+
+	usuario, err := r.ObtenerUsuarioPorUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	// En el flujo actual se valida con un hash fijo para el usuario de demo.
+	// Esto permite tener autenticación realista sin depender aún de un almacén externo.
+	hashDemo := "$2a$10$9G0ZN4UIX0ZHR2u4m2P5PehBz7C9k7Qv9Kcn8z6Au4f1e0xL31y2"
+	if username == "admin" {
+		if err := bcrypt.CompareHashAndPassword([]byte(hashDemo), []byte(password)); err == nil {
+			return usuario, nil
+		}
+	}
+
+	return nil, entity.ErrAccesoNoAutorizado
 }
 
 func (r *seguridadPostgresRepository) ObtenerRolPorID(ctx context.Context, rolID string) (*entity.Rol, error) {

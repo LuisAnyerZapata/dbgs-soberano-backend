@@ -24,30 +24,42 @@ func (h *SeguridadHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb
 		return nil, status.Error(codes.InvalidArgument, "el usuario y la contraseña son obligatorios")
 	}
 
-	// En un flujo real, aquí se autentica y se genera el JWT mediante el caso de uso
-	// Por ahora resolvemos la llamada a la capa de aplicación:
-	usuario, err := h.seguridadUseCase.ObtenerPerfilUsuario(ctx, req.Username)
+	result, err := h.seguridadUseCase.Login(ctx, req.Username, req.Password)
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
 	}
 
-	if !usuario.Estado {
-		return nil, status.Error(codes.PermissionDenied, "el usuario se encuentra inactivo")
-	}
-
 	return &pb.LoginResponse{
-		AccessToken: "jwt_token_simulado_dbgs",
-		TokenType:   "Bearer",
-		ExpiresIn:   86400, // 24 horas
+		AccessToken: result.AccessToken,
+		TokenType:   result.TokenType,
+		ExpiresIn:   result.ExpiresIn,
 	}, nil
 }
 
 func (h *SeguridadHandler) ValidarToken(ctx context.Context, req *pb.ValidarTokenRequest) (*pb.ValidarTokenResponse, error) {
-	return &pb.ValidarTokenResponse{EsValido: true, Username: "demo"}, nil
+	if req.Token == "" {
+		return nil, status.Error(codes.InvalidArgument, "el token es obligatorio")
+	}
+
+	result, err := h.seguridadUseCase.ValidarToken(ctx, req.Token)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &pb.ValidarTokenResponse{EsValido: result.Valid, Username: result.Username, UsuarioId: result.UserID, Rol: result.Rol}, nil
 }
 
 func (h *SeguridadHandler) VerificarPermiso(ctx context.Context, req *pb.VerificarPermisoRequest) (*pb.VerificarPermisoResponse, error) {
-	return &pb.VerificarPermisoResponse{Permitido: true}, nil
+	if req.UsuarioId == "" || req.Recurso == "" || req.Accion == "" {
+		return nil, status.Error(codes.InvalidArgument, "usuario, recurso y acción son obligatorios")
+	}
+
+	permitido, err := h.seguridadUseCase.ValidarAcceso(ctx, port.ValidarAccesoInput{Username: req.UsuarioId, Permiso: req.Recurso + ":" + req.Accion})
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &pb.VerificarPermisoResponse{Permitido: permitido}, nil
 }
 
 func (h *SeguridadHandler) ObtenerPerfil(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {

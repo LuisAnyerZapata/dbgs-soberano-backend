@@ -11,6 +11,9 @@ type SeguridadRepository interface {
 	// ObtenerUsuarioPorUsername busca la identidad del usuario o cuenta técnica
 	ObtenerUsuarioPorUsername(ctx context.Context, username string) (*entity.Usuario, error)
 
+	// AutenticarUsuario valida credenciales de acceso de forma inicial.
+	AutenticarUsuario(ctx context.Context, username, password string) (*entity.Usuario, error)
+
 	// ObtenerRolPorID obtiene las definiciones del rol y sus permisos asociados
 	ObtenerRolPorID(ctx context.Context, rolID string) (*entity.Rol, error)
 
