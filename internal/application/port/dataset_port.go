@@ -25,5 +25,6 @@ type DatasetPort interface {
 	ListarFuentes(ctx context.Context) ([]entity.FuenteDato, error)
 	ObtenerDatasetPorID(ctx context.Context, id string) (*entity.ConjuntoDato, error)
 	ListarDatasets(ctx context.Context, input ObtenerDatasetsInput) (*ObtenerDatasetsOutput, error)
-	CrearDataset(ctx context.Context, dataset *entity.ConjuntoDato) error
+	CrearDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error)
+	ActualizarDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error)
 }

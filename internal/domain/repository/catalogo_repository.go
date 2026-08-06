@@ -20,6 +20,9 @@ type CatalogoRepository interface {
 	// Guardar inserta un nuevo catálogo en el almacén de datos
 	Guardar(ctx context.Context, catalogo *entity.Catalogo) error
 
+	// Actualizar actualiza los campos modificables de un catálogo existente
+	Actualizar(ctx context.Context, catalogo *entity.Catalogo) (*entity.Catalogo, error)
+
 	// ActualizarEstado modifica la vigencia lógica del catálogo
 	ActualizarEstado(ctx context.Context, id string, estado bool, usuarioModificador string) error
 }

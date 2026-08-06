@@ -105,7 +105,7 @@ func (r *datasetPostgresRepository) ListarDatasets(ctx context.Context, clasific
 func (r *datasetPostgresRepository) GuardarDataset(ctx context.Context, dataset *entity.ConjuntoDato) error {
 	query := `
 		INSERT INTO dbgs_schema.conjuntos_datos (id, fuente_dato_id, nombre, proposito, propietario_dato, clasificacion, estado, created_at, created_by, updated_at, updated_by)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES (COALESCE(NULLIF($1, ''), uuid_generate_v4()), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
 	_, err := r.db.ExecContext(ctx, query,
 		dataset.ID, dataset.FuenteDatoID, dataset.Nombre, dataset.Proposito,
@@ -116,4 +116,29 @@ func (r *datasetPostgresRepository) GuardarDataset(ctx context.Context, dataset 
 		return entity.ErrErrorInterno
 	}
 	return nil
+}
+
+func (r *datasetPostgresRepository) ActualizarDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error) {
+	query := `
+		UPDATE dbgs_schema.conjuntos_datos
+		SET fuente_dato_id = $1, nombre = $2, proposito = $3, propietario_dato = $4, clasificacion = $5, estado = $6, updated_at = $7, updated_by = $8
+		WHERE id = $9
+		RETURNING id, fuente_dato_id, nombre, proposito, propietario_dato, clasificacion, estado, created_at, created_by, updated_at, updated_by
+	`
+
+	row := r.db.QueryRowContext(ctx, query,
+		dataset.FuenteDatoID, dataset.Nombre, dataset.Proposito,
+		dataset.PropietarioDato, dataset.Clasificacion, dataset.Estado,
+		dataset.UpdatedAt, dataset.UpdatedBy, dataset.ID,
+	)
+
+	var updated entity.ConjuntoDato
+	if err := row.Scan(&updated.ID, &updated.FuenteDatoID, &updated.Nombre, &updated.Proposito, &updated.PropietarioDato, &updated.Clasificacion, &updated.Estado, &updated.CreatedAt, &updated.CreatedBy, &updated.UpdatedAt, &updated.UpdatedBy); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, entity.ErrEntidadNoEncontrada
+		}
+		return nil, entity.ErrErrorInterno
+	}
+
+	return &updated, nil
 }

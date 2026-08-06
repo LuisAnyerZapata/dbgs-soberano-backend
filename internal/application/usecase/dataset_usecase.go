@@ -59,12 +59,52 @@ func (u *datasetUseCase) ListarDatasets(ctx context.Context, input port.ObtenerD
 	}, nil
 }
 
-func (u *datasetUseCase) CrearDataset(ctx context.Context, dataset *entity.ConjuntoDato) error {
+func (u *datasetUseCase) CrearDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error) {
 	if err := dataset.EsValido(); err != nil {
-		return err
+		return nil, err
 	}
 
 	dataset.CreatedAt = time.Now()
+	dataset.UpdatedAt = dataset.CreatedAt
 	dataset.Estado = true
-	return u.datasetRepo.GuardarDataset(ctx, dataset)
+	if dataset.CreatedBy == "" {
+		dataset.CreatedBy = "system"
+	}
+	if dataset.UpdatedBy == "" {
+		dataset.UpdatedBy = dataset.CreatedBy
+	}
+
+	if err := u.datasetRepo.GuardarDataset(ctx, dataset); err != nil {
+		return nil, err
+	}
+
+	return dataset, nil
+}
+
+func (u *datasetUseCase) ActualizarDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error) {
+	if dataset.ID == "" || dataset.Nombre == "" {
+		return nil, domain.ErrDatosInvalidos
+	}
+
+	existente, err := u.datasetRepo.ObtenerDatasetPorID(ctx, dataset.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if dataset.FuenteDatoID == "" {
+		dataset.FuenteDatoID = existente.FuenteDatoID
+	}
+	if dataset.PropietarioDato == "" {
+		dataset.PropietarioDato = existente.PropietarioDato
+	}
+	if dataset.Clasificacion == "" {
+		dataset.Clasificacion = existente.Clasificacion
+	}
+
+	dataset.UpdatedAt = time.Now()
+	if dataset.UpdatedBy == "" {
+		dataset.UpdatedBy = existente.UpdatedBy
+	}
+
+	return u.datasetRepo.ActualizarDataset(ctx, dataset)
 }

@@ -22,4 +22,7 @@ type DatasetRepository interface {
 
 	// GuardarDataset inserta o actualiza un conjunto de datos
 	GuardarDataset(ctx context.Context, dataset *entity.ConjuntoDato) error
+
+	// ActualizarDataset actualiza un conjunto de datos existente
+	ActualizarDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error)
 }

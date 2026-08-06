@@ -93,7 +93,7 @@ func (r *catalogoPostgresRepository) Listar(ctx context.Context, soloActivos boo
 func (r *catalogoPostgresRepository) Guardar(ctx context.Context, catalogo *entity.Catalogo) error {
 	query := `
 		INSERT INTO dbgs_schema.catalogos (id, codigo, nombre, descripcion, estado, created_at, created_by, updated_at, updated_by)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		VALUES (COALESCE(NULLIF($1, ''), uuid_generate_v4()), $2, $3, $4, $5, $6, $7, $8, $9)
 	`
 	_, err := r.db.ExecContext(ctx, query,
 		catalogo.ID, catalogo.Codigo, catalogo.Nombre, catalogo.Descripcion,
@@ -103,6 +103,30 @@ func (r *catalogoPostgresRepository) Guardar(ctx context.Context, catalogo *enti
 		return entity.ErrErrorInterno
 	}
 	return nil
+}
+
+func (r *catalogoPostgresRepository) Actualizar(ctx context.Context, catalogo *entity.Catalogo) (*entity.Catalogo, error) {
+	query := `
+		UPDATE dbgs_schema.catalogos
+		SET codigo = $1, nombre = $2, descripcion = $3, estado = $4, updated_at = $5, updated_by = $6
+		WHERE id = $7
+		RETURNING id, codigo, nombre, descripcion, estado, created_at, created_by, updated_at, updated_by
+	`
+
+	row := r.db.QueryRowContext(ctx, query,
+		catalogo.Codigo, catalogo.Nombre, catalogo.Descripcion,
+		catalogo.Estado, catalogo.UpdatedAt, catalogo.UpdatedBy, catalogo.ID,
+	)
+
+	var updated entity.Catalogo
+	if err := row.Scan(&updated.ID, &updated.Codigo, &updated.Nombre, &updated.Descripcion, &updated.Estado, &updated.CreatedAt, &updated.CreatedBy, &updated.UpdatedAt, &updated.UpdatedBy); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, entity.ErrEntidadNoEncontrada
+		}
+		return nil, entity.ErrErrorInterno
+	}
+
+	return &updated, nil
 }
 
 func (r *catalogoPostgresRepository) ActualizarEstado(ctx context.Context, id string, estado bool, usuarioModificador string) error {

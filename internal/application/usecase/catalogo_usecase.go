@@ -55,19 +55,56 @@ func (u *catalogoUseCase) ListarCatalogos(ctx context.Context, input port.Obtene
 	}, nil
 }
 
-func (u *catalogoUseCase) CrearCatalogo(ctx context.Context, catalogo *entity.Catalogo) error {
+func (u *catalogoUseCase) CrearCatalogo(ctx context.Context, catalogo *entity.Catalogo) (*entity.Catalogo, error) {
 	if catalogo.Codigo == "" || catalogo.Nombre == "" {
-		return domain.ErrDatosInvalidos
+		return nil, domain.ErrDatosInvalidos
 	}
 
 	existente, _ := u.catalogoRepo.ObtenerPorCodigo(ctx, catalogo.Codigo)
 	if existente != nil {
-		return domain.ErrCodigoDuplicado
+		return nil, domain.ErrCodigoDuplicado
 	}
 
 	catalogo.CreatedAt = time.Now()
-	catalogo.Estado = "ACTIVO"
-	return u.catalogoRepo.Guardar(ctx, catalogo)
+	catalogo.UpdatedAt = catalogo.CreatedAt
+	catalogo.Estado = true
+	if catalogo.CreatedBy == "" {
+		catalogo.CreatedBy = "system"
+	}
+	catalogo.UpdatedBy = catalogo.CreatedBy
+
+	if err := u.catalogoRepo.Guardar(ctx, catalogo); err != nil {
+		return nil, err
+	}
+
+	return catalogo, nil
+}
+
+func (u *catalogoUseCase) ActualizarCatalogo(ctx context.Context, catalogo *entity.Catalogo) (*entity.Catalogo, error) {
+	if catalogo.ID == "" || catalogo.Nombre == "" {
+		return nil, domain.ErrDatosInvalidos
+	}
+
+	existente, err := u.catalogoRepo.ObtenerPorID(ctx, catalogo.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if catalogo.Codigo == "" {
+		catalogo.Codigo = existente.Codigo
+	} else if existente.Codigo != catalogo.Codigo {
+		otro, _ := u.catalogoRepo.ObtenerPorCodigo(ctx, catalogo.Codigo)
+		if otro != nil {
+			return nil, domain.ErrCodigoDuplicado
+		}
+	}
+
+	catalogo.UpdatedAt = time.Now()
+	if catalogo.UpdatedBy == "" {
+		catalogo.UpdatedBy = existente.UpdatedBy
+	}
+
+	return u.catalogoRepo.Actualizar(ctx, catalogo)
 }
 
 func (u *catalogoUseCase) InactivarCatalogo(ctx context.Context, id string, usuarioModificador string) error {
@@ -75,11 +112,23 @@ func (u *catalogoUseCase) InactivarCatalogo(ctx context.Context, id string, usua
 		return domain.ErrDatosInvalidos
 	}
 
-	catalogo, err := u.catalogoRepo.ObtenerPorID(ctx, id)
+	_, err := u.catalogoRepo.ObtenerPorID(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	catalogo.Inactivar()
+	return u.catalogoRepo.ActualizarEstado(ctx, id, false, usuarioModificador)
+}
+
+func (u *catalogoUseCase) EliminarCatalogo(ctx context.Context, id string, usuarioModificador string) error {
+	if id == "" || usuarioModificador == "" {
+		return domain.ErrDatosInvalidos
+	}
+
+	_, err := u.catalogoRepo.ObtenerPorID(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	return u.catalogoRepo.ActualizarEstado(ctx, id, false, usuarioModificador)
 }

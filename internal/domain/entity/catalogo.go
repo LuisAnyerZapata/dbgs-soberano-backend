@@ -7,7 +7,7 @@ type Catalogo struct {
 	Codigo      string    `json:"codigo"`
 	Nombre      string    `json:"nombre"`
 	Descripcion string    `json:"descripcion"`
-	Estado      string    `json:"estado"`
+	Estado      bool      `json:"estado"`
 	CreatedAt   time.Time `json:"created_at"`
 	CreatedBy   string    `json:"created_by"`
 	UpdatedAt   time.Time `json:"updated_at"`
@@ -16,6 +16,6 @@ type Catalogo struct {
 
 // Inactivar cambia el estado del catálogo a inactivo y actualiza la marca de tiempo.
 func (c *Catalogo) Inactivar() {
-	c.Estado = "INACTIVO"
+	c.Estado = false
 	c.UpdatedAt = time.Now()
 }
