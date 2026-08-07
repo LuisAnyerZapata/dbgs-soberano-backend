@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	grpcHandler "DBGS_SOBERANO_BACKEND/internal/adapter/handler/grpc"
+	grpcInterceptors "DBGS_SOBERANO_BACKEND/internal/adapter/handler/grpc/interceptors"
 	"DBGS_SOBERANO_BACKEND/internal/adapter/repository/postgres"
 	"DBGS_SOBERANO_BACKEND/internal/application/usecase"
 	"DBGS_SOBERANO_BACKEND/config"
@@ -45,15 +46,21 @@ func main() {
 	auditoriaUseCase := usecase.NewAuditoriaUseCase(auditoriaRepo)
 	datasetUseCase := usecase.NewDatasetUseCase(datasetRepo)
 	seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo)
+	integracionUseCase := usecase.NewIntegracionUseCase(nil)
 
 	// Controladores de transporte gRPC
 	catalogoHandler := grpcHandler.NewCatalogoHandler(catalogoUseCase)
 	auditoriaHandler := grpcHandler.NewAuditoriaHandler(auditoriaUseCase)
 	datasetHandler := grpcHandler.NewDatasetsHandler(datasetUseCase)
 	seguridadHandler := grpcHandler.NewSeguridadHandler(seguridadUseCase)
+	integracionInterceptor := grpcInterceptors.NewIntegracionInterceptor(integracionUseCase)
 
 	// Servidor gRPC
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			integracionInterceptor.Unary(),
+		),
+	)
 
 	// Registro de los servicios gRPC
 	pb.RegisterCatalogosServiceServer(grpcServer, catalogoHandler)
