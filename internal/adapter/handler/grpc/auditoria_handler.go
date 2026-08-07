@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"time"
 
 	dbgsv1 "DBGS_SOBERANO_BACKEND/api/proto/v1"
 	"DBGS_SOBERANO_BACKEND/internal/application/port"
@@ -41,11 +42,25 @@ func (h *AuditoriaHandler) RegistrarEvento(ctx context.Context, req *dbgsv1.Regi
 }
 
 func (h *AuditoriaHandler) ConsultarEventos(ctx context.Context, req *dbgsv1.ConsultarEventosRequest) (*dbgsv1.ConsultarEventosResponse, error) {
+	var inicio *time.Time
+	var fin *time.Time
+	if ts := req.GetFechaInicio(); ts != nil {
+		t := ts.AsTime()
+		inicio = &t
+	}
+	if ts := req.GetFechaFin(); ts != nil {
+		t := ts.AsTime()
+		fin = &t
+	}
+
 	input := port.ConsultarAuditoriaInput{
-		UsuarioID: req.GetUsuarioId(),
-		Resultado: "",
-		Limite:    int(req.GetLimit()),
-		Offset:    int(req.GetOffset()),
+		UsuarioID:   req.GetUsuarioId(),
+		Operacion:   req.GetOperacion(),
+		Resultado:   "",
+		FechaInicio: inicio,
+		FechaFin:    fin,
+		Limite:      int(req.GetLimit()),
+		Offset:      int(req.GetOffset()),
 	}
 
 	output, err := h.useCase.ConsultarBitacora(ctx, input)

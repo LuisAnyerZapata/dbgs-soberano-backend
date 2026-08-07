@@ -51,7 +51,7 @@ func (u *auditoriaUseCase) ConsultarBitacora(ctx context.Context, input port.Con
 		input.Offset = 0
 	}
 
-	eventos, total, err := u.auditoriaRepo.ListarEventos(ctx, input.UsuarioID, input.Resultado, input.Limite, input.Offset)
+	eventos, total, err := u.auditoriaRepo.ListarEventos(ctx, input.UsuarioID, input.Operacion, input.Resultado, input.FechaInicio, input.FechaFin, input.Limite, input.Offset)
 	if err != nil {
 		return nil, err
 	}

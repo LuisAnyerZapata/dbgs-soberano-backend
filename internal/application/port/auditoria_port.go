@@ -19,6 +19,7 @@ type RegistrarEventoInput struct {
 
 type ConsultarAuditoriaInput struct {
 	UsuarioID   string
+	Operacion   string
 	Resultado   string
 	FechaInicio *time.Time
 	FechaFin    *time.Time
