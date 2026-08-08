@@ -64,6 +64,12 @@ func (u *datasetUseCase) CrearDataset(ctx context.Context, dataset *entity.Conju
 		return nil, err
 	}
 
+	if dataset.FuenteDatoID != "" {
+		if _, err := u.datasetRepo.ObtenerFuentePorID(ctx, dataset.FuenteDatoID); err != nil {
+			return nil, err
+		}
+	}
+
 	dataset.CreatedAt = time.Now()
 	dataset.UpdatedAt = dataset.CreatedAt
 	dataset.Estado = true

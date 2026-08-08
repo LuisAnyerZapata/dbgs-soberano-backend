@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
+	"strings"
 
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 	"DBGS_SOBERANO_BACKEND/internal/domain/repository"
@@ -26,6 +28,7 @@ func (r *datasetPostgresRepository) ObtenerFuentePorID(ctx context.Context, id s
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrEntidadNoEncontrada
 		}
+		log.Printf("datasetPostgresRepository.ObtenerFuentePorID scan error: %v", err)
 		return nil, entity.ErrErrorInterno
 	}
 	return &f, nil
@@ -35,6 +38,7 @@ func (r *datasetPostgresRepository) ListarFuentes(ctx context.Context) ([]entity
 	query := `SELECT id, nombre, descripcion, estado, created_at, created_by FROM dbgs_schema.fuentes_datos WHERE estado = true`
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
+		log.Printf("datasetPostgresRepository.ListarFuentes query error: %v", err)
 		return nil, entity.ErrErrorInterno
 	}
 	defer rows.Close()
@@ -43,6 +47,7 @@ func (r *datasetPostgresRepository) ListarFuentes(ctx context.Context) ([]entity
 	for rows.Next() {
 		var f entity.FuenteDato
 		if err := rows.Scan(&f.ID, &f.Nombre, &f.Descripcion, &f.Estado, &f.CreatedAt, &f.CreatedBy); err != nil {
+			log.Printf("datasetPostgresRepository.ListarFuentes scan error: %v", err)
 			return nil, entity.ErrErrorInterno
 		}
 		fuentes = append(fuentes, f)
@@ -58,13 +63,16 @@ func (r *datasetPostgresRepository) ObtenerDatasetPorID(ctx context.Context, id 
 	row := r.db.QueryRowContext(ctx, query, id)
 
 	var cd entity.ConjuntoDato
-	err := row.Scan(&cd.ID, &cd.FuenteDatoID, &cd.Nombre, &cd.Proposito, &cd.PropietarioDato, &cd.Clasificacion, &cd.Estado, &cd.CreatedAt, &cd.CreatedBy, &cd.UpdatedAt, &cd.UpdatedBy)
+	var createdBy, updatedBy sql.NullString
+	err := row.Scan(&cd.ID, &cd.FuenteDatoID, &cd.Nombre, &cd.Proposito, &cd.PropietarioDato, &cd.Clasificacion, &cd.Estado, &cd.CreatedAt, &createdBy, &cd.UpdatedAt, &updatedBy)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrEntidadNoEncontrada
 		}
 		return nil, entity.ErrErrorInterno
 	}
+	cd.CreatedBy = nullableString(createdBy)
+	cd.UpdatedBy = nullableString(updatedBy)
 	return &cd, nil
 }
 
@@ -75,6 +83,7 @@ func (r *datasetPostgresRepository) ListarDatasets(ctx context.Context, clasific
 	`
 	var total int64
 	if err := r.db.QueryRowContext(ctx, countQuery, clasificacion, propietario).Scan(&total); err != nil {
+		log.Printf("datasetPostgresRepository.ListarDatasets count query error: %v", err)
 		return nil, 0, entity.ErrErrorInterno
 	}
 
@@ -87,6 +96,7 @@ func (r *datasetPostgresRepository) ListarDatasets(ctx context.Context, clasific
 	`
 	rows, err := r.db.QueryContext(ctx, query, clasificacion, propietario, limite, offset)
 	if err != nil {
+		log.Printf("datasetPostgresRepository.ListarDatasets query error: %v", err)
 		return nil, 0, entity.ErrErrorInterno
 	}
 	defer rows.Close()
@@ -94,18 +104,38 @@ func (r *datasetPostgresRepository) ListarDatasets(ctx context.Context, clasific
 	var datasets []entity.ConjuntoDato
 	for rows.Next() {
 		var cd entity.ConjuntoDato
-		if err := rows.Scan(&cd.ID, &cd.FuenteDatoID, &cd.Nombre, &cd.Proposito, &cd.PropietarioDato, &cd.Clasificacion, &cd.Estado, &cd.CreatedAt, &cd.CreatedBy, &cd.UpdatedAt, &cd.UpdatedBy); err != nil {
+		var createdBy, updatedBy sql.NullString
+		if err := rows.Scan(&cd.ID, &cd.FuenteDatoID, &cd.Nombre, &cd.Proposito, &cd.PropietarioDato, &cd.Clasificacion, &cd.Estado, &cd.CreatedAt, &createdBy, &cd.UpdatedAt, &updatedBy); err != nil {
+			log.Printf("datasetPostgresRepository.ListarDatasets scan error: %v", err)
 			return nil, 0, entity.ErrErrorInterno
 		}
+		cd.CreatedBy = nullableString(createdBy)
+		cd.UpdatedBy = nullableString(updatedBy)
 		datasets = append(datasets, cd)
 	}
 	return datasets, total, nil
 }
 
+func normalizeDatasetAudit(createdBy, updatedBy string) (string, string) {
+	createdBy = strings.TrimSpace(createdBy)
+	updatedBy = strings.TrimSpace(updatedBy)
+	if createdBy == "" {
+		createdBy = "system"
+	}
+	if updatedBy == "" {
+		updatedBy = createdBy
+	}
+	return createdBy, updatedBy
+}
+
 func (r *datasetPostgresRepository) GuardarDataset(ctx context.Context, dataset *entity.ConjuntoDato) error {
+	createdBy, updatedBy := normalizeDatasetAudit(dataset.CreatedBy, dataset.UpdatedBy)
+	dataset.CreatedBy = createdBy
+	dataset.UpdatedBy = updatedBy
+
 	query := `
 		INSERT INTO dbgs_schema.conjuntos_datos (id, fuente_dato_id, nombre, proposito, propietario_dato, clasificacion, estado, created_at, created_by, updated_at, updated_by)
-		VALUES (COALESCE(NULLIF($1, ''), uuid_generate_v4()), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		VALUES (COALESCE(NULLIF($1, '')::uuid, uuid_generate_v4()), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
 	_, err := r.db.ExecContext(ctx, query,
 		dataset.ID, dataset.FuenteDatoID, dataset.Nombre, dataset.Proposito,
@@ -113,12 +143,17 @@ func (r *datasetPostgresRepository) GuardarDataset(ctx context.Context, dataset 
 		dataset.CreatedAt, dataset.CreatedBy, dataset.UpdatedAt, dataset.UpdatedBy,
 	)
 	if err != nil {
+		log.Printf("datasetPostgresRepository.GuardarDataset exec error: %v", err)
 		return entity.ErrErrorInterno
 	}
 	return nil
 }
 
 func (r *datasetPostgresRepository) ActualizarDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error) {
+	createdBy, updatedBy := normalizeDatasetAudit(dataset.CreatedBy, dataset.UpdatedBy)
+	dataset.CreatedBy = createdBy
+	dataset.UpdatedBy = updatedBy
+
 	query := `
 		UPDATE dbgs_schema.conjuntos_datos
 		SET fuente_dato_id = $1, nombre = $2, proposito = $3, propietario_dato = $4, clasificacion = $5, estado = $6, updated_at = $7, updated_by = $8
@@ -137,6 +172,7 @@ func (r *datasetPostgresRepository) ActualizarDataset(ctx context.Context, datas
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrEntidadNoEncontrada
 		}
+		log.Printf("datasetPostgresRepository.ActualizarDataset scan/return error: %v", err)
 		return nil, entity.ErrErrorInterno
 	}
 

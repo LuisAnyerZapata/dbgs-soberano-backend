@@ -63,6 +63,7 @@ var _ repository.DatasetRepository = (*stubDatasetRepository)(nil)
 
 func TestCrearDatasetValido(t *testing.T) {
 	repo := newStubDatasetRepository()
+	repo.datasets["f1"] = &entity.ConjuntoDato{ID: "f1", Nombre: "Fuente prueba", FuenteDatoID: "f1"}
 	uc := NewDatasetUseCase(repo)
 
 	dataset := &entity.ConjuntoDato{FuenteDatoID: "f1", Nombre: "Dataset prueba"}
@@ -78,6 +79,19 @@ func TestCrearDatasetValido(t *testing.T) {
 	}
 	if created.CreatedBy != "system" {
 		t.Fatalf("CrearDataset() createdBy = %q, want system", created.CreatedBy)
+	}
+}
+
+func TestCrearDatasetRechazaFuenteInexistente(t *testing.T) {
+	repo := newStubDatasetRepository()
+	uc := NewDatasetUseCase(repo)
+
+	_, err := uc.CrearDataset(context.Background(), &entity.ConjuntoDato{FuenteDatoID: "fuente-no-existe", Nombre: "Dataset invalido"})
+	if err == nil {
+		t.Fatal("CrearDataset() esperaba error para fuente inexistente")
+	}
+	if err != entity.ErrEntidadNoEncontrada {
+		t.Fatalf("CrearDataset() error = %v, want %v", err, entity.ErrEntidadNoEncontrada)
 	}
 }
 
