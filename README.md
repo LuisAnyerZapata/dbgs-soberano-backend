@@ -1,7 +1,7 @@
 # DBGS Soberano Backend
 
 ## Visión general
-DBGS Soberano Backend es una aplicación de servicio gRPC desarrollada en Go para la gestión de auditoría, catálogos, conjuntos de datos y seguridad. El proyecto está organizado con una arquitectura hexagonal que separa claramente la lógica de negocio de los adaptadores de entrada y salida.
+DBGS Soberano Backend es una aplicación de servicio gRPC desarrollada en Go para la gestión de auditoría, catálogos, conjuntos de datos, seguridad, integración y respaldos. El proyecto está organizado con una arquitectura hexagonal que separa claramente la lógica de negocio de los adaptadores de entrada y salida.
 
 ## Arquitectura
 La solución adopta una arquitectura hexagonal con las siguientes responsabilidades:
@@ -151,11 +151,14 @@ DBGS_SOBERANO_BACKEND/
 │   ├── migrations/
 │   │   ├── 000001_init_schema.up.sql
 │   │   ├── 000002_add_rbac_roles.sql
-│   │   └── 000003_audit_triggers.sql
+│   │   ├── 000003_audit_triggers.sql
+│   │   ├── 000004_add_password_hash_to_usuarios.down.sql
+│   │   └── 000004_add_password_hash_to_usuarios.up.sql
 │   ├── seeds/
 │   │   ├── 01_catalogos_referencia.sql
 │   │   ├── 02_datos_prueba_sinteticos.sql
-│   │   └── _initial_data.sql
+│   │   ├── initial_data.sql
+│   │   └── seed_users.sql
 │   └── security/
 │       └── roles_permisos.sql
 ├── internal/
@@ -168,8 +171,13 @@ DBGS_SOBERANO_BACKEND/
 │   │   │       ├── seguridad_handler.go
 │   │   │       ├── server.go
 │   │   │       ├── errors.go
-│   │   │       └── interceptors/
-│   │   │           └── auth_interceptor.go
+│   │   │       ├── interceptors/
+│   │   │       │   ├── auth_interceptor.go
+│   │   │       │   └── integracion_interceptor.go
+│   │   │       ├── integracion/
+│   │   │       │   └── handler.go
+│   │   │       └── respaldo/
+│   │   │           └── handler.go
 │   │   └── repository/
 │   │       └── postgres/
 │   │           ├── auditoria_postgres.go
@@ -182,17 +190,23 @@ DBGS_SOBERANO_BACKEND/
 │   │   │   ├── auditoria_port.go
 │   │   │   ├── catalogo_port.go
 │   │   │   ├── dataset_port.go
+│   │   │   ├── integracion_port.go
+│   │   │   ├── respaldo_port.go
 │   │   │   └── seguridad_port.go
 │   │   └── usecase/
 │   │       ├── auditoria_usecase.go
 │   │       ├── catalogo_usecase.go
 │   │       ├── dataset_usecase.go
+│   │       ├── integracion_usecase.go
+│   │       ├── respaldo_usecase.go
 │   │       └── seguridad_usecase.go
 │   └── domain/
 │       ├── entity/
 │       │   ├── auditoria_evento.go
 │       │   ├── catalogo.go
 │       │   ├── fuente_dato.go
+│       │   ├── integracion.go
+│       │   ├── respaldo.go
 │       │   ├── usuario_rol.go
 │       │   └── errors.go
 │       ├── errors.go
@@ -200,6 +214,8 @@ DBGS_SOBERANO_BACKEND/
 │           ├── auditoria_repository.go
 │           ├── catalogo_repository.go
 │           ├── dataset_repository.go
+│           ├── integracion_repository.go
+│           ├── respaldo_repository.go
 │           └── seguridad_repository.go
 ├── Makefile
 ├── go.mod
@@ -220,5 +236,6 @@ DBGS_SOBERANO_BACKEND/
 ## Notas adicionales
 - El proyecto utiliza gRPC Reflection para facilitar la inspección de servicios durante el desarrollo.
 - La configuración sensible, como `jwt_secret`, debe manejarse con cuidado en entornos de producción.
+- Las migraciones de seguridad incluyen el almacenamiento de hashes BCrypt para usuarios, y las semillas iniciales pueden cargar usuarios base mediante `db/seeds/seed_users.sql`.
 - Si utiliza `make restore`, indique el archivo de respaldo con `BACKUP_FILE`.
 
