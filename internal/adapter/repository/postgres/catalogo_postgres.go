@@ -18,6 +18,13 @@ func NewCatalogoPostgresRepository(db *sql.DB) repository.CatalogoRepository {
 	return &catalogoPostgresRepository{db: db}
 }
 
+func nullableString(value sql.NullString) string {
+	if value.Valid {
+		return value.String
+	}
+	return ""
+}
+
 func (r *catalogoPostgresRepository) ObtenerPorID(ctx context.Context, id string) (*entity.Catalogo, error) {
 	query := `
 		SELECT id, codigo, nombre, descripcion, estado, created_at, created_by, updated_at, updated_by
@@ -27,13 +34,17 @@ func (r *catalogoPostgresRepository) ObtenerPorID(ctx context.Context, id string
 	row := r.db.QueryRowContext(ctx, query, id)
 
 	var c entity.Catalogo
-	err := row.Scan(&c.ID, &c.Codigo, &c.Nombre, &c.Descripcion, &c.Estado, &c.CreatedAt, &c.CreatedBy, &c.UpdatedAt, &c.UpdatedBy)
+	var createdBy, updatedBy sql.NullString
+	err := row.Scan(&c.ID, &c.Codigo, &c.Nombre, &c.Descripcion, &c.Estado, &c.CreatedAt, &createdBy, &c.UpdatedAt, &updatedBy)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrEntidadNoEncontrada
 		}
 		return nil, entity.ErrErrorInterno
 	}
+
+	c.CreatedBy = nullableString(createdBy)
+	c.UpdatedBy = nullableString(updatedBy)
 
 	return &c, nil
 }
@@ -47,13 +58,17 @@ func (r *catalogoPostgresRepository) ObtenerPorCodigo(ctx context.Context, codig
 	row := r.db.QueryRowContext(ctx, query, codigo)
 
 	var c entity.Catalogo
-	err := row.Scan(&c.ID, &c.Codigo, &c.Nombre, &c.Descripcion, &c.Estado, &c.CreatedAt, &c.CreatedBy, &c.UpdatedAt, &c.UpdatedBy)
+	var createdBy, updatedBy sql.NullString
+	err := row.Scan(&c.ID, &c.Codigo, &c.Nombre, &c.Descripcion, &c.Estado, &c.CreatedAt, &createdBy, &c.UpdatedAt, &updatedBy)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrEntidadNoEncontrada
 		}
 		return nil, entity.ErrErrorInterno
 	}
+
+	c.CreatedBy = nullableString(createdBy)
+	c.UpdatedBy = nullableString(updatedBy)
 
 	return &c, nil
 }
@@ -81,9 +96,12 @@ func (r *catalogoPostgresRepository) Listar(ctx context.Context, soloActivos boo
 	var result []entity.Catalogo
 	for rows.Next() {
 		var c entity.Catalogo
-		if err := rows.Scan(&c.ID, &c.Codigo, &c.Nombre, &c.Descripcion, &c.Estado, &c.CreatedAt, &c.CreatedBy, &c.UpdatedAt, &c.UpdatedBy); err != nil {
+		var createdBy, updatedBy sql.NullString
+		if err := rows.Scan(&c.ID, &c.Codigo, &c.Nombre, &c.Descripcion, &c.Estado, &c.CreatedAt, &createdBy, &c.UpdatedAt, &updatedBy); err != nil {
 			return nil, 0, entity.ErrErrorInterno
 		}
+		c.CreatedBy = nullableString(createdBy)
+		c.UpdatedBy = nullableString(updatedBy)
 		result = append(result, c)
 	}
 
