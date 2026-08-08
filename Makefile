@@ -156,6 +156,7 @@ seed:
 	@PGPASSWORD=$(DB_PASSWORD) psql -v ON_ERROR_STOP=1 -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f db/seeds/initial_data.sql
 	@PGPASSWORD=$(DB_PASSWORD) psql -v ON_ERROR_STOP=1 -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f db/seeds/01_catalogos_referencia.sql
 	@PGPASSWORD=$(DB_PASSWORD) psql -v ON_ERROR_STOP=1 -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f db/seeds/02_datos_prueba_sinteticos.sql
+	@PGPASSWORD=$(DB_PASSWORD) psql -v ON_ERROR_STOP=1 -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER) -d $(DB_NAME) -f db/seeds/seed_users.sql
 	@echo "==> Semillas cargadas correctamente."
 
 ## backup: Genera un respaldo .dump de la base de datos
