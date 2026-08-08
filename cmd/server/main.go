@@ -54,11 +54,13 @@ func main() {
 	datasetHandler := grpcHandler.NewDatasetsHandler(datasetUseCase)
 	seguridadHandler := grpcHandler.NewSeguridadHandler(seguridadUseCase)
 	integracionInterceptor := grpcInterceptors.NewIntegracionInterceptor(integracionUseCase)
+	authInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase)
 
 	// Servidor gRPC
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			integracionInterceptor.Unary(),
+			authInterceptor.Unary(),
 		),
 	)
 

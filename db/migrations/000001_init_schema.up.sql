@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS dbgs_schema.usuarios (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
     rol_id UUID NOT NULL REFERENCES dbgs_schema.roles(id),
     es_tecnico BOOLEAN NOT NULL DEFAULT FALSE,
     estado BOOLEAN NOT NULL DEFAULT TRUE,

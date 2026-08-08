@@ -37,26 +37,40 @@ func (r *seguridadPostgresRepository) ObtenerUsuarioPorUsername(ctx context.Cont
 	return &u, nil
 }
 
+func verificarCredencial(passwordHash, password string) bool {
+	if passwordHash == "" || password == "" {
+		return false
+	}
+	return bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password)) == nil
+}
+
 func (r *seguridadPostgresRepository) AutenticarUsuario(ctx context.Context, username, password string) (*entity.Usuario, error) {
 	if username == "" || password == "" {
 		return nil, entity.ErrDatosInvalidos
 	}
 
-	usuario, err := r.ObtenerUsuarioPorUsername(ctx, username)
+	query := `
+		SELECT id, username, email, password_hash, rol_id, es_tecnico, estado, created_at, updated_at
+		FROM dbgs_schema.usuarios
+		WHERE username = $1
+	`
+	row := r.db.QueryRowContext(ctx, query, username)
+
+	var u entity.Usuario
+	var passwordHash string
+	err := row.Scan(&u.ID, &u.Username, &u.Email, &passwordHash, &u.RolID, &u.EsTecnico, &u.Estado, &u.CreatedAt, &u.UpdatedAt)
 	if err != nil {
-		return nil, err
-	}
-
-	// En el flujo actual se valida con un hash fijo para el usuario de demo.
-	// Esto permite tener autenticación realista sin depender aún de un almacén externo.
-	hashDemo := "$2a$10$9G0ZN4UIX0ZHR2u4m2P5PehBz7C9k7Qv9Kcn8z6Au4f1e0xL31y2"
-	if username == "admin" {
-		if err := bcrypt.CompareHashAndPassword([]byte(hashDemo), []byte(password)); err == nil {
-			return usuario, nil
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, entity.ErrEntidadNoEncontrada
 		}
+		return nil, entity.ErrErrorInterno
 	}
 
-	return nil, entity.ErrAccesoNoAutorizado
+	if !verificarCredencial(passwordHash, password) {
+		return nil, entity.ErrAccesoNoAutorizado
+	}
+
+	return &u, nil
 }
 
 func (r *seguridadPostgresRepository) ObtenerRolPorID(ctx context.Context, rolID string) (*entity.Rol, error) {

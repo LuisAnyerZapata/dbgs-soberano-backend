@@ -30,7 +30,10 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 		// Endpoints públicos excluidos de autenticación
-		if info.FullMethod == "/v1.CatalogosService/GetHealth" || info.FullMethod == "/v1.CatalogosService/GetVersion" {
+		if info.FullMethod == "/dbgs.v1.SeguridadService/Login" ||
+			info.FullMethod == "/dbgs.v1.SeguridadService/ValidarToken" ||
+			info.FullMethod == "/v1.CatalogosService/GetHealth" ||
+			info.FullMethod == "/v1.CatalogosService/GetVersion" {
 			return handler(ctx, req)
 		}
 
@@ -49,16 +52,16 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 			return nil, status.Error(codes.Unauthenticated, "formato de token inválido")
 		}
 
-		// Simulamos la extracción del usuario del token JWT (en prod se valida firma)
-		username := "usuario_demo" // Extraído del token reclamado
+		validated, err := i.seguridadUseCase.ValidarToken(ctx, tokenStr)
+		if err != nil || !validated.Valid {
+			return nil, status.Error(codes.Unauthenticated, "token inválido o expirado")
+		}
 
-		// Validar perfil de usuario activo
-		usuario, err := i.seguridadUseCase.ObtenerPerfilUsuario(ctx, username)
+		usuario, err := i.seguridadUseCase.ObtenerPerfilUsuario(ctx, validated.Username)
 		if err != nil {
 			return nil, status.Error(codes.PermissionDenied, "acceso denegado: cuenta inactiva o no registrada")
 		}
 
-		// Inyectar usuario en el contexto
 		newCtx := context.WithValue(ctx, "user", usuario)
 		return handler(newCtx, req)
 	}
