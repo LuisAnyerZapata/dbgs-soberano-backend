@@ -12,10 +12,10 @@ INSERT INTO dbgs_schema.conjuntos_datos (id, fuente_dato_id, nombre, proposito, 
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Usuarios Sintéticos de Prueba (Diferentes roles)
-INSERT INTO dbgs_schema.usuarios (id, username, email, rol_id, es_tecnico, estado) VALUES
-('02000000-0000-0000-0000-000000000001', 'operador_demo', 'operador@dbgs.gob.ve', '22222222-2222-2222-2222-222222222222', false, true),
-('02000000-0000-0000-0000-000000000002', 'auditor_demo', 'auditor@dbgs.gob.ve', '33333333-3333-3333-3333-333333333333', false, true),
-('02000000-0000-0000-0000-000000000003', 'tecnico_soporte', 'soporte@dbgs.gob.ve', '22222222-2222-2222-2222-222222222222', true, true)
+INSERT INTO dbgs_schema.usuarios (id, username, email, password_hash, rol_id, es_tecnico, estado) VALUES
+('02000000-0000-0000-0000-000000000001', 'operador_demo', 'operador@dbgs.gob.ve', '$2a$12$LJ3m4ys3Hz0JEh2l5KIX9.FGHvhMxOqJqKJv5h6kzT7nR8mGsUCvG', '22222222-2222-2222-2222-222222222222', false, true),
+('02000000-0000-0000-0000-000000000002', 'auditor_demo', 'auditor@dbgs.gob.ve', '$2a$12$LJ3m4ys3Hz0JEh2l5KIX9.FGHvhMxOqJqKJv5h6kzT7nR8mGsUCvG', '33333333-3333-3333-3333-333333333333', false, true),
+('02000000-0000-0000-0000-000000000003', 'tecnico_soporte', 'soporte@dbgs.gob.ve', '$2a$12$LJ3m4ys3Hz0JEh2l5KIX9.FGHvhMxOqJqKJv5h6kzT7nR8mGsUCvG', '22222222-2222-2222-2222-222222222222', true, true)
 ON CONFLICT (username) DO NOTHING;
 
 -- 3. Eventos de Auditoría Sintéticos para Pruebas de Trazabilidad
