@@ -22,8 +22,8 @@ INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id) VALUES
 ON CONFLICT DO NOTHING;
 
 -- Insertar Usuario Administrador Inicial
-INSERT INTO dbgs_schema.usuarios (id, username, email, rol_id, es_tecnico, estado) VALUES
-('99999999-9999-9999-9999-999999999999', 'admin_dbgs', 'admin@dbgs.gob.ve', '11111111-1111-1111-1111-111111111111', true, true)
+INSERT INTO dbgs_schema.usuarios (id, username, email, password_hash, rol_id, es_tecnico, estado) VALUES
+('99999999-9999-9999-9999-999999999999', 'admin_dbgs', 'admin@dbgs.gob.ve', '$2a$12$LJ3m4ys3Hz0JEh2l5KIX9.FGHvhMxOqJqKJv5h6kzT7nR8mGsUCvG', '11111111-1111-1111-1111-111111111111', true, true)
 ON CONFLICT (username) DO NOTHING;
 
 -- Insertar Fuentes de Datos de Ejemplo
