@@ -4,6 +4,7 @@ package dbgs.v1;
 
 option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
 
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 enum ClasificacionSeguridad {
@@ -16,10 +17,32 @@ enum ClasificacionSeguridad {
 
 // Servicio gRPC para la administración de conjuntos de datos (datasets)
 service DatasetsService {
-  rpc CrearDataset (CrearDatasetRequest) returns (DatasetResponse);
-  rpc ObtenerDatasetPorID (ObtenerDatasetPorIDRequest) returns (DatasetResponse);
-  rpc ListarDatasets (ListarDatasetsRequest) returns (ListarDatasetsResponse);
-  rpc ActualizarDataset (ActualizarDatasetRequest) returns (DatasetResponse);
+  rpc CrearDataset (CrearDatasetRequest) returns (DatasetResponse) {
+    option (google.api.http) = {
+      post: "/v1/datasets"
+      body: "*"
+    };
+  }
+
+  rpc ObtenerDatasetPorID (ObtenerDatasetPorIDRequest) returns (DatasetResponse) {
+    option (google.api.http) = {
+      get: "/v1/datasets/{id}"
+    };
+  }
+
+  // Los enums se pasan como cadena de texto en los Query Params (ej: ?filtro_clasificacion=PUBLICO)
+  rpc ListarDatasets (ListarDatasetsRequest) returns (ListarDatasetsResponse) {
+    option (google.api.http) = {
+      get: "/v1/datasets"
+    };
+  }
+
+  rpc ActualizarDataset (ActualizarDatasetRequest) returns (DatasetResponse) {
+    option (google.api.http) = {
+      put: "/v1/datasets/{id}"
+      body: "*"
+    };
+  }
 }
 
 message Dataset {

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v3.21.12
-// source: api/proto/v1/catalogos_servicio.proto
+// source: catalogos_servicio.proto
 
 package dbgsv1
 
@@ -33,7 +33,9 @@ const (
 // Servicio gRPC para la gestión de catálogos maestras
 type CatalogosServiceClient interface {
 	CrearCatalogo(ctx context.Context, in *CrearCatalogoRequest, opts ...grpc.CallOption) (*CatalogoResponse, error)
+	// Se utiliza 'get' y el parámetro se extrae automáticamente de la ruta URL usando {id}
 	ObtenerCatalogoPorID(ctx context.Context, in *ObtenerCatalogoPorIDRequest, opts ...grpc.CallOption) (*CatalogoResponse, error)
+	// Los parámetros de consulta (page_size, solo_activos) se envían como Query Strings (?solo_activos=true)
 	ListarCatalogos(ctx context.Context, in *ListarCatalogosRequest, opts ...grpc.CallOption) (*ListarCatalogosResponse, error)
 	ActualizarCatalogo(ctx context.Context, in *ActualizarCatalogoRequest, opts ...grpc.CallOption) (*CatalogoResponse, error)
 	EliminarCatalogo(ctx context.Context, in *EliminarCatalogoRequest, opts ...grpc.CallOption) (*EliminarCatalogoResponse, error)
@@ -104,7 +106,9 @@ func (c *catalogosServiceClient) EliminarCatalogo(ctx context.Context, in *Elimi
 // Servicio gRPC para la gestión de catálogos maestras
 type CatalogosServiceServer interface {
 	CrearCatalogo(context.Context, *CrearCatalogoRequest) (*CatalogoResponse, error)
+	// Se utiliza 'get' y el parámetro se extrae automáticamente de la ruta URL usando {id}
 	ObtenerCatalogoPorID(context.Context, *ObtenerCatalogoPorIDRequest) (*CatalogoResponse, error)
+	// Los parámetros de consulta (page_size, solo_activos) se envían como Query Strings (?solo_activos=true)
 	ListarCatalogos(context.Context, *ListarCatalogosRequest) (*ListarCatalogosResponse, error)
 	ActualizarCatalogo(context.Context, *ActualizarCatalogoRequest) (*CatalogoResponse, error)
 	EliminarCatalogo(context.Context, *EliminarCatalogoRequest) (*EliminarCatalogoResponse, error)
@@ -273,5 +277,5 @@ var CatalogosService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/v1/catalogos_servicio.proto",
+	Metadata: "catalogos_servicio.proto",
 }

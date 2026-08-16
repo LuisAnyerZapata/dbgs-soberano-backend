@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v3.21.12
-// source: api/proto/v1/datasets_servicio.proto
+// source: datasets_servicio.proto
 
 package dbgsv1
 
@@ -33,6 +33,7 @@ const (
 type DatasetsServiceClient interface {
 	CrearDataset(ctx context.Context, in *CrearDatasetRequest, opts ...grpc.CallOption) (*DatasetResponse, error)
 	ObtenerDatasetPorID(ctx context.Context, in *ObtenerDatasetPorIDRequest, opts ...grpc.CallOption) (*DatasetResponse, error)
+	// Los enums se pasan como cadena de texto en los Query Params (ej: ?filtro_clasificacion=PUBLICO)
 	ListarDatasets(ctx context.Context, in *ListarDatasetsRequest, opts ...grpc.CallOption) (*ListarDatasetsResponse, error)
 	ActualizarDataset(ctx context.Context, in *ActualizarDatasetRequest, opts ...grpc.CallOption) (*DatasetResponse, error)
 }
@@ -93,6 +94,7 @@ func (c *datasetsServiceClient) ActualizarDataset(ctx context.Context, in *Actua
 type DatasetsServiceServer interface {
 	CrearDataset(context.Context, *CrearDatasetRequest) (*DatasetResponse, error)
 	ObtenerDatasetPorID(context.Context, *ObtenerDatasetPorIDRequest) (*DatasetResponse, error)
+	// Los enums se pasan como cadena de texto en los Query Params (ej: ?filtro_clasificacion=PUBLICO)
 	ListarDatasets(context.Context, *ListarDatasetsRequest) (*ListarDatasetsResponse, error)
 	ActualizarDataset(context.Context, *ActualizarDatasetRequest) (*DatasetResponse, error)
 	mustEmbedUnimplementedDatasetsServiceServer()
@@ -235,5 +237,5 @@ var DatasetsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/v1/datasets_servicio.proto",
+	Metadata: "datasets_servicio.proto",
 }

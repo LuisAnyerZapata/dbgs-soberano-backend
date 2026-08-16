@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v3.21.12
-// source: api/proto/v1/seguridad_servicio.proto
+// source: seguridad_servicio.proto
 
 package dbgsv1
 
@@ -30,6 +30,7 @@ const (
 //
 // Servicio gRPC para autenticación, RBAC y validación de tokens
 type SeguridadServiceClient interface {
+	// Expone el endpoint como POST. 'body: "*"' indica que todo el JSON va en el cuerpo de la petición.
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ValidarToken(ctx context.Context, in *ValidarTokenRequest, opts ...grpc.CallOption) (*ValidarTokenResponse, error)
 	VerificarPermiso(ctx context.Context, in *VerificarPermisoRequest, opts ...grpc.CallOption) (*VerificarPermisoResponse, error)
@@ -79,6 +80,7 @@ func (c *seguridadServiceClient) VerificarPermiso(ctx context.Context, in *Verif
 //
 // Servicio gRPC para autenticación, RBAC y validación de tokens
 type SeguridadServiceServer interface {
+	// Expone el endpoint como POST. 'body: "*"' indica que todo el JSON va en el cuerpo de la petición.
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ValidarToken(context.Context, *ValidarTokenRequest) (*ValidarTokenResponse, error)
 	VerificarPermiso(context.Context, *VerificarPermisoRequest) (*VerificarPermisoResponse, error)
@@ -197,5 +199,5 @@ var SeguridadService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/v1/seguridad_servicio.proto",
+	Metadata: "seguridad_servicio.proto",
 }

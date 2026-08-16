@@ -6,6 +6,8 @@ APP_NAME := dbgs_soberano_backend
 MAIN_PACKAGE := ./cmd/server/main.go
 BUILD_DIR := ./bin
 PROTO_DIR := ./api/proto/v1
+THIRD_PARTY_DIR := ./api/proto/third_party
+GOOGLE_APIS_DIR := $(THIRD_PARTY_DIR)/google/api
 MIGRATIONS_DIR := ./db/migrations
 
 GOPATH := $(shell go env GOPATH)
@@ -20,7 +22,7 @@ DB_NAME ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_J
 DB_SSLMODE ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("ssl_mode", "disable"))' 2>/dev/null), disable)
 DATABASE_URL := "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSLMODE)"
 
-.PHONY: help setup proto proto-clean clean build run dev test test-coverage fmt lint deps install-migrate migrate-up migrate-down seed backup restore
+.PHONY: help setup proto-deps proto proto-clean clean build run dev test test-coverage fmt lint deps install-migrate migrate-up migrate-down seed backup restore
 
 .DEFAULT_GOAL := help
 
@@ -35,33 +37,51 @@ help:
 # CONFIGURACIÓN INICIAL DEL ENTORNO
 # ==============================================================================
 
-## setup: Instala las herramientas necesarias de Go para compilar .proto
-setup:
+## setup: Instala todas las herramientas necesarias de Go para compilar .proto (incluyendo gRPC-Gateway)
+setup: proto-deps
 	@echo "==> Instalando plugins de Go para Protobuf..."
 	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	@go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 	@echo "==> Herramientas instaladas correctamente en $(GOPATH)/bin"
 
+## proto-deps: Descarga las dependencias de Google API necesarias para las anotaciones REST
+proto-deps:
+	@mkdir -p $(GOOGLE_APIS_DIR)
+	@if [ ! -f $(GOOGLE_APIS_DIR)/annotations.proto ]; then \
+		echo "==> Descargando dependencias de Google API para anotaciones HTTP..."; \
+		curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/annotations.proto -o $(GOOGLE_APIS_DIR)/annotations.proto; \
+		curl -sSL https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/http.proto -o $(GOOGLE_APIS_DIR)/http.proto; \
+		echo "==> Dependencias descargadas en $(THIRD_PARTY_DIR)"; \
+	else \
+		echo "==> Dependencias de Google API ya existen, omitiendo descarga."; \
+	fi
+
 # ==============================================================================
-# PROTOBUF / gRPC
+# PROTOBUF / gRPC / REST-GATEWAY
 # ==============================================================================
 
-## proto: Compila todos los archivos .proto a código Go stubs
-proto:
+## proto: Compila todos los archivos .proto a código Go (Stubs gRPC + Traductores REST)
+proto: proto-deps
 	@echo "==> Verificando plugins de Protobuf..."
 	@command -v protoc-gen-go >/dev/null 2>&1 || go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	@command -v protoc-gen-go-grpc >/dev/null 2>&1 || go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	@command -v protoc-gen-grpc-gateway >/dev/null 2>&1 || go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 	@echo "==> Compilando archivos Protobuf (.proto)..."
-	@protoc -I. -I/usr/include \
-		--go_out=. --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+	@protoc \
+		-I$(PROTO_DIR) \
+		-I$(THIRD_PARTY_DIR) \
+		--go_out=$(PROTO_DIR) --go_opt=paths=source_relative \
+		--go-grpc_out=$(PROTO_DIR) --go-grpc_opt=paths=source_relative \
+		--grpc-gateway_out=$(PROTO_DIR) --grpc-gateway_opt=paths=source_relative \
 		$(PROTO_DIR)/*.proto
-	@echo "==> Archivos .pb.go y _grpc.pb.go generados exitosamente en $(PROTO_DIR)"
+	@echo "==> Archivos .pb.go generados exitosamente dentro de $(PROTO_DIR)"
 
-## proto-clean: Elimina los archivos autogenerados de Protobuf
+## proto-clean: Elimina los archivos autogenerados de Protobuf y las dependencias de terceros
 proto-clean:
 	@echo "==> Limpiando archivos autogenerados de Protobuf..."
-	@rm -f $(PROTO_DIR)/*.pb.go $(PROTO_DIR)/*_grpc.pb.go
+	@rm -f $(PROTO_DIR)/*.pb.go
+	@rm -rf $(THIRD_PARTY_DIR)
 
 # ==============================================================================
 # CONSTRUCCIÓN Y EJECUCIÓN

@@ -4,12 +4,24 @@ package dbgs.v1;
 
 option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
 
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 // Servicio gRPC para la consulta y registro de eventos de auditoría
 service AuditoriaService {
-  rpc RegistrarEvento (RegistrarEventoRequest) returns (RegistrarEventoResponse);
-  rpc ConsultarEventos (ConsultarEventosRequest) returns (ConsultarEventosResponse);
+  rpc RegistrarEvento (RegistrarEventoRequest) returns (RegistrarEventoResponse) {
+    option (google.api.http) = {
+      post: "/v1/auditoria/eventos"
+      body: "*"
+    };
+  }
+
+  // Nota: grpc-gateway parsea automáticamente los Timestamps en Query Strings si se envían en formato RFC3339
+  rpc ConsultarEventos (ConsultarEventosRequest) returns (ConsultarEventosResponse) {
+    option (google.api.http) = {
+      get: "/v1/auditoria/eventos"
+    };
+  }
 }
 
 message EventoAuditoria {

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.2
 // - protoc             v3.21.12
-// source: api/proto/v1/auditoria_servicio.proto
+// source: auditoria_servicio.proto
 
 package dbgsv1
 
@@ -30,6 +30,7 @@ const (
 // Servicio gRPC para la consulta y registro de eventos de auditoría
 type AuditoriaServiceClient interface {
 	RegistrarEvento(ctx context.Context, in *RegistrarEventoRequest, opts ...grpc.CallOption) (*RegistrarEventoResponse, error)
+	// Nota: grpc-gateway parsea automáticamente los Timestamps en Query Strings si se envían en formato RFC3339
 	ConsultarEventos(ctx context.Context, in *ConsultarEventosRequest, opts ...grpc.CallOption) (*ConsultarEventosResponse, error)
 }
 
@@ -68,6 +69,7 @@ func (c *auditoriaServiceClient) ConsultarEventos(ctx context.Context, in *Consu
 // Servicio gRPC para la consulta y registro de eventos de auditoría
 type AuditoriaServiceServer interface {
 	RegistrarEvento(context.Context, *RegistrarEventoRequest) (*RegistrarEventoResponse, error)
+	// Nota: grpc-gateway parsea automáticamente los Timestamps en Query Strings si se envían en formato RFC3339
 	ConsultarEventos(context.Context, *ConsultarEventosRequest) (*ConsultarEventosResponse, error)
 	mustEmbedUnimplementedAuditoriaServiceServer()
 }
@@ -159,5 +161,5 @@ var AuditoriaService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/v1/auditoria_servicio.proto",
+	Metadata: "auditoria_servicio.proto",
 }

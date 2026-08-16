@@ -4,11 +4,32 @@ package dbgs.v1;
 
 option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
 
+// Se importa el paquete de anotaciones para mapear los métodos a rutas HTTP/REST
+import "google/api/annotations.proto";
+
 // Servicio gRPC para autenticación, RBAC y validación de tokens
 service SeguridadService {
-  rpc Login (LoginRequest) returns (LoginResponse);
-  rpc ValidarToken (ValidarTokenRequest) returns (ValidarTokenResponse);
-  rpc VerificarPermiso (VerificarPermisoRequest) returns (VerificarPermisoResponse);
+  // Expone el endpoint como POST. 'body: "*"' indica que todo el JSON va en el cuerpo de la petición.
+  rpc Login (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/seguridad/login"
+      body: "*"
+    };
+  }
+
+  rpc ValidarToken (ValidarTokenRequest) returns (ValidarTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/seguridad/validar-token"
+      body: "*"
+    };
+  }
+
+  rpc VerificarPermiso (VerificarPermisoRequest) returns (VerificarPermisoResponse) {
+    option (google.api.http) = {
+      post: "/v1/seguridad/verificar-permiso"
+      body: "*"
+    };
+  }
 }
 
 message LoginRequest {

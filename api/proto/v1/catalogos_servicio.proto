@@ -4,15 +4,44 @@ package dbgs.v1;
 
 option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
 
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 // Servicio gRPC para la gestión de catálogos maestras
 service CatalogosService {
-  rpc CrearCatalogo (CrearCatalogoRequest) returns (CatalogoResponse);
-  rpc ObtenerCatalogoPorID (ObtenerCatalogoPorIDRequest) returns (CatalogoResponse);
-  rpc ListarCatalogos (ListarCatalogosRequest) returns (ListarCatalogosResponse);
-  rpc ActualizarCatalogo (ActualizarCatalogoRequest) returns (CatalogoResponse);
-  rpc EliminarCatalogo (EliminarCatalogoRequest) returns (EliminarCatalogoResponse);
+  rpc CrearCatalogo (CrearCatalogoRequest) returns (CatalogoResponse) {
+    option (google.api.http) = {
+      post: "/v1/catalogos"
+      body: "*"
+    };
+  }
+
+  // Se utiliza 'get' y el parámetro se extrae automáticamente de la ruta URL usando {id}
+  rpc ObtenerCatalogoPorID (ObtenerCatalogoPorIDRequest) returns (CatalogoResponse) {
+    option (google.api.http) = {
+      get: "/v1/catalogos/{id}"
+    };
+  }
+
+  // Los parámetros de consulta (page_size, solo_activos) se envían como Query Strings (?solo_activos=true)
+  rpc ListarCatalogos (ListarCatalogosRequest) returns (ListarCatalogosResponse) {
+    option (google.api.http) = {
+      get: "/v1/catalogos"
+    };
+  }
+
+  rpc ActualizarCatalogo (ActualizarCatalogoRequest) returns (CatalogoResponse) {
+    option (google.api.http) = {
+      put: "/v1/catalogos/{id}"
+      body: "*"
+    };
+  }
+
+  rpc EliminarCatalogo (EliminarCatalogoRequest) returns (EliminarCatalogoResponse) {
+    option (google.api.http) = {
+      delete: "/v1/catalogos/{id}"
+    };
+  }
 }
 
 message Catalogo {
