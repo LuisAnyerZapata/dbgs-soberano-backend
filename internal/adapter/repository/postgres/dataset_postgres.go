@@ -128,25 +128,35 @@ func normalizeDatasetAudit(createdBy, updatedBy string) (string, string) {
 	return createdBy, updatedBy
 }
 
+// GuardarDataset inserta un nuevo conjunto de datos en la base de datos.
 func (r *datasetPostgresRepository) GuardarDataset(ctx context.Context, dataset *entity.ConjuntoDato) error {
-	createdBy, updatedBy := normalizeDatasetAudit(dataset.CreatedBy, dataset.UpdatedBy)
-	dataset.CreatedBy = createdBy
-	dataset.UpdatedBy = updatedBy
+    createdBy, updatedBy := normalizeDatasetAudit(dataset.CreatedBy, dataset.UpdatedBy)
+    dataset.CreatedBy = createdBy
+    dataset.UpdatedBy = updatedBy
 
-	query := `
-		INSERT INTO dbgs_schema.conjuntos_datos (id, fuente_dato_id, nombre, proposito, propietario_dato, clasificacion, estado, created_at, created_by, updated_at, updated_by)
-		VALUES (COALESCE(NULLIF($1, '')::uuid, uuid_generate_v4()), $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-	`
-	_, err := r.db.ExecContext(ctx, query,
-		dataset.ID, dataset.FuenteDatoID, dataset.Nombre, dataset.Proposito,
-		dataset.PropietarioDato, dataset.Clasificacion, dataset.Estado,
-		dataset.CreatedAt, dataset.CreatedBy, dataset.UpdatedAt, dataset.UpdatedBy,
-	)
-	if err != nil {
-		log.Printf("datasetPostgresRepository.GuardarDataset exec error: %v", err)
-		return entity.ErrErrorInterno
-	}
-	return nil
+    query := `
+        INSERT INTO dbgs_schema.conjuntos_datos (id, fuente_dato_id, nombre, proposito, propietario_dato, clasificacion, estado, created_at, created_by, updated_at, updated_by)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    `
+
+    _, err := r.db.ExecContext(ctx, query,
+        dataset.ID,                 // $1 (NULL o UUID)
+        dataset.FuenteDatoID,       // $2
+        dataset.Nombre,             // $3
+        dataset.Proposito,          // $4
+        dataset.PropietarioDato,    // $5
+        dataset.Clasificacion,      // $6
+        dataset.Estado,             // $7
+        dataset.CreatedAt,          // $8
+        dataset.CreatedBy,          // $9
+        dataset.UpdatedAt,          // $10
+        dataset.UpdatedBy,          // $11
+    )
+    if err != nil {
+        log.Printf("datasetPostgresRepository.GuardarDataset exec error: %v", err)
+        return entity.ErrErrorInterno
+    }
+    return nil
 }
 
 func (r *datasetPostgresRepository) ActualizarDataset(ctx context.Context, dataset *entity.ConjuntoDato) (*entity.ConjuntoDato, error) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 	"DBGS_SOBERANO_BACKEND/internal/domain/repository"
@@ -108,19 +109,30 @@ func (r *catalogoPostgresRepository) Listar(ctx context.Context, soloActivos boo
 	return result, total, nil
 }
 
+// Guardar inserta un nuevo catálogo en la base de datos.
+// Si no se proporciona un ID, se envía NULL para que PostgreSQL ejecute la función DEFAULT (uuid_generate_v4())
 func (r *catalogoPostgresRepository) Guardar(ctx context.Context, catalogo *entity.Catalogo) error {
-	query := `
-		INSERT INTO dbgs_schema.catalogos (id, codigo, nombre, descripcion, estado, created_at, created_by, updated_at, updated_by)
-		VALUES (COALESCE(NULLIF($1, ''), uuid_generate_v4()), $2, $3, $4, $5, $6, $7, $8, $9)
-	`
-	_, err := r.db.ExecContext(ctx, query,
-		catalogo.ID, catalogo.Codigo, catalogo.Nombre, catalogo.Descripcion,
-		catalogo.Estado, catalogo.CreatedAt, catalogo.CreatedBy, catalogo.UpdatedAt, catalogo.UpdatedBy,
-	)
-	if err != nil {
-		return entity.ErrErrorInterno
-	}
-	return nil
+    query := `
+        INSERT INTO dbgs_schema.catalogos (id, codigo, nombre, descripcion, estado, created_at, created_by, updated_at, updated_by)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `
+    
+    _, err := r.db.ExecContext(ctx, query,
+        catalogo.ID,           // $1 (Siempre vendrá con UUID desde el Use Case)
+        catalogo.Codigo,        // $2
+        catalogo.Nombre,        // $3
+        catalogo.Descripcion,   // $4
+        catalogo.Estado,        // $5
+        catalogo.CreatedAt,     // $6
+        catalogo.CreatedBy,     // $7
+        catalogo.UpdatedAt,     // $8
+        catalogo.UpdatedBy,     // $9
+    )
+    if err != nil {
+        log.Printf("ERROR CRÍTICO EN BD (Catalogo.Guardar): %v", err) 
+        return entity.ErrErrorInterno
+    }
+    return nil
 }
 
 func (r *catalogoPostgresRepository) Actualizar(ctx context.Context, catalogo *entity.Catalogo) (*entity.Catalogo, error) {

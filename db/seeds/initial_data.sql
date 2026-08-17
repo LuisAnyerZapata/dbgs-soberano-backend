@@ -3,7 +3,7 @@ INSERT INTO dbgs_schema.roles (id, nombre, descripcion, estado) VALUES
 ('11111111-1111-1111-1111-111111111111', 'ADMINISTRADOR', 'Administrador del sistema', true),
 ('22222222-2222-2222-2222-222222222222', 'OPERADOR', 'Operador funcional de datos', true),
 ('33333333-3333-3333-3333-333333333333', 'AUDITOR', 'Auditor de seguridad e historial', true)
-ON CONFLICT (nombre) DO NOTHING;
+ON CONFLICT (id) DO NOTHING;
 
 -- Insertar Permisos Basicos
 INSERT INTO dbgs_schema.permisos (id, codigo, descripcion) VALUES
