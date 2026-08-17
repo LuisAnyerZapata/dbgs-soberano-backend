@@ -10,11 +10,12 @@ import (
     "os/signal"
     "syscall"
     "time"
-
+    
     // gRPC nativo y utilidades
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials/insecure"
     "google.golang.org/grpc/reflection"
+    "google.golang.org/grpc/metadata"
 
     // Adaptadores de entrada (Handlers gRPC) e Interceptores
     grpcHandler "DBGS_SOBERANO_BACKEND/internal/adapter/handler/grpc"
@@ -61,13 +62,14 @@ func main() {
     auditoriaRepo := postgres.NewAuditoriaPostgresRepository(db)
     datasetRepo := postgres.NewDatasetPostgresRepository(db)
     seguridadRepo := postgres.NewSeguridadPostgresRepository(db)
+    integracionRepo := postgres.NewIntegracionPostgresRepository(db)
 
     catalogoUseCase := usecase.NewCatalogoUseCase(catalogoRepo)
     auditoriaUseCase := usecase.NewAuditoriaUseCase(auditoriaRepo)
     datasetUseCase := usecase.NewDatasetUseCase(datasetRepo)
     // Se inyectan los parámetros de seguridad desde el config.json o variables de entorno
     seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo, cfg.Security.JWTSecret, cfg.Security.TokenTTLMinutes)
-    integracionUseCase := usecase.NewIntegracionUseCase(nil)
+    integracionUseCase := usecase.NewIntegracionUseCase(integracionRepo)
 
     // Nota: En producción, estos valores se inyectan con -ldflags en el Makefile
     sistemaUseCase := usecase.NewSistemaUseCase(db, usecase.BuildInfo{
@@ -86,16 +88,14 @@ func main() {
     sistemaHandler := grpcHandler.NewSistemaHandler(sistemaUseCase)
     
     // Interceptores para autorización y validación de integraciones
-    integracionInterceptor := grpcInterceptors.NewIntegracionInterceptor(integracionUseCase)
-    authInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase)
+    unifiedAuthInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase, integracionUseCase)
 
     // ====================================================================
     // 3. SERVIDOR gRPC NATIVO (Comunicación interna / Móvil / Escritorio)
     // ====================================================================
     grpcServer := grpc.NewServer(
         grpc.ChainUnaryInterceptor(
-            integracionInterceptor.Unary(),
-            authInterceptor.Unary(),
+            unifiedAuthInterceptor.Unary(), // Único interceptor en la cadena
         ),
     )
 
@@ -115,7 +115,25 @@ func main() {
     // El Mux de runtime actúa como un proxy inverso en proceso.
     // Traduce peticiones HTTP/JSON entrantes a peticiones gRPC salientes.
     ctx := context.Background()
-    gatewayMux := runtime.NewServeMux()
+    
+    // Configuración crítica para gRPC-Gateway: 
+    // Extrae cabeceras HTTP personalizadas y las inyecta en los metadatos gRPC
+    // para que los interceptores puedan leerlas.
+    gatewayMux := runtime.NewServeMux(
+        runtime.WithMetadata(func(ctx context.Context, req *http.Request) metadata.MD {
+            md := metadata.New(map[string]string{})
+            
+            // Extraer API Keys de integración (Máquina a Máquina)
+            if val := req.Header.Get("x-api-token"); val != "" {
+                md.Append("x-api-token", val)
+            }
+            if val := req.Header.Get("x-client-id"); val != "" {
+                md.Append("x-client-id", val)
+            }
+            
+            return md
+        }),
+    )
 
     // Configuración para que el Gateway se conecte al servidor gRPC local.
     // Se usa insecure porque la comunicación es en loopback (localhost).

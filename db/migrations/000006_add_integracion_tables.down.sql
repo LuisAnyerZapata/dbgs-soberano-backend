@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS dbgs_schema.clientes_api;
