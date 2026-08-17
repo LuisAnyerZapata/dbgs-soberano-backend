@@ -65,7 +65,8 @@ func main() {
     catalogoUseCase := usecase.NewCatalogoUseCase(catalogoRepo)
     auditoriaUseCase := usecase.NewAuditoriaUseCase(auditoriaRepo)
     datasetUseCase := usecase.NewDatasetUseCase(datasetRepo)
-    seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo)
+    // Se inyectan los parámetros de seguridad desde el config.json o variables de entorno
+    seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo, cfg.Security.JWTSecret, cfg.Security.TokenTTLMinutes)
     integracionUseCase := usecase.NewIntegracionUseCase(nil)
 
     // Nota: En producción, estos valores se inyectan con -ldflags en el Makefile

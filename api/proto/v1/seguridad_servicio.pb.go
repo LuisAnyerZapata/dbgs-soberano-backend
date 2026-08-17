@@ -22,6 +22,147 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetSetupStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSetupStatusRequest) Reset() {
+	*x = GetSetupStatusRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSetupStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSetupStatusRequest) ProtoMessage() {}
+
+func (x *GetSetupStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSetupStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetSetupStatusRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{0}
+}
+
+type GetSetupStatusResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Indica si ya existe al menos un administrador principal en el sistema
+	Initialized   bool `protobuf:"varint,1,opt,name=initialized,proto3" json:"initialized,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSetupStatusResponse) Reset() {
+	*x = GetSetupStatusResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSetupStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSetupStatusResponse) ProtoMessage() {}
+
+func (x *GetSetupStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSetupStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetSetupStatusResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetSetupStatusResponse) GetInitialized() bool {
+	if x != nil {
+		return x.Initialized
+	}
+	return false
+}
+
+type CreateSetupRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSetupRequest) Reset() {
+	*x = CreateSetupRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSetupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSetupRequest) ProtoMessage() {}
+
+func (x *CreateSetupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSetupRequest.ProtoReflect.Descriptor instead.
+func (*CreateSetupRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateSetupRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CreateSetupRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *CreateSetupRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
 type LoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
@@ -32,7 +173,7 @@ type LoginRequest struct {
 
 func (x *LoginRequest) Reset() {
 	*x = LoginRequest{}
-	mi := &file_seguridad_servicio_proto_msgTypes[0]
+	mi := &file_seguridad_servicio_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +185,7 @@ func (x *LoginRequest) String() string {
 func (*LoginRequest) ProtoMessage() {}
 
 func (x *LoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_seguridad_servicio_proto_msgTypes[0]
+	mi := &file_seguridad_servicio_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +198,7 @@ func (x *LoginRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return file_seguridad_servicio_proto_rawDescGZIP(), []int{0}
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *LoginRequest) GetUsername() string {
@@ -86,7 +227,7 @@ type LoginResponse struct {
 
 func (x *LoginResponse) Reset() {
 	*x = LoginResponse{}
-	mi := &file_seguridad_servicio_proto_msgTypes[1]
+	mi := &file_seguridad_servicio_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -98,7 +239,7 @@ func (x *LoginResponse) String() string {
 func (*LoginResponse) ProtoMessage() {}
 
 func (x *LoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_seguridad_servicio_proto_msgTypes[1]
+	mi := &file_seguridad_servicio_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -111,7 +252,7 @@ func (x *LoginResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return file_seguridad_servicio_proto_rawDescGZIP(), []int{1}
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *LoginResponse) GetAccessToken() string {
@@ -151,7 +292,7 @@ type ValidarTokenRequest struct {
 
 func (x *ValidarTokenRequest) Reset() {
 	*x = ValidarTokenRequest{}
-	mi := &file_seguridad_servicio_proto_msgTypes[2]
+	mi := &file_seguridad_servicio_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -163,7 +304,7 @@ func (x *ValidarTokenRequest) String() string {
 func (*ValidarTokenRequest) ProtoMessage() {}
 
 func (x *ValidarTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_seguridad_servicio_proto_msgTypes[2]
+	mi := &file_seguridad_servicio_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -176,7 +317,7 @@ func (x *ValidarTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ValidarTokenRequest.ProtoReflect.Descriptor instead.
 func (*ValidarTokenRequest) Descriptor() ([]byte, []int) {
-	return file_seguridad_servicio_proto_rawDescGZIP(), []int{2}
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ValidarTokenRequest) GetToken() string {
@@ -198,7 +339,7 @@ type ValidarTokenResponse struct {
 
 func (x *ValidarTokenResponse) Reset() {
 	*x = ValidarTokenResponse{}
-	mi := &file_seguridad_servicio_proto_msgTypes[3]
+	mi := &file_seguridad_servicio_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -210,7 +351,7 @@ func (x *ValidarTokenResponse) String() string {
 func (*ValidarTokenResponse) ProtoMessage() {}
 
 func (x *ValidarTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_seguridad_servicio_proto_msgTypes[3]
+	mi := &file_seguridad_servicio_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -223,7 +364,7 @@ func (x *ValidarTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ValidarTokenResponse.ProtoReflect.Descriptor instead.
 func (*ValidarTokenResponse) Descriptor() ([]byte, []int) {
-	return file_seguridad_servicio_proto_rawDescGZIP(), []int{3}
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ValidarTokenResponse) GetEsValido() bool {
@@ -265,7 +406,7 @@ type VerificarPermisoRequest struct {
 
 func (x *VerificarPermisoRequest) Reset() {
 	*x = VerificarPermisoRequest{}
-	mi := &file_seguridad_servicio_proto_msgTypes[4]
+	mi := &file_seguridad_servicio_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -277,7 +418,7 @@ func (x *VerificarPermisoRequest) String() string {
 func (*VerificarPermisoRequest) ProtoMessage() {}
 
 func (x *VerificarPermisoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_seguridad_servicio_proto_msgTypes[4]
+	mi := &file_seguridad_servicio_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -290,7 +431,7 @@ func (x *VerificarPermisoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerificarPermisoRequest.ProtoReflect.Descriptor instead.
 func (*VerificarPermisoRequest) Descriptor() ([]byte, []int) {
-	return file_seguridad_servicio_proto_rawDescGZIP(), []int{4}
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *VerificarPermisoRequest) GetUsuarioId() string {
@@ -324,7 +465,7 @@ type VerificarPermisoResponse struct {
 
 func (x *VerificarPermisoResponse) Reset() {
 	*x = VerificarPermisoResponse{}
-	mi := &file_seguridad_servicio_proto_msgTypes[5]
+	mi := &file_seguridad_servicio_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -336,7 +477,7 @@ func (x *VerificarPermisoResponse) String() string {
 func (*VerificarPermisoResponse) ProtoMessage() {}
 
 func (x *VerificarPermisoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_seguridad_servicio_proto_msgTypes[5]
+	mi := &file_seguridad_servicio_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -349,7 +490,7 @@ func (x *VerificarPermisoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerificarPermisoResponse.ProtoReflect.Descriptor instead.
 func (*VerificarPermisoResponse) Descriptor() ([]byte, []int) {
-	return file_seguridad_servicio_proto_rawDescGZIP(), []int{5}
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *VerificarPermisoResponse) GetPermitido() bool {
@@ -370,7 +511,14 @@ var File_seguridad_servicio_proto protoreflect.FileDescriptor
 
 const file_seguridad_servicio_proto_rawDesc = "" +
 	"\n" +
-	"\x18seguridad_servicio.proto\x12\adbgs.v1\x1a\x1cgoogle/api/annotations.proto\"F\n" +
+	"\x18seguridad_servicio.proto\x12\adbgs.v1\x1a\x1cgoogle/api/annotations.proto\"\x17\n" +
+	"\x15GetSetupStatusRequest\":\n" +
+	"\x16GetSetupStatusResponse\x12 \n" +
+	"\vinitialized\x18\x01 \x01(\bR\vinitialized\"b\n" +
+	"\x12CreateSetupRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x95\x01\n" +
@@ -396,8 +544,10 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\x06accion\x18\x03 \x01(\tR\x06accion\"N\n" +
 	"\x18VerificarPermisoResponse\x12\x1c\n" +
 	"\tpermitido\x18\x01 \x01(\bR\tpermitido\x12\x14\n" +
-	"\x05razon\x18\x02 \x01(\tR\x05razon2\xe5\x02\n" +
-	"\x10SeguridadService\x12V\n" +
+	"\x05razon\x18\x02 \x01(\tR\x05razon2\xb6\x04\n" +
+	"\x10SeguridadService\x12p\n" +
+	"\x0eGetSetupStatus\x12\x1e.dbgs.v1.GetSetupStatusRequest\x1a\x1f.dbgs.v1.GetSetupStatusResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/auth/setup-status\x12]\n" +
+	"\vCreateSetup\x12\x1b.dbgs.v1.CreateSetupRequest\x1a\x16.dbgs.v1.LoginResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth/setup\x12V\n" +
 	"\x05Login\x12\x15.dbgs.v1.LoginRequest\x1a\x16.dbgs.v1.LoginResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/v1/seguridad/login\x12s\n" +
 	"\fValidarToken\x12\x1c.dbgs.v1.ValidarTokenRequest\x1a\x1d.dbgs.v1.ValidarTokenResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/seguridad/validar-token\x12\x83\x01\n" +
 	"\x10VerificarPermiso\x12 .dbgs.v1.VerificarPermisoRequest\x1a!.dbgs.v1.VerificarPermisoResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/v1/seguridad/verificar-permisoB+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
@@ -414,24 +564,31 @@ func file_seguridad_servicio_proto_rawDescGZIP() []byte {
 	return file_seguridad_servicio_proto_rawDescData
 }
 
-var file_seguridad_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_seguridad_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_seguridad_servicio_proto_goTypes = []any{
-	(*LoginRequest)(nil),             // 0: dbgs.v1.LoginRequest
-	(*LoginResponse)(nil),            // 1: dbgs.v1.LoginResponse
-	(*ValidarTokenRequest)(nil),      // 2: dbgs.v1.ValidarTokenRequest
-	(*ValidarTokenResponse)(nil),     // 3: dbgs.v1.ValidarTokenResponse
-	(*VerificarPermisoRequest)(nil),  // 4: dbgs.v1.VerificarPermisoRequest
-	(*VerificarPermisoResponse)(nil), // 5: dbgs.v1.VerificarPermisoResponse
+	(*GetSetupStatusRequest)(nil),    // 0: dbgs.v1.GetSetupStatusRequest
+	(*GetSetupStatusResponse)(nil),   // 1: dbgs.v1.GetSetupStatusResponse
+	(*CreateSetupRequest)(nil),       // 2: dbgs.v1.CreateSetupRequest
+	(*LoginRequest)(nil),             // 3: dbgs.v1.LoginRequest
+	(*LoginResponse)(nil),            // 4: dbgs.v1.LoginResponse
+	(*ValidarTokenRequest)(nil),      // 5: dbgs.v1.ValidarTokenRequest
+	(*ValidarTokenResponse)(nil),     // 6: dbgs.v1.ValidarTokenResponse
+	(*VerificarPermisoRequest)(nil),  // 7: dbgs.v1.VerificarPermisoRequest
+	(*VerificarPermisoResponse)(nil), // 8: dbgs.v1.VerificarPermisoResponse
 }
 var file_seguridad_servicio_proto_depIdxs = []int32{
-	0, // 0: dbgs.v1.SeguridadService.Login:input_type -> dbgs.v1.LoginRequest
-	2, // 1: dbgs.v1.SeguridadService.ValidarToken:input_type -> dbgs.v1.ValidarTokenRequest
-	4, // 2: dbgs.v1.SeguridadService.VerificarPermiso:input_type -> dbgs.v1.VerificarPermisoRequest
-	1, // 3: dbgs.v1.SeguridadService.Login:output_type -> dbgs.v1.LoginResponse
-	3, // 4: dbgs.v1.SeguridadService.ValidarToken:output_type -> dbgs.v1.ValidarTokenResponse
-	5, // 5: dbgs.v1.SeguridadService.VerificarPermiso:output_type -> dbgs.v1.VerificarPermisoResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	0, // 0: dbgs.v1.SeguridadService.GetSetupStatus:input_type -> dbgs.v1.GetSetupStatusRequest
+	2, // 1: dbgs.v1.SeguridadService.CreateSetup:input_type -> dbgs.v1.CreateSetupRequest
+	3, // 2: dbgs.v1.SeguridadService.Login:input_type -> dbgs.v1.LoginRequest
+	5, // 3: dbgs.v1.SeguridadService.ValidarToken:input_type -> dbgs.v1.ValidarTokenRequest
+	7, // 4: dbgs.v1.SeguridadService.VerificarPermiso:input_type -> dbgs.v1.VerificarPermisoRequest
+	1, // 5: dbgs.v1.SeguridadService.GetSetupStatus:output_type -> dbgs.v1.GetSetupStatusResponse
+	4, // 6: dbgs.v1.SeguridadService.CreateSetup:output_type -> dbgs.v1.LoginResponse
+	4, // 7: dbgs.v1.SeguridadService.Login:output_type -> dbgs.v1.LoginResponse
+	6, // 8: dbgs.v1.SeguridadService.ValidarToken:output_type -> dbgs.v1.ValidarTokenResponse
+	8, // 9: dbgs.v1.SeguridadService.VerificarPermiso:output_type -> dbgs.v1.VerificarPermisoResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -448,7 +605,7 @@ func file_seguridad_servicio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_seguridad_servicio_proto_rawDesc), len(file_seguridad_servicio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

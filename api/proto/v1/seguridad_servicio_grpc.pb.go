@@ -19,6 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	SeguridadService_GetSetupStatus_FullMethodName   = "/dbgs.v1.SeguridadService/GetSetupStatus"
+	SeguridadService_CreateSetup_FullMethodName      = "/dbgs.v1.SeguridadService/CreateSetup"
 	SeguridadService_Login_FullMethodName            = "/dbgs.v1.SeguridadService/Login"
 	SeguridadService_ValidarToken_FullMethodName     = "/dbgs.v1.SeguridadService/ValidarToken"
 	SeguridadService_VerificarPermiso_FullMethodName = "/dbgs.v1.SeguridadService/VerificarPermiso"
@@ -28,8 +30,12 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Servicio gRPC para autenticación, RBAC y validación de tokens
+// Servicio gRPC para autenticación, RBAC, validación de tokens y configuración inicial
 type SeguridadServiceClient interface {
+	// Verifica si el sistema ya ha sido inicializado (existe al menos un SUPER_ADMIN)
+	GetSetupStatus(ctx context.Context, in *GetSetupStatusRequest, opts ...grpc.CallOption) (*GetSetupStatusResponse, error)
+	// Crea el primer usuario SUPER_ADMIN. Solo se permite si el sistema no está inicializado.
+	CreateSetup(ctx context.Context, in *CreateSetupRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	// Expone el endpoint como POST. 'body: "*"' indica que todo el JSON va en el cuerpo de la petición.
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ValidarToken(ctx context.Context, in *ValidarTokenRequest, opts ...grpc.CallOption) (*ValidarTokenResponse, error)
@@ -42,6 +48,26 @@ type seguridadServiceClient struct {
 
 func NewSeguridadServiceClient(cc grpc.ClientConnInterface) SeguridadServiceClient {
 	return &seguridadServiceClient{cc}
+}
+
+func (c *seguridadServiceClient) GetSetupStatus(ctx context.Context, in *GetSetupStatusRequest, opts ...grpc.CallOption) (*GetSetupStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSetupStatusResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_GetSetupStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) CreateSetup(ctx context.Context, in *CreateSetupRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_CreateSetup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *seguridadServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
@@ -78,8 +104,12 @@ func (c *seguridadServiceClient) VerificarPermiso(ctx context.Context, in *Verif
 // All implementations must embed UnimplementedSeguridadServiceServer
 // for forward compatibility.
 //
-// Servicio gRPC para autenticación, RBAC y validación de tokens
+// Servicio gRPC para autenticación, RBAC, validación de tokens y configuración inicial
 type SeguridadServiceServer interface {
+	// Verifica si el sistema ya ha sido inicializado (existe al menos un SUPER_ADMIN)
+	GetSetupStatus(context.Context, *GetSetupStatusRequest) (*GetSetupStatusResponse, error)
+	// Crea el primer usuario SUPER_ADMIN. Solo se permite si el sistema no está inicializado.
+	CreateSetup(context.Context, *CreateSetupRequest) (*LoginResponse, error)
 	// Expone el endpoint como POST. 'body: "*"' indica que todo el JSON va en el cuerpo de la petición.
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ValidarToken(context.Context, *ValidarTokenRequest) (*ValidarTokenResponse, error)
@@ -94,6 +124,12 @@ type SeguridadServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedSeguridadServiceServer struct{}
 
+func (UnimplementedSeguridadServiceServer) GetSetupStatus(context.Context, *GetSetupStatusRequest) (*GetSetupStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetSetupStatus not implemented")
+}
+func (UnimplementedSeguridadServiceServer) CreateSetup(context.Context, *CreateSetupRequest) (*LoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateSetup not implemented")
+}
 func (UnimplementedSeguridadServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
 }
@@ -122,6 +158,42 @@ func RegisterSeguridadServiceServer(s grpc.ServiceRegistrar, srv SeguridadServic
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&SeguridadService_ServiceDesc, srv)
+}
+
+func _SeguridadService_GetSetupStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSetupStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).GetSetupStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_GetSetupStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).GetSetupStatus(ctx, req.(*GetSetupStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_CreateSetup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSetupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).CreateSetup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_CreateSetup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).CreateSetup(ctx, req.(*CreateSetupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _SeguridadService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -185,6 +257,14 @@ var SeguridadService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "dbgs.v1.SeguridadService",
 	HandlerType: (*SeguridadServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetSetupStatus",
+			Handler:    _SeguridadService_GetSetupStatus_Handler,
+		},
+		{
+			MethodName: "CreateSetup",
+			Handler:    _SeguridadService_CreateSetup_Handler,
+		},
 		{
 			MethodName: "Login",
 			Handler:    _SeguridadService_Login_Handler,

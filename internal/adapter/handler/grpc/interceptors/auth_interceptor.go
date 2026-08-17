@@ -29,9 +29,12 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		// Endpoints públicos excluidos de autenticación
-		 if info.FullMethod == "/dbgs.v1.SeguridadService/Login" ||
+		// Endpoints públicos excluidos de autenticación JWT
+        // Incluyen diagnósticos, setup inicial y validación genérica de tokens
+        if info.FullMethod == "/dbgs.v1.SeguridadService/Login" ||
             info.FullMethod == "/dbgs.v1.SeguridadService/ValidarToken" ||
+            info.FullMethod == "/dbgs.v1.SeguridadService/GetSetupStatus" ||
+            info.FullMethod == "/dbgs.v1.SeguridadService/CreateSetup" ||
             info.FullMethod == "/dbgs.v1.SistemaService/GetHealth" ||
             info.FullMethod == "/dbgs.v1.SistemaService/GetVersion" {
             return handler(ctx, req)

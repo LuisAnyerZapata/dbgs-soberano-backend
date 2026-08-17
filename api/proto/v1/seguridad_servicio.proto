@@ -7,8 +7,25 @@ option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
 // Se importa el paquete de anotaciones para mapear los métodos a rutas HTTP/REST
 import "google/api/annotations.proto";
 
-// Servicio gRPC para autenticación, RBAC y validación de tokens
+// Servicio gRPC para autenticación, RBAC, validación de tokens y configuración inicial
 service SeguridadService {
+  // --- Métodos de Setup Inicial (Públicos y condicionales) ---
+
+  // Verifica si el sistema ya ha sido inicializado (existe al menos un SUPER_ADMIN)
+  rpc GetSetupStatus (GetSetupStatusRequest) returns (GetSetupStatusResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/setup-status"
+    };
+  }
+
+  // Crea el primer usuario SUPER_ADMIN. Solo se permite si el sistema no está inicializado.
+  rpc CreateSetup (CreateSetupRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/setup"
+      body: "*"
+    };
+  }
+
   // Expone el endpoint como POST. 'body: "*"' indica que todo el JSON va en el cuerpo de la petición.
   rpc Login (LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
@@ -30,6 +47,19 @@ service SeguridadService {
       body: "*"
     };
   }
+}
+
+message GetSetupStatusRequest {}
+
+message GetSetupStatusResponse {
+  // Indica si ya existe al menos un administrador principal en el sistema
+  bool initialized = 1;
+}
+
+message CreateSetupRequest {
+  string username = 1;
+  string password = 2;
+  string email = 3;
 }
 
 message LoginRequest {
