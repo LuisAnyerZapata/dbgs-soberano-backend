@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/api/annotations.proto";
+
+// Servicio de Diagnóstico y Estado del Sistema
+// NOTA: Estos endpoints NO requieren autenticación JWT.
+service SistemaService {
+  // Verifica la conectividad con los componentes críticos (ej. PostgreSQL)
+  rpc GetHealth (GetHealthRequest) returns (GetHealthResponse) {
+    option (google.api.http) = {
+      get: "/v1/system/health"
+    };
+  }
+
+  // Obtiene la versión del motor, el commit de compilación y el entorno
+  rpc GetVersion (GetVersionRequest) returns (GetVersionResponse) {
+    option (google.api.http) = {
+      get: "/v1/system/version"
+    };
+  }
+}
+
+message GetHealthRequest {}
+
+message GetHealthResponse {
+  string status = 1; // "SERVING" o "DOWN"
+  int64 uptime_seconds = 2;
+  HealthCheck database = 3;
+}
+
+message HealthCheck {
+  string status = 1; // "UP" o "DOWN"
+  string component = 2;
+  double latency_ms = 3;
+}
+
+message GetVersionRequest {}
+
+message GetVersionResponse {
+  string version = 1;
+  string git_commit = 2;
+  string build_date = 3;
+  string go_version = 4;
+  string environment = 5;
+  string engine = 6;
+}

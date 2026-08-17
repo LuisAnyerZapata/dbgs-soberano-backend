@@ -30,12 +30,12 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 		// Endpoints públicos excluidos de autenticación
-		if info.FullMethod == "/dbgs.v1.SeguridadService/Login" ||
-			info.FullMethod == "/dbgs.v1.SeguridadService/ValidarToken" ||
-			info.FullMethod == "/v1.CatalogosService/GetHealth" ||
-			info.FullMethod == "/v1.CatalogosService/GetVersion" {
-			return handler(ctx, req)
-		}
+		 if info.FullMethod == "/dbgs.v1.SeguridadService/Login" ||
+            info.FullMethod == "/dbgs.v1.SeguridadService/ValidarToken" ||
+            info.FullMethod == "/dbgs.v1.SistemaService/GetHealth" ||
+            info.FullMethod == "/dbgs.v1.SistemaService/GetVersion" {
+            return handler(ctx, req)
+        }
 
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {

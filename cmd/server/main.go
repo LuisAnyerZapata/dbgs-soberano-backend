@@ -68,11 +68,21 @@ func main() {
     seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo)
     integracionUseCase := usecase.NewIntegracionUseCase(nil)
 
+    // Nota: En producción, estos valores se inyectan con -ldflags en el Makefile
+    sistemaUseCase := usecase.NewSistemaUseCase(db, usecase.BuildInfo{
+        Version:    "v1.0.0-dev",
+        GitCommit:  "local-dev",
+        BuildDate:  time.Now().Format(time.RFC3339),
+        GoVersion:  "1.26",
+        Environment: "development",
+    })
+
     // Controladores que implementan las interfaces gRPC generadas
     catalogoHandler := grpcHandler.NewCatalogoHandler(catalogoUseCase)
     auditoriaHandler := grpcHandler.NewAuditoriaHandler(auditoriaUseCase)
     datasetHandler := grpcHandler.NewDatasetsHandler(datasetUseCase)
     seguridadHandler := grpcHandler.NewSeguridadHandler(seguridadUseCase)
+    sistemaHandler := grpcHandler.NewSistemaHandler(sistemaUseCase)
     
     // Interceptores para autorización y validación de integraciones
     integracionInterceptor := grpcInterceptors.NewIntegracionInterceptor(integracionUseCase)
@@ -93,6 +103,7 @@ func main() {
     pb.RegisterAuditoriaServiceServer(grpcServer, auditoriaHandler)
     pb.RegisterDatasetsServiceServer(grpcServer, datasetHandler)
     pb.RegisterSeguridadServiceServer(grpcServer, seguridadHandler)
+    pb.RegisterSistemaServiceServer(grpcServer, sistemaHandler)
 
     // Habilitar reflexión para herramientas de depuración como grpcurl
     reflection.Register(grpcServer)
@@ -123,6 +134,9 @@ func main() {
     }
     if err := pb.RegisterAuditoriaServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
         log.Fatalf("Fallo al registrar AuditoriaService en el Gateway: %v", err)
+    }
+    if err := pb.RegisterSistemaServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
+        log.Fatalf("Fallo al registrar SistemaService en el Gateway: %v", err)
     }
 
     // Se envuelve el Mux en un middleware CORS. Esto es estrictamente necesario
