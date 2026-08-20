@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// Servicio para la gestión dinámica de estructuras de datos (Motor tipo PocketBase)
+service ColeccionesService {
+  // Crea una nueva tabla en la base de datos basándose en la definición de campos JSON
+  rpc CrearColeccion (CrearColeccionRequest) returns (CrearColeccionResponse) {
+    option (google.api.http) = {
+      post: "/v1/colecciones"
+      body: "*"
+    };
+  }
+
+  // Lista las colecciones dinámicas registradas en el diccionario de datos
+  rpc ListarColecciones (ListarColeccionesRequest) returns (ListarColeccionesResponse) {
+    option (google.api.http) = {
+      get: "/v1/colecciones"
+    };
+  }
+}
+
+// --- Mensajes para Crear ---
+
+message CampoDinamicoProto {
+  string nombre = 1;
+  string tipo = 2; // STRING, TEXT, INTEGER, FLOAT, BOOLEAN, UUID, JSONB, TIMESTAMPTZ
+  bool nulo = 3;
+  bool unico = 4;
+  string descripcion = 5;
+}
+
+message CrearColeccionRequest {
+  string nombre = 1;
+  string descripcion = 2;
+  repeated CampoDinamicoProto campos = 3;
+  string institucion_id = 4; // Opcional para futuro RLS
+}
+
+message CrearColeccionResponse {
+  string id = 1;
+  string nombre_logico = 2;
+  string nombre_fisico = 3; // El prefijo "dyn_" aplicado
+  string mensaje = 4;
+}
+
+// --- Mensajes para Listar ---
+
+message ListarColeccionesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ColeccionRegistroProto {
+  string id = 1;
+  string nombre_logico = 2;
+  string nombre_fisico = 3;
+  string descripcion = 4;
+  string estructura_json = 5; // Devuelve el JSON de los campos para que la UI sepa cómo renderizar formularios
+  bool esta_activa = 6;
+  string created_at = 7;
+}
+
+message ListarColeccionesResponse {
+  repeated ColeccionRegistroProto colecciones = 1;
+  int32 total = 2;
+}

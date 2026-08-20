@@ -63,13 +63,17 @@ func main() {
     datasetRepo := postgres.NewDatasetPostgresRepository(db)
     seguridadRepo := postgres.NewSeguridadPostgresRepository(db)
     integracionRepo := postgres.NewIntegracionPostgresRepository(db)
+    coleccionRepo := postgres.NewColeccionDinamicaPostgresRepository(db)
 
     catalogoUseCase := usecase.NewCatalogoUseCase(catalogoRepo)
     auditoriaUseCase := usecase.NewAuditoriaUseCase(auditoriaRepo)
     datasetUseCase := usecase.NewDatasetUseCase(datasetRepo)
+    
     // Se inyectan los parámetros de seguridad desde el config.json o variables de entorno
     seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo, cfg.Security.JWTSecret, cfg.Security.TokenTTLMinutes)
+
     integracionUseCase := usecase.NewIntegracionUseCase(integracionRepo)
+    coleccionUseCase := usecase.NewColeccionUseCase(coleccionRepo)
 
     // Nota: En producción, estos valores se inyectan con -ldflags en el Makefile
     sistemaUseCase := usecase.NewSistemaUseCase(db, usecase.BuildInfo{
@@ -86,6 +90,7 @@ func main() {
     datasetHandler := grpcHandler.NewDatasetsHandler(datasetUseCase)
     seguridadHandler := grpcHandler.NewSeguridadHandler(seguridadUseCase)
     sistemaHandler := grpcHandler.NewSistemaHandler(sistemaUseCase)
+    coleccionHandler := grpcHandler.NewColeccionesHandler(coleccionUseCase)
     
     // Interceptores para autorización y validación de integraciones
     unifiedAuthInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase, integracionUseCase)
@@ -105,6 +110,7 @@ func main() {
     pb.RegisterDatasetsServiceServer(grpcServer, datasetHandler)
     pb.RegisterSeguridadServiceServer(grpcServer, seguridadHandler)
     pb.RegisterSistemaServiceServer(grpcServer, sistemaHandler)
+    pb.RegisterColeccionesServiceServer(grpcServer, coleccionHandler)
 
     // Habilitar reflexión para herramientas de depuración como grpcurl
     reflection.Register(grpcServer)
@@ -156,6 +162,9 @@ func main() {
     }
     if err := pb.RegisterSistemaServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
         log.Fatalf("Fallo al registrar SistemaService en el Gateway: %v", err)
+    }
+    if err := pb.RegisterColeccionesServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
+        log.Fatalf("Fallo al registrar ColeccionesService en el Gateway: %v", err)
     }
 
     // Se envuelve el Mux en un middleware CORS. Esto es estrictamente necesario
