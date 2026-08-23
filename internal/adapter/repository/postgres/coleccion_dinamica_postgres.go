@@ -54,11 +54,35 @@ func (r *coleccionDinamicaPostgresRepository) GuardarMetadatos(ctx context.Conte
     return nil
 }
 
+// ObtenerMetadatosPorNombre localiza una colección activa por su nombre lógico
+func (r *coleccionDinamicaPostgresRepository) ObtenerMetadatosPorNombre(ctx context.Context, nombreLogico string) (*entity.ColeccionRegistro, error) {
+    query := `
+        SELECT id, nombre_logico, nombre_fisico, descripcion, estructura, esta_activa, created_at
+        FROM dbgs_schema.colecciones_dinamicas
+        WHERE LOWER(nombre_logico) = LOWER($1)
+    `
+    row := r.db.QueryRowContext(ctx, query, nombreLogico)
+
+    var reg entity.ColeccionRegistro
+    var descripcion sql.NullString
+    if err := row.Scan(&reg.ID, &reg.NombreLogico, &reg.NombreFisico, &descripcion, &reg.EstructuraJSON, &reg.EstaActiva, &reg.CreatedAt); err != nil {
+        if err == sql.ErrNoRows {
+            return nil, entity.ErrEntidadNoEncontrada
+        }
+        log.Printf("ERROR EN BD (ColeccionDinamica.ObtenerMetadatosPorNombre '%s'): %v", nombreLogico, err)
+        return nil, entity.ErrErrorInterno
+    }
+    reg.Descripcion = descripcion.String
+
+    return &reg, nil
+}
+
 // ListarMetadatos obtiene las colecciones registradas en el diccionario
 func (r *coleccionDinamicaPostgresRepository) ListarMetadatos(ctx context.Context, limite, offset int) ([]entity.ColeccionRegistro, int64, error) {
     countQuery := `SELECT COUNT(*) FROM dbgs_schema.colecciones_dinamicas`
     var total int64
     if err := r.db.QueryRowContext(ctx, countQuery).Scan(&total); err != nil {
+        log.Printf("ERROR EN BD (ColeccionDinamica.ListarMetadatos COUNT): %v", err)
         return nil, 0, entity.ErrErrorInterno
     }
 
@@ -70,6 +94,7 @@ func (r *coleccionDinamicaPostgresRepository) ListarMetadatos(ctx context.Contex
     `
     rows, err := r.db.QueryContext(ctx, query, limite, offset)
     if err != nil {
+        log.Printf("ERROR EN BD (ColeccionDinamica.ListarMetadatos): %v", err)
         return nil, 0, entity.ErrErrorInterno
     }
     defer rows.Close()
@@ -77,9 +102,13 @@ func (r *coleccionDinamicaPostgresRepository) ListarMetadatos(ctx context.Contex
     var colecciones []entity.ColeccionRegistro
     for rows.Next() {
         var reg entity.ColeccionRegistro
-        if err := rows.Scan(&reg.ID, &reg.NombreLogico, &reg.NombreFisico, &reg.Descripcion, &reg.EstructuraJSON, &reg.EstaActiva, &reg.CreatedAt); err != nil {
+        // La columna descripcion es NULLABLE: se escanea en NullString para evitar errores
+        var descripcion sql.NullString
+        if err := rows.Scan(&reg.ID, &reg.NombreLogico, &reg.NombreFisico, &descripcion, &reg.EstructuraJSON, &reg.EstaActiva, &reg.CreatedAt); err != nil {
+            log.Printf("ERROR EN BD (ColeccionDinamica.ListarMetadatos scan): %v", err)
             return nil, 0, entity.ErrErrorInterno
         }
+        reg.Descripcion = descripcion.String
         colecciones = append(colecciones, reg)
     }
     return colecciones, total, nil

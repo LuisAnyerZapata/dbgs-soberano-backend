@@ -4,7 +4,9 @@ import (
     "context"
     "database/sql"
     "encoding/json"
+    "errors"
     "fmt"
+    "log"
     "strings"
 
     "DBGS_SOBERANO_BACKEND/internal/domain/entity"
@@ -12,6 +14,15 @@ import (
 
     "github.com/lib/pq"
 )
+
+// codigoViolacionUnica corresponde al SQLSTATE de PostgreSQL para UNIQUE violations
+const codigoViolacionUnica = "23505"
+
+// esErrorUnico determina si el error devuelto por PostgreSQL es una violación de unicidad
+func esErrorUnico(err error) bool {
+    var pqErr *pq.Error
+    return errors.As(err, &pqErr) && pqErr.Code == codigoViolacionUnica
+}
 
 // Constante local para evitar hardcodeos y errores tipográficos
 const DBGS_SCHEMA = "dbgs_schema"
@@ -34,6 +45,7 @@ func (r *datosDinamicosPostgresRepository) Listar(ctx context.Context, nombreFis
     countQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s.%s", DBGS_SCHEMA, pq.QuoteIdentifier(nombreFisico))
     var total int64
     if err := r.db.QueryRowContext(ctx, countQuery).Scan(&total); err != nil {
+        log.Printf("ERROR EN BD (DatosDinamicos.Listar COUNT en %s): %v", nombreFisico, err)
         return nil, 0, entity.ErrErrorInterno
     }
 
@@ -46,6 +58,7 @@ func (r *datosDinamicosPostgresRepository) Listar(ctx context.Context, nombreFis
 
     rows, err := r.db.QueryContext(ctx, query, limite, offset)
     if err != nil {
+        log.Printf("ERROR EN BD (DatosDinamicos.Listar en %s): %v", nombreFisico, err)
         return nil, 0, entity.ErrErrorInterno
     }
     defer rows.Close()
@@ -54,11 +67,13 @@ func (r *datosDinamicosPostgresRepository) Listar(ctx context.Context, nombreFis
     for rows.Next() {
         var jsonData []byte
         if err := rows.Scan(&jsonData); err != nil {
+            log.Printf("ERROR EN BD (DatosDinamicos.Listar scan en %s): %v", nombreFisico, err)
             return nil, 0, entity.ErrErrorInterno
         }
         
         var registro map[string]interface{}
         if err := json.Unmarshal(jsonData, &registro); err != nil {
+            log.Printf("ERROR EN BD (DatosDinamicos.Listar unmarshal en %s): %v", nombreFisico, err)
             return nil, 0, entity.ErrErrorInterno
         }
         registros = append(registros, registro)
@@ -79,11 +94,13 @@ func (r *datosDinamicosPostgresRepository) ObtenerPorID(ctx context.Context, nom
         if err == sql.ErrNoRows {
             return nil, entity.ErrEntidadNoEncontrada
         }
+        log.Printf("ERROR EN BD (DatosDinamicos.ObtenerPorID en %s): %v", nombreFisico, err)
         return nil, entity.ErrErrorInterno
     }
 
     var resultado map[string]interface{}
     if err := json.Unmarshal(jsonData, &resultado); err != nil {
+        log.Printf("ERROR EN BD (DatosDinamicos.ObtenerPorID unmarshal en %s): %v", nombreFisico, err)
         return nil, entity.ErrErrorInterno
     }
     return resultado, nil
@@ -94,22 +111,25 @@ func (r *datosDinamicosPostgresRepository) Insertar(ctx context.Context, nombreF
     var placeholders []string
     var valores []interface{}
 
-    // Inyectamos el auditor obligatorio ($1)
-    valores = append(valores, createdBy)
-    placeholders = append(placeholders, "$1")
-
-    // Iteramos el mapa dinámico ignorando campos del sistema
+    // Iteramos el mapa dinámico ignorando campos del sistema y de auditoría
+    // (created_by/updated_by se inyectan de forma controlada más abajo)
     for clave, valor := range datos {
-        if camposSistema[clave] {
-            continue // No permitimos sobreescribir ID o fechas del sistema
+        if camposSistema[clave] || clave == "created_by" || clave == "updated_by" {
+            continue
         }
         columnas = append(columnas, pq.QuoteIdentifier(clave))
         placeholders = append(placeholders, fmt.Sprintf("$%d", len(valores)+1))
         valores = append(valores, valor)
     }
 
+    // El auditor obligatorio se agrega AL FINAL para que el placeholder
+    // quede emparejado con la posición exacta de su columna
+    columnas = append(columnas, "created_by")
+    placeholders = append(placeholders, fmt.Sprintf("$%d", len(valores)+1))
+    valores = append(valores, createdBy)
+
     query := fmt.Sprintf(
-        "INSERT INTO %s.%s (%s, created_by) VALUES (%s) RETURNING id",
+        "INSERT INTO %s.%s (%s) VALUES (%s) RETURNING id",
         DBGS_SCHEMA,
         pq.QuoteIdentifier(nombreFisico),
         strings.Join(columnas, ", "),
@@ -119,8 +139,9 @@ func (r *datosDinamicosPostgresRepository) Insertar(ctx context.Context, nombreF
     var nuevoID string
     err := r.db.QueryRowContext(ctx, query, valores...).Scan(&nuevoID)
     if err != nil {
-        if err == sql.ErrNoRows {
-            return "", entity.ErrErrorInterno
+        log.Printf("ERROR EN BD (DatosDinamicos.Insertar en %s): %v\nSQL: %s", nombreFisico, err, query)
+        if esErrorUnico(err) {
+            return "", entity.ErrCodigoDuplicado
         }
         return "", entity.ErrErrorInterno
     }
@@ -166,11 +187,16 @@ func (r *datosDinamicosPostgresRepository) Actualizar(ctx context.Context, nombr
         if err == sql.ErrNoRows {
             return nil, entity.ErrEntidadNoEncontrada
         }
+        log.Printf("ERROR EN BD (DatosDinamicos.Actualizar en %s): %v\nSQL: %s", nombreFisico, err, query)
+        if esErrorUnico(err) {
+            return nil, entity.ErrCodigoDuplicado
+        }
         return nil, entity.ErrErrorInterno
     }
 
     var resultado map[string]interface{}
     if err := json.Unmarshal(jsonData, &resultado); err != nil {
+        log.Printf("ERROR EN BD (DatosDinamicos.Actualizar unmarshal en %s): %v", nombreFisico, err)
         return nil, entity.ErrErrorInterno
     }
     return resultado, nil
@@ -181,6 +207,7 @@ func (r *datosDinamicosPostgresRepository) Eliminar(ctx context.Context, nombreF
     
     res, err := r.db.ExecContext(ctx, query, id)
     if err != nil {
+        log.Printf("ERROR EN BD (DatosDinamicos.Eliminar en %s): %v", nombreFisico, err)
         return entity.ErrErrorInterno
     }
     

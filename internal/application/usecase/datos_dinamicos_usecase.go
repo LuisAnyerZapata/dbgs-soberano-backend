@@ -26,21 +26,13 @@ func NewDatosDinamicosUseCase(coleccionRepo repository.ColeccionDinamicaReposito
 // validarEstructuraYCampos es el método privado que garantiza que nadie pueda inyectar 
 // campos falsos o maliciosos que no estén en el diccionario de datos.
 func (uc *datosDinamicosUseCase) validarEstructuraYCampos(nombreLogico string, payload map[string]interface{}) (*entity.ColeccionRegistro, []entity.CampoDinamico, error) {
-    // 1. Buscar en el diccionario de datos (Metadatos)
-    colecciones, _, err := uc.coleccionRepo.ListarMetadatos(context.Background(), 1, 0)
-    if err != nil || len(colecciones) == 0 {
-        return nil, nil, domain.ErrEntidadNoEncontrada
+    // 1. Buscar en el diccionario de datos (Metadatos) por nombre lógico exacto
+    registro, err := uc.coleccionRepo.ObtenerMetadatosPorNombre(context.Background(), nombreLogico)
+    if err != nil {
+        return nil, nil, err
     }
 
-    var registro *entity.ColeccionRegistro
-    for _, c := range colecciones {
-        if c.NombreLogico == nombreLogico {
-            registro = &c
-            break
-        }
-    }
-
-    if registro == nil || !registro.EstaActiva {
+    if !registro.EstaActiva {
         return nil, nil, domain.ErrEntidadNoEncontrada
     }
 
@@ -64,7 +56,8 @@ func (uc *datosDinamicosUseCase) validarEstructuraYCampos(nombreLogico string, p
             }
         }
         if !permitido {
-            return nil, nil, fmt.Errorf("el campo '%s' no está definido en la estructura de la tabla '%s'", key, nombreLogico)
+            // Se envuelve el error de dominio para que el handler lo mapee como InvalidArgument (y no Internal)
+            return nil, nil, fmt.Errorf("%w: el campo '%s' no está definido en la estructura de la tabla '%s'", domain.ErrDatosInvalidos, key, nombreLogico)
         }
     }
 

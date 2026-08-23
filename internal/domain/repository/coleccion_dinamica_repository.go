@@ -12,5 +12,9 @@ type ColeccionDinamicaRepository interface {
     
     // GuardarMetadatos inserta el registro en el diccionario de colecciones dinámicas
     GuardarMetadatos(ctx context.Context, registro *entity.ColeccionRegistro) error
+
+    // ObtenerMetadatosPorNombre localiza una colección activa por su nombre lógico
+    ObtenerMetadatosPorNombre(ctx context.Context, nombreLogico string) (*entity.ColeccionRegistro, error)
+
     ListarMetadatos(ctx context.Context, limite, offset int) ([]entity.ColeccionRegistro, int64, error)
 }
