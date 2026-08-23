@@ -26,6 +26,8 @@ func mapDomainErrorToGRPC(err error) error {
 		return status.Error(codes.AlreadyExists, err.Error())
 	case errors.Is(err, domain.ErrRegistroInactivo):
 		return status.Error(codes.FailedPrecondition, err.Error())
+	case errors.Is(err, domain.ErrSintaxisInvalida):
+        return status.Error(codes.InvalidArgument, err.Error())
 	default:
 		return status.Error(codes.Internal, "ha ocurrido un error interno al procesar la solicitud")
 	}

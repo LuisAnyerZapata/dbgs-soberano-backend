@@ -64,10 +64,12 @@ func main() {
     seguridadRepo := postgres.NewSeguridadPostgresRepository(db)
     integracionRepo := postgres.NewIntegracionPostgresRepository(db)
     coleccionRepo := postgres.NewColeccionDinamicaPostgresRepository(db)
+    datosDinamicosRepo := postgres.NewDatosDinamicosPostgresRepository(db)
 
     catalogoUseCase := usecase.NewCatalogoUseCase(catalogoRepo)
     auditoriaUseCase := usecase.NewAuditoriaUseCase(auditoriaRepo)
     datasetUseCase := usecase.NewDatasetUseCase(datasetRepo)
+    datosDinamicosUseCase := usecase.NewDatosDinamicosUseCase(coleccionRepo, datosDinamicosRepo)
     
     // Se inyectan los parámetros de seguridad desde el config.json o variables de entorno
     seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo, cfg.Security.JWTSecret, cfg.Security.TokenTTLMinutes)
@@ -91,6 +93,7 @@ func main() {
     seguridadHandler := grpcHandler.NewSeguridadHandler(seguridadUseCase)
     sistemaHandler := grpcHandler.NewSistemaHandler(sistemaUseCase)
     coleccionHandler := grpcHandler.NewColeccionesHandler(coleccionUseCase)
+    datosDinamicosHandler := grpcHandler.NewDatosDinamicosHandler(datosDinamicosUseCase)
     
     // Interceptores para autorización y validación de integraciones
     unifiedAuthInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase, integracionUseCase)
@@ -111,6 +114,7 @@ func main() {
     pb.RegisterSeguridadServiceServer(grpcServer, seguridadHandler)
     pb.RegisterSistemaServiceServer(grpcServer, sistemaHandler)
     pb.RegisterColeccionesServiceServer(grpcServer, coleccionHandler)
+    pb.RegisterDatosDinamicosServiceServer(grpcServer, datosDinamicosHandler)
 
     // Habilitar reflexión para herramientas de depuración como grpcurl
     reflection.Register(grpcServer)
@@ -165,6 +169,9 @@ func main() {
     }
     if err := pb.RegisterColeccionesServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
         log.Fatalf("Fallo al registrar ColeccionesService en el Gateway: %v", err)
+    }
+    if err := pb.RegisterDatosDinamicosServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
+        log.Fatalf("Fallo al registrar DatosDinamicosService en el Gateway: %v", err)
     }
 
     // Se envuelve el Mux en un middleware CORS. Esto es estrictamente necesario

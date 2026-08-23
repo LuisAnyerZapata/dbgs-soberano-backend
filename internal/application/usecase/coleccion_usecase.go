@@ -44,7 +44,7 @@ func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.Crear
 
     // 3. Generar el SQL para vincular el trigger de auditoría
     // DESACTIVADO TEMPORALMENTE HASTA EL DOMINIO 7
-    // nombreFisico := ObtenerNombreTablaCompleto(input.Nombre)
+    nombreFisico := ObtenerNombreTablaCompleto(input.Nombre)
     // sqlTrigger := GenerarSQLTriggerAuditoria(nombreFisico)
 
     // 4. Ejecutar DDLs en la base de datos
@@ -78,7 +78,7 @@ func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.Crear
     registro := &entity.ColeccionRegistro{
         ID:             uuid.New().String(),
         NombreLogico:   input.Nombre,
-        // NombreFisico:   nombreFisico,
+        NombreFisico:   nombreFisico,
         Descripcion:    input.Descripcion,
         InstitucionID:  institucionIDSeguro, 
         EstructuraJSON: estructuraJSON,

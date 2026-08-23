@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+// Importante: Struct nos permite recibir y enviar JSON dinámico sin conocer los campos de antemano
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+
+// Servicio para el consumo genérico de datos (El corazón tipo PocketBase)
+service DatosDinamicosService {
+  // Listar registros con paginación
+  rpc ListarRegistros (ListarRegistrosRequest) returns (ListarRegistrosResponse) {
+    option (google.api.http) = {
+      get: "/v1/data/{nombre_tabla}"
+    };
+  }
+
+  // Obtener un registro específico por su UUID
+  rpc ObtenerRegistro (ObtenerRegistroRequest) returns (ObtenerRegistroResponse) {
+    option (google.api.http) = {
+      get: "/v1/data/{nombre_tabla}/{id}"
+    };
+  }
+
+  // Insertar un nuevo registro dinámicamente
+  rpc CrearRegistro (CrearRegistroRequest) returns (CrearRegistroResponse) {
+    option (google.api.http) = {
+      post: "/v1/data/{nombre_tabla}"
+      body: "datos"
+    };
+  }
+
+  // Actualizar campos de un registro existente
+  rpc ActualizarRegistro (ActualizarRegistroRequest) returns (ActualizarRegistroResponse) {
+    option (google.api.http) = {
+      put: "/v1/data/{nombre_tabla}/{id}"
+      body: "datos"
+    };
+  }
+
+  // Eliminar un registro de forma lógica o física (según diseño)
+  rpc EliminarRegistro (EliminarRegistroRequest) returns (EliminarRegistroResponse) {
+    option (google.api.http) = {
+      delete: "/v1/data/{nombre_tabla}/{id}"
+    };
+  }
+}
+
+// --- Mensajes de Solicitud ---
+
+message ListarRegistrosRequest {
+  string nombre_tabla = 1; // Ej: 'ciudadanos' (El sistema buscará internamente 'dyn_ciudadanos')
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ObtenerRegistroRequest {
+  string nombre_tabla = 1;
+  string id = 2; // UUID del registro
+}
+
+message CrearRegistroRequest {
+  string nombre_tabla = 1;
+  google.protobuf.Struct datos = 2; // JSON dinámico con los campos a insertar
+}
+
+message ActualizarRegistroRequest {
+  string nombre_tabla = 1;
+  string id = 2;
+  google.protobuf.Struct datos = 3; // JSON dinámico con solo los campos a modificar
+}
+
+message EliminarRegistroRequest {
+  string nombre_tabla = 1;
+  string id = 2;
+}
+
+// --- Mensajes de Respuesta ---
+
+message ListarRegistrosResponse {
+  repeated google.protobuf.Struct registros = 1; // Array de objetos JSON dinámicos
+  int32 total = 2;
+}
+
+message ObtenerRegistroResponse {
+  google.protobuf.Struct registro = 1;
+}
+
+message CrearRegistroResponse {
+  string id = 1; // UUID del nuevo registro creado
+}
+
+message ActualizarRegistroResponse {
+  google.protobuf.Struct registro = 1; // Devuelve el registro actualizado
+}
+
+message EliminarRegistroResponse {
+  bool exitoso = 1;
+  string mensaje = 2;
+}

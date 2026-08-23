@@ -10,4 +10,5 @@ var (
 	ErrDatosInvalidos      = errors.New("los datos proporcionados no cumplen con las reglas de validación")
 	ErrRegistroInactivo    = errors.New("el registro se encuentra inactivo y no puede ser operado")
 	ErrErrorInterno        = errors.New("ha ocurrido un error interno en el procesamiento de la solicitud")
+	ErrSintaxisInvalida    = errors.New("error de sintaxis en la base de datos al procesar el payload dinámico")
 )
