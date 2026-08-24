@@ -19,27 +19,9 @@ func NewAuditoriaHandler(uc port.AuditoriaPort) *AuditoriaHandler {
 	}
 }
 
-func (h *AuditoriaHandler) RegistrarEvento(ctx context.Context, req *dbgsv1.RegistrarEventoRequest) (*dbgsv1.RegistrarEventoResponse, error) {
-	input := port.RegistrarEventoInput{
-		UsuarioID: req.GetUsuarioId(),
-		Username:  req.GetUsername(),
-		Operacion: req.GetOperacion(),
-		Recurso:   req.GetRecurso(),
-		Detalles:  req.GetDetalles(),
-		Resultado: req.GetResultado(),
-		IPOrigen:  req.GetIpOrigen(),
-	}
-
-	evento, err := h.useCase.RegistrarEvento(ctx, input)
-	if err != nil {
-		return nil, mapDomainErrorToGRPC(err)
-	}
-
-	return &dbgsv1.RegistrarEventoResponse{
-		EventoId:   evento.ID,
-		Registrado: true,
-	}, nil
-}
+// RegistrarEvento fue eliminado del contrato público (Dominio 7).
+// La escritura de eventos es exclusiva de los triggers de base de datos,
+// impidiendo que un cliente falsifique la bitácora.
 
 func (h *AuditoriaHandler) ConsultarEventos(ctx context.Context, req *dbgsv1.ConsultarEventosRequest) (*dbgsv1.ConsultarEventosResponse, error) {
 	var inicio *time.Time

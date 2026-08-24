@@ -45,6 +45,25 @@ func (s *stubSeguridadRepository) ValidarPermiso(ctx context.Context, rolID, per
 	return false, nil
 }
 
+func (s *stubSeguridadRepository) ContarSuperAdmins(ctx context.Context) (int64, error) {
+	if s.usuario == nil || !s.usuario.Estado {
+		return 0, nil
+	}
+	return 1, nil
+}
+
+func (s *stubSeguridadRepository) CrearUsuarioAdmin(ctx context.Context, username, email, passwordHash, rolID string) (*entity.Usuario, error) {
+	s.usuario = &entity.Usuario{ID: "u-nuevo", Username: username, Email: email, RolID: rolID, Estado: true}
+	return s.usuario, nil
+}
+
+func (s *stubSeguridadRepository) AsegurarRolSuperAdmin(ctx context.Context) (string, error) {
+	if s.rol == nil {
+		s.rol = &entity.Rol{ID: "r-admin", Nombre: "ADMIN_PLATFORM", Estado: true}
+	}
+	return s.rol.ID, nil
+}
+
 var _ repository.SeguridadRepository = (*stubSeguridadRepository)(nil)
 
 func TestLoginAutenticaUsuarioYGeneraToken(t *testing.T) {
@@ -53,7 +72,7 @@ func TestLoginAutenticaUsuarioYGeneraToken(t *testing.T) {
 		rol:     &entity.Rol{ID: "r1", Nombre: "ADMIN", Permisos: []string{"usuarios:leer"}, Estado: true},
 	}
 
-	uc := NewSeguridadUseCase(repo)
+	uc := NewSeguridadUseCase(repo, "secreto-de-prueba", 60)
 	login, err := uc.Login(context.Background(), "admin", "dbgs-admin")
 	if err != nil {
 		t.Fatalf("Login() error = %v", err)
@@ -69,7 +88,7 @@ func TestValidarAccesoConPermisoValido(t *testing.T) {
 		rol:     &entity.Rol{ID: "r1", Nombre: "ADMIN", Permisos: []string{"usuarios:leer"}, Estado: true},
 	}
 
-	uc := NewSeguridadUseCase(repo)
+	uc := NewSeguridadUseCase(repo, "secreto-de-prueba", 60)
 	permitido, err := uc.ValidarAcceso(context.Background(), port.ValidarAccesoInput{Username: "admin", Permiso: "usuarios:leer"})
 	if err != nil {
 		t.Fatalf("ValidarAcceso() error = %v", err)
@@ -85,7 +104,7 @@ func TestLoginRechazaCredencialesInvalidas(t *testing.T) {
 		rol:     &entity.Rol{ID: "r1", Nombre: "ADMIN", Permisos: []string{"usuarios:leer"}, Estado: true},
 	}
 
-	uc := NewSeguridadUseCase(repo)
+	uc := NewSeguridadUseCase(repo, "secreto-de-prueba", 60)
 	_, err := uc.Login(context.Background(), "admin", "password-malo")
 	if err == nil {
 		t.Fatal("Login() esperaba error para credenciales inválidas")

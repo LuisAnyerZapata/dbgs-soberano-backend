@@ -131,150 +131,6 @@ func (x *EventoAuditoria) GetFechaCreacion() *timestamppb.Timestamp {
 	return nil
 }
 
-type RegistrarEventoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UsuarioId     string                 `protobuf:"bytes,1,opt,name=usuario_id,json=usuarioId,proto3" json:"usuario_id,omitempty"`
-	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Operacion     string                 `protobuf:"bytes,3,opt,name=operacion,proto3" json:"operacion,omitempty"`
-	Recurso       string                 `protobuf:"bytes,4,opt,name=recurso,proto3" json:"recurso,omitempty"`
-	Detalles      string                 `protobuf:"bytes,5,opt,name=detalles,proto3" json:"detalles,omitempty"`
-	Resultado     string                 `protobuf:"bytes,6,opt,name=resultado,proto3" json:"resultado,omitempty"`
-	IpOrigen      string                 `protobuf:"bytes,7,opt,name=ip_origen,json=ipOrigen,proto3" json:"ip_origen,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegistrarEventoRequest) Reset() {
-	*x = RegistrarEventoRequest{}
-	mi := &file_auditoria_servicio_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegistrarEventoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegistrarEventoRequest) ProtoMessage() {}
-
-func (x *RegistrarEventoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auditoria_servicio_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegistrarEventoRequest.ProtoReflect.Descriptor instead.
-func (*RegistrarEventoRequest) Descriptor() ([]byte, []int) {
-	return file_auditoria_servicio_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RegistrarEventoRequest) GetUsuarioId() string {
-	if x != nil {
-		return x.UsuarioId
-	}
-	return ""
-}
-
-func (x *RegistrarEventoRequest) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *RegistrarEventoRequest) GetOperacion() string {
-	if x != nil {
-		return x.Operacion
-	}
-	return ""
-}
-
-func (x *RegistrarEventoRequest) GetRecurso() string {
-	if x != nil {
-		return x.Recurso
-	}
-	return ""
-}
-
-func (x *RegistrarEventoRequest) GetDetalles() string {
-	if x != nil {
-		return x.Detalles
-	}
-	return ""
-}
-
-func (x *RegistrarEventoRequest) GetResultado() string {
-	if x != nil {
-		return x.Resultado
-	}
-	return ""
-}
-
-func (x *RegistrarEventoRequest) GetIpOrigen() string {
-	if x != nil {
-		return x.IpOrigen
-	}
-	return ""
-}
-
-type RegistrarEventoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EventoId      string                 `protobuf:"bytes,1,opt,name=evento_id,json=eventoId,proto3" json:"evento_id,omitempty"`
-	Registrado    bool                   `protobuf:"varint,2,opt,name=registrado,proto3" json:"registrado,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegistrarEventoResponse) Reset() {
-	*x = RegistrarEventoResponse{}
-	mi := &file_auditoria_servicio_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegistrarEventoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegistrarEventoResponse) ProtoMessage() {}
-
-func (x *RegistrarEventoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auditoria_servicio_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegistrarEventoResponse.ProtoReflect.Descriptor instead.
-func (*RegistrarEventoResponse) Descriptor() ([]byte, []int) {
-	return file_auditoria_servicio_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *RegistrarEventoResponse) GetEventoId() string {
-	if x != nil {
-		return x.EventoId
-	}
-	return ""
-}
-
-func (x *RegistrarEventoResponse) GetRegistrado() bool {
-	if x != nil {
-		return x.Registrado
-	}
-	return false
-}
-
 type ConsultarEventosRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UsuarioId     string                 `protobuf:"bytes,1,opt,name=usuario_id,json=usuarioId,proto3" json:"usuario_id,omitempty"`
@@ -289,7 +145,7 @@ type ConsultarEventosRequest struct {
 
 func (x *ConsultarEventosRequest) Reset() {
 	*x = ConsultarEventosRequest{}
-	mi := &file_auditoria_servicio_proto_msgTypes[3]
+	mi := &file_auditoria_servicio_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -301,7 +157,7 @@ func (x *ConsultarEventosRequest) String() string {
 func (*ConsultarEventosRequest) ProtoMessage() {}
 
 func (x *ConsultarEventosRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auditoria_servicio_proto_msgTypes[3]
+	mi := &file_auditoria_servicio_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -314,7 +170,7 @@ func (x *ConsultarEventosRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConsultarEventosRequest.ProtoReflect.Descriptor instead.
 func (*ConsultarEventosRequest) Descriptor() ([]byte, []int) {
-	return file_auditoria_servicio_proto_rawDescGZIP(), []int{3}
+	return file_auditoria_servicio_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ConsultarEventosRequest) GetUsuarioId() string {
@@ -369,7 +225,7 @@ type ConsultarEventosResponse struct {
 
 func (x *ConsultarEventosResponse) Reset() {
 	*x = ConsultarEventosResponse{}
-	mi := &file_auditoria_servicio_proto_msgTypes[4]
+	mi := &file_auditoria_servicio_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -381,7 +237,7 @@ func (x *ConsultarEventosResponse) String() string {
 func (*ConsultarEventosResponse) ProtoMessage() {}
 
 func (x *ConsultarEventosResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auditoria_servicio_proto_msgTypes[4]
+	mi := &file_auditoria_servicio_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -394,7 +250,7 @@ func (x *ConsultarEventosResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConsultarEventosResponse.ProtoReflect.Descriptor instead.
 func (*ConsultarEventosResponse) Descriptor() ([]byte, []int) {
-	return file_auditoria_servicio_proto_rawDescGZIP(), []int{4}
+	return file_auditoria_servicio_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ConsultarEventosResponse) GetEventos() []*EventoAuditoria {
@@ -426,21 +282,7 @@ const file_auditoria_servicio_proto_rawDesc = "" +
 	"\bdetalles\x18\x06 \x01(\tR\bdetalles\x12\x1c\n" +
 	"\tresultado\x18\a \x01(\tR\tresultado\x12\x1b\n" +
 	"\tip_origen\x18\b \x01(\tR\bipOrigen\x12A\n" +
-	"\x0efecha_creacion\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\rfechaCreacion\"\xe2\x01\n" +
-	"\x16RegistrarEventoRequest\x12\x1d\n" +
-	"\n" +
-	"usuario_id\x18\x01 \x01(\tR\tusuarioId\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x1c\n" +
-	"\toperacion\x18\x03 \x01(\tR\toperacion\x12\x18\n" +
-	"\arecurso\x18\x04 \x01(\tR\arecurso\x12\x1a\n" +
-	"\bdetalles\x18\x05 \x01(\tR\bdetalles\x12\x1c\n" +
-	"\tresultado\x18\x06 \x01(\tR\tresultado\x12\x1b\n" +
-	"\tip_origen\x18\a \x01(\tR\bipOrigen\"V\n" +
-	"\x17RegistrarEventoResponse\x12\x1b\n" +
-	"\tevento_id\x18\x01 \x01(\tR\beventoId\x12\x1e\n" +
-	"\n" +
-	"registrado\x18\x02 \x01(\bR\n" +
-	"registrado\"\xfc\x01\n" +
+	"\x0efecha_creacion\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\rfechaCreacion\"\xfc\x01\n" +
 	"\x17ConsultarEventosRequest\x12\x1d\n" +
 	"\n" +
 	"usuario_id\x18\x01 \x01(\tR\tusuarioId\x12\x1c\n" +
@@ -451,9 +293,8 @@ const file_auditoria_servicio_proto_rawDesc = "" +
 	"\x06offset\x18\x06 \x01(\x05R\x06offset\"d\n" +
 	"\x18ConsultarEventosResponse\x122\n" +
 	"\aeventos\x18\x01 \x03(\v2\x18.dbgs.v1.EventoAuditoriaR\aeventos\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total2\x82\x02\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total2\x8a\x01\n" +
 	"\x10AuditoriaService\x12v\n" +
-	"\x0fRegistrarEvento\x12\x1f.dbgs.v1.RegistrarEventoRequest\x1a .dbgs.v1.RegistrarEventoResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/auditoria/eventos\x12v\n" +
 	"\x10ConsultarEventos\x12 .dbgs.v1.ConsultarEventosRequest\x1a!.dbgs.v1.ConsultarEventosResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/auditoria/eventosB+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
 
 var (
@@ -468,26 +309,22 @@ func file_auditoria_servicio_proto_rawDescGZIP() []byte {
 	return file_auditoria_servicio_proto_rawDescData
 }
 
-var file_auditoria_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_auditoria_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_auditoria_servicio_proto_goTypes = []any{
 	(*EventoAuditoria)(nil),          // 0: dbgs.v1.EventoAuditoria
-	(*RegistrarEventoRequest)(nil),   // 1: dbgs.v1.RegistrarEventoRequest
-	(*RegistrarEventoResponse)(nil),  // 2: dbgs.v1.RegistrarEventoResponse
-	(*ConsultarEventosRequest)(nil),  // 3: dbgs.v1.ConsultarEventosRequest
-	(*ConsultarEventosResponse)(nil), // 4: dbgs.v1.ConsultarEventosResponse
-	(*timestamppb.Timestamp)(nil),    // 5: google.protobuf.Timestamp
+	(*ConsultarEventosRequest)(nil),  // 1: dbgs.v1.ConsultarEventosRequest
+	(*ConsultarEventosResponse)(nil), // 2: dbgs.v1.ConsultarEventosResponse
+	(*timestamppb.Timestamp)(nil),    // 3: google.protobuf.Timestamp
 }
 var file_auditoria_servicio_proto_depIdxs = []int32{
-	5, // 0: dbgs.v1.EventoAuditoria.fecha_creacion:type_name -> google.protobuf.Timestamp
-	5, // 1: dbgs.v1.ConsultarEventosRequest.fecha_inicio:type_name -> google.protobuf.Timestamp
-	5, // 2: dbgs.v1.ConsultarEventosRequest.fecha_fin:type_name -> google.protobuf.Timestamp
+	3, // 0: dbgs.v1.EventoAuditoria.fecha_creacion:type_name -> google.protobuf.Timestamp
+	3, // 1: dbgs.v1.ConsultarEventosRequest.fecha_inicio:type_name -> google.protobuf.Timestamp
+	3, // 2: dbgs.v1.ConsultarEventosRequest.fecha_fin:type_name -> google.protobuf.Timestamp
 	0, // 3: dbgs.v1.ConsultarEventosResponse.eventos:type_name -> dbgs.v1.EventoAuditoria
-	1, // 4: dbgs.v1.AuditoriaService.RegistrarEvento:input_type -> dbgs.v1.RegistrarEventoRequest
-	3, // 5: dbgs.v1.AuditoriaService.ConsultarEventos:input_type -> dbgs.v1.ConsultarEventosRequest
-	2, // 6: dbgs.v1.AuditoriaService.RegistrarEvento:output_type -> dbgs.v1.RegistrarEventoResponse
-	4, // 7: dbgs.v1.AuditoriaService.ConsultarEventos:output_type -> dbgs.v1.ConsultarEventosResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
+	1, // 4: dbgs.v1.AuditoriaService.ConsultarEventos:input_type -> dbgs.v1.ConsultarEventosRequest
+	2, // 5: dbgs.v1.AuditoriaService.ConsultarEventos:output_type -> dbgs.v1.ConsultarEventosResponse
+	5, // [5:6] is the sub-list for method output_type
+	4, // [4:5] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
 	4, // [4:4] is the sub-list for extension extendee
 	0, // [0:4] is the sub-list for field type_name
@@ -504,7 +341,7 @@ func file_auditoria_servicio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auditoria_servicio_proto_rawDesc), len(file_auditoria_servicio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

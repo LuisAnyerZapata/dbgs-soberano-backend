@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
@@ -41,27 +42,33 @@ func (r *auditoriaPostgresRepository) ListarEventos(ctx context.Context, usuario
 		WHERE ($1 = '' OR usuario_id = $1)
 		  AND ($2 = '' OR operacion = $2)
 		  AND ($3 = '' OR resultado = $3)
-		  AND ($4 IS NULL OR fecha_creacion >= $4)
-		  AND ($5 IS NULL OR fecha_creacion <= $5)
+		  AND ($4::timestamptz IS NULL OR fecha_creacion >= $4::timestamptz)
+		  AND ($5::timestamptz IS NULL OR fecha_creacion <= $5::timestamptz)
 	`
 	var total int64
 	if err := r.db.QueryRowContext(ctx, countQuery, usuarioID, operacion, resultado, fechaInicio, fechaFin).Scan(&total); err != nil {
+		log.Printf("ERROR EN BD (Auditoria.ListarEventos COUNT): %v", err)
 		return nil, 0, entity.ErrErrorInterno
 	}
 
 	query := `
-		SELECT id, usuario_id, username, operacion, recurso, detalles, resultado, ip_origen, fecha_creacion
+		SELECT id,
+		       COALESCE(usuario_id, ''),
+		       username, operacion, recurso,
+		       COALESCE(detalles, ''),
+		       resultado, ip_origen, fecha_creacion
 		FROM dbgs_schema.auditoria_eventos
 		WHERE ($1 = '' OR usuario_id = $1)
 		  AND ($2 = '' OR operacion = $2)
 		  AND ($3 = '' OR resultado = $3)
-		  AND ($4 IS NULL OR fecha_creacion >= $4)
-		  AND ($5 IS NULL OR fecha_creacion <= $5)
+		  AND ($4::timestamptz IS NULL OR fecha_creacion >= $4::timestamptz)
+		  AND ($5::timestamptz IS NULL OR fecha_creacion <= $5::timestamptz)
 		ORDER BY fecha_creacion DESC
 		LIMIT $6 OFFSET $7
 	`
 	rows, err := r.db.QueryContext(ctx, query, usuarioID, operacion, resultado, fechaInicio, fechaFin, limite, offset)
 	if err != nil {
+		log.Printf("ERROR EN BD (Auditoria.ListarEventos): %v", err)
 		return nil, 0, entity.ErrErrorInterno
 	}
 	defer rows.Close()

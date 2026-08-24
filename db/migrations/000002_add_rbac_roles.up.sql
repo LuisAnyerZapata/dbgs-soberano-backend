@@ -1,0 +1,14 @@
+-- Migración 000002 (RBAC complementario).
+--
+-- NOTA DE MANTENIMIENTO (Dominio 7): esta migración fue encontrada con defectos
+-- estructurales (objetos sin calificar con esquema, FKs hacia tablas inexistentes
+-- en el search_path por defecto) y nunca pudo aplicarse vía golang-migrate porque
+-- su nombre carecía del sufijo .up.sql.
+--
+-- El control de acceso basado en roles que la aplicación utiliza realmente vive en
+-- dbgs_schema (tablas roles, permisos y roles_permisos creadas en la migración
+-- 000001 y pobladas por db/security/roles_permisos.sql), por lo que las estructuras
+-- redundantes de este archivo quedaron obsoletas antes de nacer.
+--
+-- Se conserva como marcador histórico para no renumerar migraciones ya distribuidas.
+SELECT 1;

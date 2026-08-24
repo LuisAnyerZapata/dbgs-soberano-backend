@@ -12,13 +12,20 @@ import (
 
 type stubDatasetRepository struct {
 	datasets map[string]*entity.ConjuntoDato
+	fuentes  map[string]*entity.FuenteDato
 }
 
 func newStubDatasetRepository() *stubDatasetRepository {
-	return &stubDatasetRepository{datasets: make(map[string]*entity.ConjuntoDato)}
+	return &stubDatasetRepository{
+		datasets: make(map[string]*entity.ConjuntoDato),
+		fuentes:  make(map[string]*entity.FuenteDato),
+	}
 }
 
 func (s *stubDatasetRepository) ObtenerFuentePorID(ctx context.Context, id string) (*entity.FuenteDato, error) {
+	if f, ok := s.fuentes[id]; ok {
+		return f, nil
+	}
 	return nil, entity.ErrEntidadNoEncontrada
 }
 
@@ -63,7 +70,7 @@ var _ repository.DatasetRepository = (*stubDatasetRepository)(nil)
 
 func TestCrearDatasetValido(t *testing.T) {
 	repo := newStubDatasetRepository()
-	repo.datasets["f1"] = &entity.ConjuntoDato{ID: "f1", Nombre: "Fuente prueba", FuenteDatoID: "f1"}
+	repo.fuentes["f1"] = &entity.FuenteDato{ID: "f1", Nombre: "Fuente prueba", Estado: true}
 	uc := NewDatasetUseCase(repo)
 
 	dataset := &entity.ConjuntoDato{FuenteDatoID: "f1", Nombre: "Dataset prueba"}

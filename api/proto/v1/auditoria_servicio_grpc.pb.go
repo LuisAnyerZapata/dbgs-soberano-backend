@@ -19,7 +19,6 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuditoriaService_RegistrarEvento_FullMethodName  = "/dbgs.v1.AuditoriaService/RegistrarEvento"
 	AuditoriaService_ConsultarEventos_FullMethodName = "/dbgs.v1.AuditoriaService/ConsultarEventos"
 )
 
@@ -27,9 +26,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Servicio gRPC para la consulta y registro de eventos de auditoría
+// Servicio gRPC de SOLO LECTURA para la consulta de eventos de auditoría.
+// La escritura ocurre exclusivamente a nivel de motor (triggers fn_auditar_cambios),
+// nunca por petición del cliente, para evitar la falsificación de trazas.
 type AuditoriaServiceClient interface {
-	RegistrarEvento(ctx context.Context, in *RegistrarEventoRequest, opts ...grpc.CallOption) (*RegistrarEventoResponse, error)
 	// Nota: grpc-gateway parsea automáticamente los Timestamps en Query Strings si se envían en formato RFC3339
 	ConsultarEventos(ctx context.Context, in *ConsultarEventosRequest, opts ...grpc.CallOption) (*ConsultarEventosResponse, error)
 }
@@ -40,16 +40,6 @@ type auditoriaServiceClient struct {
 
 func NewAuditoriaServiceClient(cc grpc.ClientConnInterface) AuditoriaServiceClient {
 	return &auditoriaServiceClient{cc}
-}
-
-func (c *auditoriaServiceClient) RegistrarEvento(ctx context.Context, in *RegistrarEventoRequest, opts ...grpc.CallOption) (*RegistrarEventoResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RegistrarEventoResponse)
-	err := c.cc.Invoke(ctx, AuditoriaService_RegistrarEvento_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *auditoriaServiceClient) ConsultarEventos(ctx context.Context, in *ConsultarEventosRequest, opts ...grpc.CallOption) (*ConsultarEventosResponse, error) {
@@ -66,9 +56,10 @@ func (c *auditoriaServiceClient) ConsultarEventos(ctx context.Context, in *Consu
 // All implementations must embed UnimplementedAuditoriaServiceServer
 // for forward compatibility.
 //
-// Servicio gRPC para la consulta y registro de eventos de auditoría
+// Servicio gRPC de SOLO LECTURA para la consulta de eventos de auditoría.
+// La escritura ocurre exclusivamente a nivel de motor (triggers fn_auditar_cambios),
+// nunca por petición del cliente, para evitar la falsificación de trazas.
 type AuditoriaServiceServer interface {
-	RegistrarEvento(context.Context, *RegistrarEventoRequest) (*RegistrarEventoResponse, error)
 	// Nota: grpc-gateway parsea automáticamente los Timestamps en Query Strings si se envían en formato RFC3339
 	ConsultarEventos(context.Context, *ConsultarEventosRequest) (*ConsultarEventosResponse, error)
 	mustEmbedUnimplementedAuditoriaServiceServer()
@@ -81,9 +72,6 @@ type AuditoriaServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuditoriaServiceServer struct{}
 
-func (UnimplementedAuditoriaServiceServer) RegistrarEvento(context.Context, *RegistrarEventoRequest) (*RegistrarEventoResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method RegistrarEvento not implemented")
-}
 func (UnimplementedAuditoriaServiceServer) ConsultarEventos(context.Context, *ConsultarEventosRequest) (*ConsultarEventosResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ConsultarEventos not implemented")
 }
@@ -106,24 +94,6 @@ func RegisterAuditoriaServiceServer(s grpc.ServiceRegistrar, srv AuditoriaServic
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AuditoriaService_ServiceDesc, srv)
-}
-
-func _AuditoriaService_RegistrarEvento_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegistrarEventoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuditoriaServiceServer).RegistrarEvento(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuditoriaService_RegistrarEvento_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuditoriaServiceServer).RegistrarEvento(ctx, req.(*RegistrarEventoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _AuditoriaService_ConsultarEventos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -151,10 +121,6 @@ var AuditoriaService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "dbgs.v1.AuditoriaService",
 	HandlerType: (*AuditoriaServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "RegistrarEvento",
-			Handler:    _AuditoriaService_RegistrarEvento_Handler,
-		},
 		{
 			MethodName: "ConsultarEventos",
 			Handler:    _AuditoriaService_ConsultarEventos_Handler,

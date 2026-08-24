@@ -7,15 +7,10 @@ option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
-// Servicio gRPC para la consulta y registro de eventos de auditoría
+// Servicio gRPC de SOLO LECTURA para la consulta de eventos de auditoría.
+// La escritura ocurre exclusivamente a nivel de motor (triggers fn_auditar_cambios),
+// nunca por petición del cliente, para evitar la falsificación de trazas.
 service AuditoriaService {
-  rpc RegistrarEvento (RegistrarEventoRequest) returns (RegistrarEventoResponse) {
-    option (google.api.http) = {
-      post: "/v1/auditoria/eventos"
-      body: "*"
-    };
-  }
-
   // Nota: grpc-gateway parsea automáticamente los Timestamps en Query Strings si se envían en formato RFC3339
   rpc ConsultarEventos (ConsultarEventosRequest) returns (ConsultarEventosResponse) {
     option (google.api.http) = {
@@ -34,21 +29,6 @@ message EventoAuditoria {
   string resultado = 7;
   string ip_origen = 8;
   google.protobuf.Timestamp fecha_creacion = 9;
-}
-
-message RegistrarEventoRequest {
-  string usuario_id = 1;
-  string username = 2;
-  string operacion = 3;
-  string recurso = 4;
-  string detalles = 5;
-  string resultado = 6;
-  string ip_origen = 7;
-}
-
-message RegistrarEventoResponse {
-  string evento_id = 1;
-  bool registrado = 2;
 }
 
 message ConsultarEventosRequest {

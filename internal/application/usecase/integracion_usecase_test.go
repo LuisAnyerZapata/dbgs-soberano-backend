@@ -11,12 +11,16 @@ import (
 )
 
 type stubIntegracionRepository struct {
-	clientes    map[string]*entity.ClienteIntegracion
+	clientes    map[string]*entity.ClienteIntegracion // indexados por ID
+	porHash     map[string]*entity.ClienteIntegracion // indexados por hash de token
 	solicitudes []entity.SolicitudIntegracion
 }
 
 func newStubIntegracionRepository() *stubIntegracionRepository {
-	return &stubIntegracionRepository{clientes: make(map[string]*entity.ClienteIntegracion)}
+	return &stubIntegracionRepository{
+		clientes: make(map[string]*entity.ClienteIntegracion),
+		porHash:  make(map[string]*entity.ClienteIntegracion),
+	}
 }
 
 func (s *stubIntegracionRepository) GuardarCliente(ctx context.Context, cliente *entity.ClienteIntegracion) error {
@@ -24,7 +28,18 @@ func (s *stubIntegracionRepository) GuardarCliente(ctx context.Context, cliente 
 		cliente.ID = "cli-1"
 	}
 	s.clientes[cliente.ID] = cliente
+	if cliente.TokenHash != "" {
+		s.porHash[cliente.TokenHash] = cliente
+	}
 	return nil
+}
+
+func (s *stubIntegracionRepository) ValidarCredenciales(ctx context.Context, tokenHash string) (*entity.ClienteIntegracion, error) {
+	cliente, ok := s.porHash[tokenHash]
+	if !ok {
+		return nil, entity.ErrEntidadNoEncontrada
+	}
+	return cliente, nil
 }
 
 func (s *stubIntegracionRepository) ObtenerClientePorID(ctx context.Context, id string) (*entity.ClienteIntegracion, error) {
@@ -55,17 +70,45 @@ func TestRegistrarClienteGeneraTokenYVersion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RegistrarCliente() error = %v", err)
 	}
-	if cliente.Token == "" {
-		t.Fatal("RegistrarCliente() debe generar un token")
+	if cliente.TokenPlano == "" {
+		t.Fatal("RegistrarCliente() debe generar un token plano")
+	}
+	if cliente.TokenHash == "" || cliente.TokenHash == cliente.TokenPlano {
+		t.Fatal("RegistrarCliente() debe almacenar solo el hash del token")
 	}
 	if cliente.VersionContrato != "v1" {
 		t.Fatalf("RegistrarCliente() version = %q, want v1", cliente.VersionContrato)
 	}
 }
 
+func TestValidarAccesoConTokenValido(t *testing.T) {
+	repo := newStubIntegracionRepository()
+	uc := NewIntegracionUseCase(repo)
+
+	creado, err := uc.RegistrarCliente(context.Background(), port.RegistrarClienteInput{
+		Nombre: "Sistema Electoral", Tipo: "api",
+	})
+	if err != nil {
+		t.Fatalf("RegistrarCliente() error = %v", err)
+	}
+
+	cliente, err := uc.ValidarAcceso(context.Background(), port.ValidarAccesoIntegracionInput{
+		ClienteID: creado.ID,
+		Token:     creado.TokenPlano,
+	})
+	if err != nil {
+		t.Fatalf("ValidarAcceso() con token correcto no debe fallar: %v", err)
+	}
+	if cliente.ID != creado.ID {
+		t.Fatalf("ValidarAcceso() cliente.ID = %q, want %q", cliente.ID, creado.ID)
+	}
+}
+
 func TestValidarAccesoRechazaTokenInvalido(t *testing.T) {
 	repo := newStubIntegracionRepository()
-	repo.clientes["cli-1"] = &entity.ClienteIntegracion{ID: "cli-1", Nombre: "CRM", Token: "abc", Estado: true, VersionContrato: "v1"}
+	repo.GuardarCliente(context.Background(), &entity.ClienteIntegracion{
+		ID: "cli-1", Nombre: "CRM", TokenHash: "hash-inexistente", Estado: true, VersionContrato: "v1",
+	})
 	uc := NewIntegracionUseCase(repo)
 
 	_, err := uc.ValidarAcceso(context.Background(), port.ValidarAccesoIntegracionInput{ClienteID: "cli-1", Token: "otro", VersionContrato: "v1"})

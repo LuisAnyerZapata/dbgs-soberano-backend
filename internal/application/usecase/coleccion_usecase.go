@@ -42,19 +42,19 @@ func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.Crear
         return nil, err
     }
 
-    // 3. Generar el SQL para vincular el trigger de auditoría
-    // DESACTIVADO TEMPORALMENTE HASTA EL DOMINIO 7
+    // 3. Generar el SQL para vincular el trigger de auditoría forense (Dominio 7)
     nombreFisico := ObtenerNombreTablaCompleto(input.Nombre)
-    // sqlTrigger := GenerarSQLTriggerAuditoria(nombreFisico)
+    sqlTrigger := GenerarSQLTriggerAuditoria(nombreFisico)
 
     // 4. Ejecutar DDLs en la base de datos
     if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlCreacionTabla); err != nil {
         return nil, err
     }
-    // DESACTIVADO TEMPORALMENTE HASTA EL DOMINIO 7
-    // if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlTrigger); err != nil {
-    //     return nil, err
-    // }
+    // Toda tabla dinámica nace auditada: INSERT/UPDATE/DELETE quedan registrados
+    // en la bitácora inmutable sin intervención posterior.
+    if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlTrigger); err != nil {
+        return nil, err
+    }
 
     // 5. Serializar la estructura a JSON
     estructuraJSON, err := json.Marshal(input.Campos)
