@@ -2,27 +2,37 @@ package entity
 
 import "time"
 
+// Estados válidos del ciclo de vida de una operación de respaldo/restauración.
+const (
+	EstadoEnProgreso = "EN_PROGRESO"
+	EstadoCompletado = "COMPLETADO"
+	EstadoFallido    = "FALLIDO"
+)
+
 // RespaldoOperacion representa un respaldo generado por el sistema.
+// FechaFinalizacion es cero mientras la operación siga en progreso.
 type RespaldoOperacion struct {
-	ID             string    `json:"id"`
-	Tipo           string    `json:"tipo"`
-	Estado         string    `json:"estado"`
-	RutaArchivo    string    `json:"ruta_archivo"`
-	Detalles       string    `json:"detalles"`
-	FechaCreacion  time.Time `json:"fecha_creacion"`
-	RetencionDias  int       `json:"retencion_dias"`
-	UsuarioCreador string    `json:"usuario_creador"`
+	ID                string    `json:"id"`
+	Tipo              string    `json:"tipo"`
+	Estado            string    `json:"estado"`
+	RutaArchivo       string    `json:"ruta_archivo"`
+	TamanoBytes       int64     `json:"tamano_bytes"`
+	Detalles          string    `json:"detalles"`
+	FechaCreacion     time.Time `json:"fecha_creacion"`
+	FechaFinalizacion time.Time `json:"fecha_finalizacion"`
+	RetencionDias     int       `json:"retencion_dias"`
+	UsuarioCreador    string    `json:"usuario_creador"`
 }
 
 // Restauracion representa una restauración validada del sistema.
 type Restauracion struct {
-	ID             string    `json:"id"`
-	BackupID       string    `json:"backup_id"`
-	Usuario        string    `json:"usuario"`
-	Estado         string    `json:"estado"`
-	Validado       bool      `json:"validado"`
-	FechaCreacion  time.Time `json:"fecha_creacion"`
-	Observaciones  string    `json:"observaciones"`
+	ID            string    `json:"id"`
+	BackupID      string    `json:"backup_id"`
+	Usuario       string    `json:"usuario"`
+	Estado        string    `json:"estado"`
+	Validado      bool      `json:"validado"`
+	FechaCreacion time.Time `json:"fecha_creacion"`
+	Observaciones string    `json:"observaciones"`
 }
 
 // LogOperativo registra eventos del sistema para observabilidad.

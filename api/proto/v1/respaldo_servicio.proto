@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/api/annotations.proto";
+
+// Servicio de Respaldos y Operación (Dominio 8).
+// Orquesta pg_dump/pg_restore mediante los scripts oficiales en db/backup,
+// registra cada operación en la bitácora y expone la política de retención.
+//
+// NOTA DE SEGURIDAD: Todos los métodos requieren autenticación (JWT o API Key).
+// La creación/descarga exige el permiso 'respaldo:ejecutar' y la restauración
+// exige 'restauracion:ejecutar' (ver db/seeds/seed_users.sql).
+service RespaldoService {
+  // Lanza un respaldo completo asíncrono (pg_dump) y retorna de inmediato su ID
+  rpc CrearRespaldo (CrearRespaldoRequest) returns (CrearRespaldoResponse) {
+    option (google.api.http) = {
+      post: "/v1/backups"
+      body: "*"
+    };
+  }
+
+  // Consulta el estado detallado de una operación de respaldo
+  rpc ObtenerRespaldo (ObtenerRespaldoRequest) returns (ObtenerRespaldoResponse) {
+    option (google.api.http) = {
+      get: "/v1/backups/{id}"
+    };
+  }
+
+  // Lista los respaldos registrados, del más reciente al más antiguo
+  rpc ListarRespaldos (ListarRespaldosRequest) returns (ListarRespaldosResponse) {
+    option (google.api.http) = {
+      get: "/v1/backups"
+    };
+  }
+
+  // Descarga el contenido binario del archivo .dump (base64 en JSON)
+  rpc DescargarRespaldo (DescargarRespaldoRequest) returns (DescargarRespaldoResponse) {
+    option (google.api.http) = {
+      get: "/v1/backups/{id}/contenido"
+    };
+  }
+
+  // Restaura la base de datos desde un respaldo COMPLETADO (operación destructiva,
+  // requiere confirmación explícita; ejecuta pg_restore con --clean --if-exists)
+  rpc RestaurarRespaldo (RestaurarRespaldoRequest) returns (RestaurarRespaldoResponse) {
+    option (google.api.http) = {
+      post: "/v1/backups/{backup_id}/restaurar"
+      body: "*"
+    };
+  }
+
+  // Elimina archivos y registros de respaldos vencidos según la política indicada
+  rpc AplicarRetencion (AplicarRetencionRequest) returns (AplicarRetencionResponse) {
+    option (google.api.http) = {
+      post: "/v1/backups/retencion"
+      body: "*"
+    };
+  }
+}
+
+// --- Mensajes de Solicitud ---
+
+message CrearRespaldoRequest {
+  string tipo = 1;             // Ej: FULL
+  int32 retencion_dias = 2;    // Días de vida útil del archivo (0 = usar default 30)
+  string detalles = 3;
+}
+
+message ObtenerRespaldoRequest {
+  string id = 1; // UUID del respaldo
+}
+
+message ListarRespaldosRequest {
+  int32 limite = 1; // 0 = usar default 20 (máximo 100)
+}
+
+message DescargarRespaldoRequest {
+  string id = 1;
+}
+
+message RestaurarRespaldoRequest {
+  string backup_id = 1;
+  bool confirmar = 2; // Debe ser true: la restauración sobrescribe la base actual
+}
+
+message AplicarRetencionRequest {
+  int32 dias_retencion = 1; // 0 = usar default 30
+  int32 maximo_backups = 2; // 0 = usar default 10
+}
+
+// --- Mensajes de Respuesta ---
+
+message Respaldo {
+  string id = 1;
+  string tipo = 2;
+  string estado = 3;            // EN_PROGRESO | COMPLETADO | FALLIDO
+  string ruta_archivo = 4;
+  int64 tamano_bytes = 5;
+  string detalles = 6;
+  int32 retencion_dias = 7;
+  string usuario_creador = 8;
+  string fecha_creacion = 9;       // RFC3339
+  string fecha_finalizacion = 10;  // RFC3339 (vacío si sigue en progreso)
+}
+
+message Restauracion {
+  string id = 1;
+  string backup_id = 2;
+  string usuario = 3;
+  string estado = 4;
+  bool validado = 5;
+  string observaciones = 6;
+  string fecha_creacion = 7; // RFC3339
+}
+
+message CrearRespaldoResponse {
+  Respaldo respaldo = 1;
+}
+
+message ObtenerRespaldoResponse {
+  Respaldo respaldo = 1;
+}
+
+message ListarRespaldosResponse {
+  repeated Respaldo respaldos = 1;
+  int32 total = 2;
+}
+
+message DescargarRespaldoResponse {
+  string id = 1;
+  string nombre_archivo = 2;
+  bytes contenido = 3; // Contenido íntegro del .dump (JSON lo codifica como base64)
+}
+
+message RestaurarRespaldoResponse {
+  Restauracion restauracion = 1;
+}
+
+message AplicarRetencionResponse {
+  repeated string ids_eliminados = 1;
+}

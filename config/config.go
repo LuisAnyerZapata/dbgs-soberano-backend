@@ -15,6 +15,14 @@ type Config struct {
 	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"database"`
 	Security SecurityConfig `mapstructure:"security"`
+	Backup   BackupConfig   `mapstructure:"backup"`
+}
+
+// BackupConfig localiza los scripts oficiales y el repositorio de dumps.
+type BackupConfig struct {
+	ScriptsDir     string `mapstructure:"scripts_dir"`
+	DumpsDir       string `mapstructure:"dumps_dir"`
+	TimeoutMinutos int    `mapstructure:"timeout_minutos"`
 }
 
 // ServerConfig contiene la configuración del servidor gRPC.
@@ -144,6 +152,10 @@ func setDefaults(v *viper.Viper) {
 
 	v.SetDefault("security.jwt_secret", "CambiarSecretPorUnoSeguroEnProduccion")
 	v.SetDefault("security.token_ttl_minutes", 480)
+
+	v.SetDefault("backup.scripts_dir", "./db/backup")
+	v.SetDefault("backup.dumps_dir", "./db/backup/dumps")
+	v.SetDefault("backup.timeout_minutos", 30)
 }
 
 func validateConfig(cfg *Config) error {

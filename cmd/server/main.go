@@ -27,6 +27,9 @@ import (
     // Casos de Uso (Aplicación)
     "DBGS_SOBERANO_BACKEND/internal/application/usecase"
 
+    // Adaptador de ejecución de scripts (pg_dump/pg_restore)
+    "DBGS_SOBERANO_BACKEND/internal/adapter/executor"
+
     // Configuración global
     "DBGS_SOBERANO_BACKEND/config"
 
@@ -77,6 +80,19 @@ func main() {
     integracionUseCase := usecase.NewIntegracionUseCase(integracionRepo)
     coleccionUseCase := usecase.NewColeccionUseCase(coleccionRepo)
 
+    // Dominio de Respaldos: el motor ejecuta los scripts bash de db/backup con las
+    // credenciales centralizadas; el caso de uso orquesta pg_dump/pg_restore asíncrono.
+    respaldoRepo := postgres.NewRespaldoPostgresRepository(db)
+    motorRespaldos := executor.NewMotorScripts(
+        cfg.Backup.ScriptsDir,
+        cfg.Database.Host, cfg.Database.Port,
+        cfg.Database.User, cfg.Database.Password, cfg.Database.Name,
+    )
+    respaldoUseCase := usecase.NewRespaldoUseCase(respaldoRepo, seguridadRepo, motorRespaldos, usecase.RespaldoConfig{
+        DumpsDir:         cfg.Backup.DumpsDir,
+        TimeoutEjecucion: time.Duration(cfg.Backup.TimeoutMinutos) * time.Minute,
+    })
+
     // Nota: En producción, estos valores se inyectan con -ldflags en el Makefile
     sistemaUseCase := usecase.NewSistemaUseCase(db, usecase.BuildInfo{
         Version:    "v1.0.0-dev",
@@ -94,6 +110,7 @@ func main() {
     sistemaHandler := grpcHandler.NewSistemaHandler(sistemaUseCase)
     coleccionHandler := grpcHandler.NewColeccionesHandler(coleccionUseCase)
     datosDinamicosHandler := grpcHandler.NewDatosDinamicosHandler(datosDinamicosUseCase)
+    respaldoHandler := grpcHandler.NewRespaldoHandler(respaldoUseCase)
     
     // Interceptores para autorización y validación de integraciones
     unifiedAuthInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase, integracionUseCase)
@@ -115,6 +132,7 @@ func main() {
     pb.RegisterSistemaServiceServer(grpcServer, sistemaHandler)
     pb.RegisterColeccionesServiceServer(grpcServer, coleccionHandler)
     pb.RegisterDatosDinamicosServiceServer(grpcServer, datosDinamicosHandler)
+    pb.RegisterRespaldoServiceServer(grpcServer, respaldoHandler)
 
     // Habilitar reflexión para herramientas de depuración como grpcurl
     reflection.Register(grpcServer)
@@ -172,6 +190,9 @@ func main() {
     }
     if err := pb.RegisterDatosDinamicosServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
         log.Fatalf("Fallo al registrar DatosDinamicosService en el Gateway: %v", err)
+    }
+    if err := pb.RegisterRespaldoServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
+        log.Fatalf("Fallo al registrar RespaldoService en el Gateway: %v", err)
     }
 
     // Se envuelve el Mux en un middleware CORS. Esto es estrictamente necesario

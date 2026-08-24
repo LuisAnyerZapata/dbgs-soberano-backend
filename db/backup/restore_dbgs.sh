@@ -90,8 +90,7 @@ if pg_restore \
     
     echo "SUCCESS: Database restoration finished successfully!"
 else
-    # Nota: pg_restore puede retornar código 1 si hay advertencias no críticas
-    echo "WARNING: pg_restore completed with warnings or minor errors. Please check logs."
+    # Propagamos el fallo al llamador (la capa Go distingue FALLIDO de COMPLETADO)
+    echo "ERROR: Database restoration failed!" >&2
+    exit 1
 fi
-
-exit 0

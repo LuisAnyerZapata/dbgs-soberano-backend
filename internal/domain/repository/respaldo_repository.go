@@ -14,6 +14,7 @@ type RespaldoRepository interface {
 	EliminarRespaldo(ctx context.Context, id string) error
 
 	GuardarRestauracion(ctx context.Context, restauracion *entity.Restauracion) error
+	ActualizarRestauracion(ctx context.Context, restauracion *entity.Restauracion) error
 	GuardarLog(ctx context.Context, log *entity.LogOperativo) error
 	GuardarMetrica(ctx context.Context, metrica *entity.MetricaSistema) error
 }
