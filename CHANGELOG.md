@@ -7,13 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- `auditoria`: migración `000008` con el trigger `trg_prohibir_modificacion` que bloquea `UPDATE`, `DELETE` y `TRUNCATE` sobre la bitácora a nivel de motor.
+- `colecciones`: RPC `ActualizarColeccion` (`POST /v1/colecciones/{nombre}/actualizar`) — agrega columnas nuevas vía `ALTER TABLE ADD COLUMN` con validación de campos existentes y nombres reservados.
+- `colecciones`: RPC `EliminarColeccion` (`DELETE /v1/colecciones/{nombre}`) — hard delete con `confirmar=true` ejecuta `DROP TABLE` y elimina metadata; sin confirmar realiza soft delete (`esta_activa=false`).
+- `colecciones`: RBAC con permisos `colecciones:actualizar` y `colecciones:eliminar` a nivel de use case; solo `ADMIN_PLATFORM` posee estos permisos.
+- `colecciones`: función `GenerarSQLAgregarColumnas` en el ddl generator para `ALTER TABLE` seguro.
+- `colecciones`: métodos `ActualizarMetadatos`, `DesactivarMetadatos` y `EliminarMetadatos` en el repositorio.
 - `colecciones`: reactivada la vinculación automática del trigger forense de auditoría en toda tabla dinámica creada por el motor DDL.
-
-### Removed
-- `auditoria`: eliminado el endpoint público `RegistrarEvento` (`POST /v1/auditoria/eventos`) para impedir la falsificación de trazas; la bitácora ahora es de solo lectura desde la API.
+- `auditoria`: migración `000008` con el trigger `trg_prohibir_modificacion` que bloquea `UPDATE`, `DELETE` y `TRUNCATE` sobre la bitácora a nivel de motor.
+- `docs`: actualización de README con estructura, servicios, endpoints y notas de los ocho dominios.
 
 ### Fixed
+- `colecciones`: corregido `DROP TABLE` en `EliminarColeccion` — `nombre_fisico` ya contiene el schema, se eliminó la concatenación redundante que generaba un nombre inválido.
+- `auditoria`: eliminado el endpoint público `RegistrarEvento` (`POST /v1/auditoria/eventos`) para impedir la falsificación de trazas; la bitácora ahora es de solo lectura desde la API.
 - `auditoria`: corregido `ListarEventos` — cast explícito `::timestamptz` en parámetros de fecha (PostgreSQL no infería el tipo de un NULL enviado por lib/pq) y `COALESCE` para columnas nulas (`usuario_id`, `detalles`); el endpoint `GET /v1/auditoria/eventos` nunca había funcionado.
 - `db`: migraciones `000002` y `000003` renombradas con sufijo `.up.sql`; golang-migrate las ignoraba silenciosamente, por lo que la función `fn_auditar_cambios()` (base de toda la auditoría forense) no existía en entornos migrados.
 - `tests`: actualizados los stubs de seguridad, integración y datasets desalineados con los contratos vigentes; `make test` y `go vet` vuelven a pasar.
