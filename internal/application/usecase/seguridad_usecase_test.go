@@ -89,6 +89,22 @@ func (s *stubSeguridadRepository) ListarPermisosRol(ctx context.Context, rolID s
 	return nil, nil
 }
 
+func (s *stubSeguridadRepository) CrearUsuario(ctx context.Context, username, email, passwordHash, rolID string, esTecnico bool) (*entity.Usuario, error) {
+	return &entity.Usuario{ID: "stub-user", Username: username, Email: email, RolID: rolID, EsTecnico: esTecnico, Estado: true}, nil
+}
+func (s *stubSeguridadRepository) ListarUsuarios(ctx context.Context) ([]entity.Usuario, error) {
+	return nil, nil
+}
+func (s *stubSeguridadRepository) ObtenerUsuarioPorID(ctx context.Context, id string) (*entity.Usuario, error) {
+	return &entity.Usuario{ID: id, Username: "stub"}, nil
+}
+func (s *stubSeguridadRepository) ActualizarUsuario(ctx context.Context, id, email, rolID string, esTecnico, estado bool) error {
+	return nil
+}
+func (s *stubSeguridadRepository) EliminarUsuario(ctx context.Context, id string) error {
+	return nil
+}
+
 var _ repository.SeguridadRepository = (*stubSeguridadRepository)(nil)
 
 func TestLoginAutenticaUsuarioYGeneraToken(t *testing.T) {

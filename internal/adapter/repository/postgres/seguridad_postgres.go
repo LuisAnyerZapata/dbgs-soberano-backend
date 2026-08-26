@@ -321,3 +321,96 @@ func (r *seguridadPostgresRepository) ListarPermisosRol(ctx context.Context, rol
     }
     return permisos, nil
 }
+
+// =========================================================================================================
+// CRUD DE USUARIOS
+// =========================================================================================================
+
+func (r *seguridadPostgresRepository) CrearUsuario(ctx context.Context, username, email, passwordHash, rolID string, esTecnico bool) (*entity.Usuario, error) {
+    query := `
+        INSERT INTO dbgs_schema.usuarios (username, email, password_hash, rol_id, es_tecnico, estado)
+        VALUES ($1, $2, $3, $4, $5, true)
+        RETURNING id, username, email, rol_id, es_tecnico, estado, created_at, updated_at
+    `
+    var u entity.Usuario
+    err := r.db.QueryRowContext(ctx, query, username, email, passwordHash, rolID, esTecnico).
+        Scan(&u.ID, &u.Username, &u.Email, &u.RolID, &u.EsTecnico, &u.Estado, &u.CreatedAt, &u.UpdatedAt)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.CrearUsuario): %v", err)
+        return nil, entity.ErrErrorInterno
+    }
+    return &u, nil
+}
+
+func (r *seguridadPostgresRepository) ListarUsuarios(ctx context.Context) ([]entity.Usuario, error) {
+    query := `
+        SELECT u.id, u.username, u.email, u.rol_id, COALESCE(r.nombre,'') AS rol_nombre,
+               u.es_tecnico, u.estado, u.created_at, u.updated_at
+        FROM dbgs_schema.usuarios u
+        LEFT JOIN dbgs_schema.roles r ON r.id = u.rol_id
+        ORDER BY u.created_at DESC
+    `
+    rows, err := r.db.QueryContext(ctx, query)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.ListarUsuarios): %v", err)
+        return nil, entity.ErrErrorInterno
+    }
+    defer rows.Close()
+
+    var usuarios []entity.Usuario
+    for rows.Next() {
+        var u entity.Usuario
+        if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.RolID, &u.Rol.Nombre,
+            &u.EsTecnico, &u.Estado, &u.CreatedAt, &u.UpdatedAt); err != nil {
+            return nil, entity.ErrErrorInterno
+        }
+        usuarios = append(usuarios, u)
+    }
+    return usuarios, nil
+}
+
+func (r *seguridadPostgresRepository) ObtenerUsuarioPorID(ctx context.Context, id string) (*entity.Usuario, error) {
+    query := `
+        SELECT u.id, u.username, u.email, u.rol_id, COALESCE(r.nombre,'') AS rol_nombre,
+               u.es_tecnico, u.estado, u.created_at, u.updated_at
+        FROM dbgs_schema.usuarios u
+        LEFT JOIN dbgs_schema.roles r ON r.id = u.rol_id
+        WHERE u.id = $1
+    `
+    var u entity.Usuario
+    err := r.db.QueryRowContext(ctx, query, id).
+        Scan(&u.ID, &u.Username, &u.Email, &u.RolID, &u.Rol.Nombre,
+            &u.EsTecnico, &u.Estado, &u.CreatedAt, &u.UpdatedAt)
+    if err != nil {
+        if err == sql.ErrNoRows {
+            return nil, entity.ErrEntidadNoEncontrada
+        }
+        log.Printf("ERROR EN BD (Seguridad.ObtenerUsuarioPorID): %v", err)
+        return nil, entity.ErrErrorInterno
+    }
+    return &u, nil
+}
+
+func (r *seguridadPostgresRepository) ActualizarUsuario(ctx context.Context, id, email, rolID string, esTecnico, estado bool) error {
+    query := `
+        UPDATE dbgs_schema.usuarios
+        SET email = $1, rol_id = $2, es_tecnico = $3, estado = $4, updated_at = NOW()
+        WHERE id = $5
+    `
+    _, err := r.db.ExecContext(ctx, query, email, rolID, esTecnico, estado, id)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.ActualizarUsuario): %v", err)
+        return entity.ErrErrorInterno
+    }
+    return nil
+}
+
+func (r *seguridadPostgresRepository) EliminarUsuario(ctx context.Context, id string) error {
+    query := `DELETE FROM dbgs_schema.usuarios WHERE id = $1`
+    _, err := r.db.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.EliminarUsuario): %v", err)
+        return entity.ErrErrorInterno
+    }
+    return nil
+}

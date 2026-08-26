@@ -244,3 +244,50 @@ func (uc *seguridadUseCase) ListarPermisosRol(ctx context.Context, rolID string)
     }
     return uc.repo.ListarPermisosRol(ctx, rolID)
 }
+
+// =========================================================================================================
+// CRUD DE USUARIOS
+// =========================================================================================================
+
+func (uc *seguridadUseCase) CrearUsuario(ctx context.Context, username, email, password, rolID string, esTecnico bool) (*entity.Usuario, error) {
+    if username == "" || password == "" || rolID == "" {
+        return nil, domain.ErrDatosInvalidos
+    }
+
+    existing, _ := uc.repo.ObtenerUsuarioPorUsername(ctx, username)
+    if existing != nil {
+        return nil, domain.ErrCodigoDuplicado
+    }
+
+    hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, domain.ErrErrorInterno
+    }
+
+    return uc.repo.CrearUsuario(ctx, username, email, string(hash), rolID, esTecnico)
+}
+
+func (uc *seguridadUseCase) ListarUsuarios(ctx context.Context) ([]entity.Usuario, error) {
+    return uc.repo.ListarUsuarios(ctx)
+}
+
+func (uc *seguridadUseCase) ObtenerUsuario(ctx context.Context, id string) (*entity.Usuario, error) {
+    if id == "" {
+        return nil, domain.ErrDatosInvalidos
+    }
+    return uc.repo.ObtenerUsuarioPorID(ctx, id)
+}
+
+func (uc *seguridadUseCase) ActualizarUsuario(ctx context.Context, id, email, rolID string, esTecnico, estado bool) error {
+    if id == "" || rolID == "" {
+        return domain.ErrDatosInvalidos
+    }
+    return uc.repo.ActualizarUsuario(ctx, id, email, rolID, esTecnico, estado)
+}
+
+func (uc *seguridadUseCase) EliminarUsuario(ctx context.Context, id string) error {
+    if id == "" {
+        return domain.ErrDatosInvalidos
+    }
+    return uc.repo.EliminarUsuario(ctx, id)
+}

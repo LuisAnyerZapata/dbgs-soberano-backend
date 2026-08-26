@@ -35,4 +35,11 @@ type SeguridadRepository interface {
     VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error)
     DesvincularPermiso(ctx context.Context, rolID, permisoID string) error
     ListarPermisosRol(ctx context.Context, rolID string) ([]string, error)
+
+    // CRUD de Usuarios
+    CrearUsuario(ctx context.Context, username, email, passwordHash, rolID string, esTecnico bool) (*entity.Usuario, error)
+    ListarUsuarios(ctx context.Context) ([]entity.Usuario, error)
+    ObtenerUsuarioPorID(ctx context.Context, id string) (*entity.Usuario, error)
+    ActualizarUsuario(ctx context.Context, id, email, rolID string, esTecnico, estado bool) error
+    EliminarUsuario(ctx context.Context, id string) error
 }

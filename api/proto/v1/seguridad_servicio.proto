@@ -102,6 +102,40 @@ service SeguridadService {
       get: "/v1/seguridad/roles/{rol_id}/permisos"
     };
   }
+
+  // --- CRUD de Usuarios ---
+
+  rpc CrearUsuario (CrearUsuarioRequest) returns (CrearUsuarioResponse) {
+    option (google.api.http) = {
+      post: "/v1/seguridad/usuarios"
+      body: "*"
+    };
+  }
+
+  rpc ListarUsuarios (ListarUsuariosRequest) returns (ListarUsuariosResponse) {
+    option (google.api.http) = {
+      get: "/v1/seguridad/usuarios"
+    };
+  }
+
+  rpc ObtenerUsuario (ObtenerUsuarioRequest) returns (ObtenerUsuarioResponse) {
+    option (google.api.http) = {
+      get: "/v1/seguridad/usuarios/{id}"
+    };
+  }
+
+  rpc ActualizarUsuario (ActualizarUsuarioRequest) returns (ActualizarUsuarioResponse) {
+    option (google.api.http) = {
+      put: "/v1/seguridad/usuarios/{id}"
+      body: "*"
+    };
+  }
+
+  rpc EliminarUsuario (EliminarUsuarioRequest) returns (EliminarUsuarioResponse) {
+    option (google.api.http) = {
+      delete: "/v1/seguridad/usuarios/{id}"
+    };
+  }
 }
 
 message GetSetupStatusRequest {}
@@ -235,4 +269,80 @@ message ListarPermisosRolRequest {
 
 message ListarPermisosRolResponse {
   repeated string permisos = 1;
+}
+
+// --- Mensajes de Usuarios ---
+
+message CrearUsuarioRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+  string rol_id = 4;
+  bool es_tecnico = 5;
+}
+
+message CrearUsuarioResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string rol_id = 4;
+  bool es_tecnico = 5;
+  bool estado = 6;
+  string mensaje = 7;
+}
+
+message ListarUsuariosRequest {}
+
+message UsuarioProto {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string rol_id = 4;
+  string rol_nombre = 5;
+  bool es_tecnico = 6;
+  bool estado = 7;
+}
+
+message ListarUsuariosResponse {
+  repeated UsuarioProto usuarios = 1;
+}
+
+message ObtenerUsuarioRequest {
+  string id = 1;
+}
+
+message ObtenerUsuarioResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string rol_id = 4;
+  string rol_nombre = 5;
+  bool es_tecnico = 6;
+  bool estado = 7;
+}
+
+message ActualizarUsuarioRequest {
+  string id = 1;
+  string email = 2;
+  string rol_id = 3;
+  bool es_tecnico = 4;
+  bool estado = 5;
+}
+
+message ActualizarUsuarioResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string rol_id = 4;
+  bool es_tecnico = 5;
+  bool estado = 6;
+  string mensaje = 7;
+}
+
+message EliminarUsuarioRequest {
+  string id = 1;
+}
+
+message EliminarUsuarioResponse {
+  string mensaje = 1;
 }

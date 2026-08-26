@@ -147,6 +147,22 @@ func (s *stubSeguridadPermisos) ListarPermisosRol(ctx context.Context, rolID str
 	return nil, nil
 }
 
+func (s *stubSeguridadPermisos) CrearUsuario(ctx context.Context, username, email, passwordHash, rolID string, esTecnico bool) (*entity.Usuario, error) {
+	return &entity.Usuario{ID: "stub-user", Username: username, Email: email, RolID: rolID, EsTecnico: esTecnico, Estado: true}, nil
+}
+func (s *stubSeguridadPermisos) ListarUsuarios(ctx context.Context) ([]entity.Usuario, error) {
+	return nil, nil
+}
+func (s *stubSeguridadPermisos) ObtenerUsuarioPorID(ctx context.Context, id string) (*entity.Usuario, error) {
+	return &entity.Usuario{ID: id, Username: "stub"}, nil
+}
+func (s *stubSeguridadPermisos) ActualizarUsuario(ctx context.Context, id, email, rolID string, esTecnico, estado bool) error {
+	return nil
+}
+func (s *stubSeguridadPermisos) EliminarUsuario(ctx context.Context, id string) error {
+	return nil
+}
+
 var _ repository.SeguridadRepository = (*stubSeguridadPermisos)(nil)
 
 // stubMotor simula pg_dump/pg_restore creando/borrando archivos reales en un directorio temporal.

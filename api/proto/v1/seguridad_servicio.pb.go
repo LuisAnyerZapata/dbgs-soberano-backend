@@ -1375,6 +1375,738 @@ func (x *ListarPermisosRolResponse) GetPermisos() []string {
 	return nil
 }
 
+type CrearUsuarioRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	RolId         string                 `protobuf:"bytes,4,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	EsTecnico     bool                   `protobuf:"varint,5,opt,name=es_tecnico,json=esTecnico,proto3" json:"es_tecnico,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CrearUsuarioRequest) Reset() {
+	*x = CrearUsuarioRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CrearUsuarioRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CrearUsuarioRequest) ProtoMessage() {}
+
+func (x *CrearUsuarioRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CrearUsuarioRequest.ProtoReflect.Descriptor instead.
+func (*CrearUsuarioRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *CrearUsuarioRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CrearUsuarioRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *CrearUsuarioRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *CrearUsuarioRequest) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *CrearUsuarioRequest) GetEsTecnico() bool {
+	if x != nil {
+		return x.EsTecnico
+	}
+	return false
+}
+
+type CrearUsuarioResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	RolId         string                 `protobuf:"bytes,4,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	EsTecnico     bool                   `protobuf:"varint,5,opt,name=es_tecnico,json=esTecnico,proto3" json:"es_tecnico,omitempty"`
+	Estado        bool                   `protobuf:"varint,6,opt,name=estado,proto3" json:"estado,omitempty"`
+	Mensaje       string                 `protobuf:"bytes,7,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CrearUsuarioResponse) Reset() {
+	*x = CrearUsuarioResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CrearUsuarioResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CrearUsuarioResponse) ProtoMessage() {}
+
+func (x *CrearUsuarioResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CrearUsuarioResponse.ProtoReflect.Descriptor instead.
+func (*CrearUsuarioResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *CrearUsuarioResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CrearUsuarioResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CrearUsuarioResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *CrearUsuarioResponse) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *CrearUsuarioResponse) GetEsTecnico() bool {
+	if x != nil {
+		return x.EsTecnico
+	}
+	return false
+}
+
+func (x *CrearUsuarioResponse) GetEstado() bool {
+	if x != nil {
+		return x.Estado
+	}
+	return false
+}
+
+func (x *CrearUsuarioResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type ListarUsuariosRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListarUsuariosRequest) Reset() {
+	*x = ListarUsuariosRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListarUsuariosRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListarUsuariosRequest) ProtoMessage() {}
+
+func (x *ListarUsuariosRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListarUsuariosRequest.ProtoReflect.Descriptor instead.
+func (*ListarUsuariosRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{28}
+}
+
+type UsuarioProto struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	RolId         string                 `protobuf:"bytes,4,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	RolNombre     string                 `protobuf:"bytes,5,opt,name=rol_nombre,json=rolNombre,proto3" json:"rol_nombre,omitempty"`
+	EsTecnico     bool                   `protobuf:"varint,6,opt,name=es_tecnico,json=esTecnico,proto3" json:"es_tecnico,omitempty"`
+	Estado        bool                   `protobuf:"varint,7,opt,name=estado,proto3" json:"estado,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UsuarioProto) Reset() {
+	*x = UsuarioProto{}
+	mi := &file_seguridad_servicio_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UsuarioProto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UsuarioProto) ProtoMessage() {}
+
+func (x *UsuarioProto) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UsuarioProto.ProtoReflect.Descriptor instead.
+func (*UsuarioProto) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *UsuarioProto) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UsuarioProto) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *UsuarioProto) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UsuarioProto) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *UsuarioProto) GetRolNombre() string {
+	if x != nil {
+		return x.RolNombre
+	}
+	return ""
+}
+
+func (x *UsuarioProto) GetEsTecnico() bool {
+	if x != nil {
+		return x.EsTecnico
+	}
+	return false
+}
+
+func (x *UsuarioProto) GetEstado() bool {
+	if x != nil {
+		return x.Estado
+	}
+	return false
+}
+
+type ListarUsuariosResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Usuarios      []*UsuarioProto        `protobuf:"bytes,1,rep,name=usuarios,proto3" json:"usuarios,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListarUsuariosResponse) Reset() {
+	*x = ListarUsuariosResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListarUsuariosResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListarUsuariosResponse) ProtoMessage() {}
+
+func (x *ListarUsuariosResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListarUsuariosResponse.ProtoReflect.Descriptor instead.
+func (*ListarUsuariosResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *ListarUsuariosResponse) GetUsuarios() []*UsuarioProto {
+	if x != nil {
+		return x.Usuarios
+	}
+	return nil
+}
+
+type ObtenerUsuarioRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObtenerUsuarioRequest) Reset() {
+	*x = ObtenerUsuarioRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObtenerUsuarioRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObtenerUsuarioRequest) ProtoMessage() {}
+
+func (x *ObtenerUsuarioRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObtenerUsuarioRequest.ProtoReflect.Descriptor instead.
+func (*ObtenerUsuarioRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *ObtenerUsuarioRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ObtenerUsuarioResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	RolId         string                 `protobuf:"bytes,4,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	RolNombre     string                 `protobuf:"bytes,5,opt,name=rol_nombre,json=rolNombre,proto3" json:"rol_nombre,omitempty"`
+	EsTecnico     bool                   `protobuf:"varint,6,opt,name=es_tecnico,json=esTecnico,proto3" json:"es_tecnico,omitempty"`
+	Estado        bool                   `protobuf:"varint,7,opt,name=estado,proto3" json:"estado,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObtenerUsuarioResponse) Reset() {
+	*x = ObtenerUsuarioResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObtenerUsuarioResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObtenerUsuarioResponse) ProtoMessage() {}
+
+func (x *ObtenerUsuarioResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObtenerUsuarioResponse.ProtoReflect.Descriptor instead.
+func (*ObtenerUsuarioResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *ObtenerUsuarioResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ObtenerUsuarioResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *ObtenerUsuarioResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *ObtenerUsuarioResponse) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *ObtenerUsuarioResponse) GetRolNombre() string {
+	if x != nil {
+		return x.RolNombre
+	}
+	return ""
+}
+
+func (x *ObtenerUsuarioResponse) GetEsTecnico() bool {
+	if x != nil {
+		return x.EsTecnico
+	}
+	return false
+}
+
+func (x *ObtenerUsuarioResponse) GetEstado() bool {
+	if x != nil {
+		return x.Estado
+	}
+	return false
+}
+
+type ActualizarUsuarioRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	RolId         string                 `protobuf:"bytes,3,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	EsTecnico     bool                   `protobuf:"varint,4,opt,name=es_tecnico,json=esTecnico,proto3" json:"es_tecnico,omitempty"`
+	Estado        bool                   `protobuf:"varint,5,opt,name=estado,proto3" json:"estado,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActualizarUsuarioRequest) Reset() {
+	*x = ActualizarUsuarioRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActualizarUsuarioRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActualizarUsuarioRequest) ProtoMessage() {}
+
+func (x *ActualizarUsuarioRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActualizarUsuarioRequest.ProtoReflect.Descriptor instead.
+func (*ActualizarUsuarioRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *ActualizarUsuarioRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioRequest) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioRequest) GetEsTecnico() bool {
+	if x != nil {
+		return x.EsTecnico
+	}
+	return false
+}
+
+func (x *ActualizarUsuarioRequest) GetEstado() bool {
+	if x != nil {
+		return x.Estado
+	}
+	return false
+}
+
+type ActualizarUsuarioResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	RolId         string                 `protobuf:"bytes,4,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	EsTecnico     bool                   `protobuf:"varint,5,opt,name=es_tecnico,json=esTecnico,proto3" json:"es_tecnico,omitempty"`
+	Estado        bool                   `protobuf:"varint,6,opt,name=estado,proto3" json:"estado,omitempty"`
+	Mensaje       string                 `protobuf:"bytes,7,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActualizarUsuarioResponse) Reset() {
+	*x = ActualizarUsuarioResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActualizarUsuarioResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActualizarUsuarioResponse) ProtoMessage() {}
+
+func (x *ActualizarUsuarioResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActualizarUsuarioResponse.ProtoReflect.Descriptor instead.
+func (*ActualizarUsuarioResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *ActualizarUsuarioResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioResponse) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *ActualizarUsuarioResponse) GetEsTecnico() bool {
+	if x != nil {
+		return x.EsTecnico
+	}
+	return false
+}
+
+func (x *ActualizarUsuarioResponse) GetEstado() bool {
+	if x != nil {
+		return x.Estado
+	}
+	return false
+}
+
+func (x *ActualizarUsuarioResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type EliminarUsuarioRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EliminarUsuarioRequest) Reset() {
+	*x = EliminarUsuarioRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EliminarUsuarioRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EliminarUsuarioRequest) ProtoMessage() {}
+
+func (x *EliminarUsuarioRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EliminarUsuarioRequest.ProtoReflect.Descriptor instead.
+func (*EliminarUsuarioRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *EliminarUsuarioRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type EliminarUsuarioResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mensaje       string                 `protobuf:"bytes,1,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EliminarUsuarioResponse) Reset() {
+	*x = EliminarUsuarioResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EliminarUsuarioResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EliminarUsuarioResponse) ProtoMessage() {}
+
+func (x *EliminarUsuarioResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EliminarUsuarioResponse.ProtoReflect.Descriptor instead.
+func (*EliminarUsuarioResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *EliminarUsuarioResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
 var File_seguridad_servicio_proto protoreflect.FileDescriptor
 
 const file_seguridad_servicio_proto_rawDesc = "" +
@@ -1463,7 +2195,68 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\x18ListarPermisosRolRequest\x12\x15\n" +
 	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\"7\n" +
 	"\x19ListarPermisosRolResponse\x12\x1a\n" +
-	"\bpermisos\x18\x01 \x03(\tR\bpermisos2\x8f\f\n" +
+	"\bpermisos\x18\x01 \x03(\tR\bpermisos\"\x99\x01\n" +
+	"\x13CrearUsuarioRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x15\n" +
+	"\x06rol_id\x18\x04 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"es_tecnico\x18\x05 \x01(\bR\tesTecnico\"\xc0\x01\n" +
+	"\x14CrearUsuarioResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x15\n" +
+	"\x06rol_id\x18\x04 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"es_tecnico\x18\x05 \x01(\bR\tesTecnico\x12\x16\n" +
+	"\x06estado\x18\x06 \x01(\bR\x06estado\x12\x18\n" +
+	"\amensaje\x18\a \x01(\tR\amensaje\"\x17\n" +
+	"\x15ListarUsuariosRequest\"\xbd\x01\n" +
+	"\fUsuarioProto\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x15\n" +
+	"\x06rol_id\x18\x04 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"rol_nombre\x18\x05 \x01(\tR\trolNombre\x12\x1d\n" +
+	"\n" +
+	"es_tecnico\x18\x06 \x01(\bR\tesTecnico\x12\x16\n" +
+	"\x06estado\x18\a \x01(\bR\x06estado\"K\n" +
+	"\x16ListarUsuariosResponse\x121\n" +
+	"\busuarios\x18\x01 \x03(\v2\x15.dbgs.v1.UsuarioProtoR\busuarios\"'\n" +
+	"\x15ObtenerUsuarioRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\xc7\x01\n" +
+	"\x16ObtenerUsuarioResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x15\n" +
+	"\x06rol_id\x18\x04 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"rol_nombre\x18\x05 \x01(\tR\trolNombre\x12\x1d\n" +
+	"\n" +
+	"es_tecnico\x18\x06 \x01(\bR\tesTecnico\x12\x16\n" +
+	"\x06estado\x18\a \x01(\bR\x06estado\"\x8e\x01\n" +
+	"\x18ActualizarUsuarioRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x15\n" +
+	"\x06rol_id\x18\x03 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"es_tecnico\x18\x04 \x01(\bR\tesTecnico\x12\x16\n" +
+	"\x06estado\x18\x05 \x01(\bR\x06estado\"\xc5\x01\n" +
+	"\x19ActualizarUsuarioResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x15\n" +
+	"\x06rol_id\x18\x04 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"es_tecnico\x18\x05 \x01(\bR\tesTecnico\x12\x16\n" +
+	"\x06estado\x18\x06 \x01(\bR\x06estado\x12\x18\n" +
+	"\amensaje\x18\a \x01(\tR\amensaje\"(\n" +
+	"\x16EliminarUsuarioRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"3\n" +
+	"\x17EliminarUsuarioResponse\x12\x18\n" +
+	"\amensaje\x18\x01 \x01(\tR\amensaje2\xea\x10\n" +
 	"\x10SeguridadService\x12p\n" +
 	"\x0eGetSetupStatus\x12\x1e.dbgs.v1.GetSetupStatusRequest\x1a\x1f.dbgs.v1.GetSetupStatusResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/auth/setup-status\x12]\n" +
 	"\vCreateSetup\x12\x1b.dbgs.v1.CreateSetupRequest\x1a\x16.dbgs.v1.LoginResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth/setup\x12V\n" +
@@ -1478,7 +2271,12 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\vEliminarRol\x12\x1b.dbgs.v1.EliminarRolRequest\x1a\x1c.dbgs.v1.EliminarRolResponse\" \x82\xd3\xe4\x93\x02\x1a*\x18/v1/seguridad/roles/{id}\x12\x8f\x01\n" +
 	"\x12VincularPermisoRol\x12\".dbgs.v1.VincularPermisoRolRequest\x1a#.dbgs.v1.VincularPermisoRolResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/seguridad/roles/{rol_id}/permisos\x12\xa6\x01\n" +
 	"\x15DesvincularPermisoRol\x12%.dbgs.v1.DesvincularPermisoRolRequest\x1a&.dbgs.v1.DesvincularPermisoRolResponse\">\x82\xd3\xe4\x93\x028*6/v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}\x12\x89\x01\n" +
-	"\x11ListarPermisosRol\x12!.dbgs.v1.ListarPermisosRolRequest\x1a\".dbgs.v1.ListarPermisosRolResponse\"-\x82\xd3\xe4\x93\x02'\x12%/v1/seguridad/roles/{rol_id}/permisosB+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
+	"\x11ListarPermisosRol\x12!.dbgs.v1.ListarPermisosRolRequest\x1a\".dbgs.v1.ListarPermisosRolResponse\"-\x82\xd3\xe4\x93\x02'\x12%/v1/seguridad/roles/{rol_id}/permisos\x12n\n" +
+	"\fCrearUsuario\x12\x1c.dbgs.v1.CrearUsuarioRequest\x1a\x1d.dbgs.v1.CrearUsuarioResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/seguridad/usuarios\x12q\n" +
+	"\x0eListarUsuarios\x12\x1e.dbgs.v1.ListarUsuariosRequest\x1a\x1f.dbgs.v1.ListarUsuariosResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/v1/seguridad/usuarios\x12v\n" +
+	"\x0eObtenerUsuario\x12\x1e.dbgs.v1.ObtenerUsuarioRequest\x1a\x1f.dbgs.v1.ObtenerUsuarioResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/v1/seguridad/usuarios/{id}\x12\x82\x01\n" +
+	"\x11ActualizarUsuario\x12!.dbgs.v1.ActualizarUsuarioRequest\x1a\".dbgs.v1.ActualizarUsuarioResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/v1/seguridad/usuarios/{id}\x12y\n" +
+	"\x0fEliminarUsuario\x12\x1f.dbgs.v1.EliminarUsuarioRequest\x1a .dbgs.v1.EliminarUsuarioResponse\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/v1/seguridad/usuarios/{id}B+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
 
 var (
 	file_seguridad_servicio_proto_rawDescOnce sync.Once
@@ -1492,7 +2290,7 @@ func file_seguridad_servicio_proto_rawDescGZIP() []byte {
 	return file_seguridad_servicio_proto_rawDescData
 }
 
-var file_seguridad_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_seguridad_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_seguridad_servicio_proto_goTypes = []any{
 	(*GetSetupStatusRequest)(nil),         // 0: dbgs.v1.GetSetupStatusRequest
 	(*GetSetupStatusResponse)(nil),        // 1: dbgs.v1.GetSetupStatusResponse
@@ -1520,40 +2318,62 @@ var file_seguridad_servicio_proto_goTypes = []any{
 	(*DesvincularPermisoRolResponse)(nil), // 23: dbgs.v1.DesvincularPermisoRolResponse
 	(*ListarPermisosRolRequest)(nil),      // 24: dbgs.v1.ListarPermisosRolRequest
 	(*ListarPermisosRolResponse)(nil),     // 25: dbgs.v1.ListarPermisosRolResponse
+	(*CrearUsuarioRequest)(nil),           // 26: dbgs.v1.CrearUsuarioRequest
+	(*CrearUsuarioResponse)(nil),          // 27: dbgs.v1.CrearUsuarioResponse
+	(*ListarUsuariosRequest)(nil),         // 28: dbgs.v1.ListarUsuariosRequest
+	(*UsuarioProto)(nil),                  // 29: dbgs.v1.UsuarioProto
+	(*ListarUsuariosResponse)(nil),        // 30: dbgs.v1.ListarUsuariosResponse
+	(*ObtenerUsuarioRequest)(nil),         // 31: dbgs.v1.ObtenerUsuarioRequest
+	(*ObtenerUsuarioResponse)(nil),        // 32: dbgs.v1.ObtenerUsuarioResponse
+	(*ActualizarUsuarioRequest)(nil),      // 33: dbgs.v1.ActualizarUsuarioRequest
+	(*ActualizarUsuarioResponse)(nil),     // 34: dbgs.v1.ActualizarUsuarioResponse
+	(*EliminarUsuarioRequest)(nil),        // 35: dbgs.v1.EliminarUsuarioRequest
+	(*EliminarUsuarioResponse)(nil),       // 36: dbgs.v1.EliminarUsuarioResponse
 }
 var file_seguridad_servicio_proto_depIdxs = []int32{
 	12, // 0: dbgs.v1.ListarRolesResponse.roles:type_name -> dbgs.v1.RolProto
-	0,  // 1: dbgs.v1.SeguridadService.GetSetupStatus:input_type -> dbgs.v1.GetSetupStatusRequest
-	2,  // 2: dbgs.v1.SeguridadService.CreateSetup:input_type -> dbgs.v1.CreateSetupRequest
-	3,  // 3: dbgs.v1.SeguridadService.Login:input_type -> dbgs.v1.LoginRequest
-	5,  // 4: dbgs.v1.SeguridadService.ValidarToken:input_type -> dbgs.v1.ValidarTokenRequest
-	7,  // 5: dbgs.v1.SeguridadService.VerificarPermiso:input_type -> dbgs.v1.VerificarPermisoRequest
-	9,  // 6: dbgs.v1.SeguridadService.CrearRol:input_type -> dbgs.v1.CrearRolRequest
-	11, // 7: dbgs.v1.SeguridadService.ListarRoles:input_type -> dbgs.v1.ListarRolesRequest
-	14, // 8: dbgs.v1.SeguridadService.ObtenerRol:input_type -> dbgs.v1.ObtenerRolRequest
-	16, // 9: dbgs.v1.SeguridadService.ActualizarRol:input_type -> dbgs.v1.ActualizarRolRequest
-	18, // 10: dbgs.v1.SeguridadService.EliminarRol:input_type -> dbgs.v1.EliminarRolRequest
-	20, // 11: dbgs.v1.SeguridadService.VincularPermisoRol:input_type -> dbgs.v1.VincularPermisoRolRequest
-	22, // 12: dbgs.v1.SeguridadService.DesvincularPermisoRol:input_type -> dbgs.v1.DesvincularPermisoRolRequest
-	24, // 13: dbgs.v1.SeguridadService.ListarPermisosRol:input_type -> dbgs.v1.ListarPermisosRolRequest
-	1,  // 14: dbgs.v1.SeguridadService.GetSetupStatus:output_type -> dbgs.v1.GetSetupStatusResponse
-	4,  // 15: dbgs.v1.SeguridadService.CreateSetup:output_type -> dbgs.v1.LoginResponse
-	4,  // 16: dbgs.v1.SeguridadService.Login:output_type -> dbgs.v1.LoginResponse
-	6,  // 17: dbgs.v1.SeguridadService.ValidarToken:output_type -> dbgs.v1.ValidarTokenResponse
-	8,  // 18: dbgs.v1.SeguridadService.VerificarPermiso:output_type -> dbgs.v1.VerificarPermisoResponse
-	10, // 19: dbgs.v1.SeguridadService.CrearRol:output_type -> dbgs.v1.CrearRolResponse
-	13, // 20: dbgs.v1.SeguridadService.ListarRoles:output_type -> dbgs.v1.ListarRolesResponse
-	15, // 21: dbgs.v1.SeguridadService.ObtenerRol:output_type -> dbgs.v1.ObtenerRolResponse
-	17, // 22: dbgs.v1.SeguridadService.ActualizarRol:output_type -> dbgs.v1.ActualizarRolResponse
-	19, // 23: dbgs.v1.SeguridadService.EliminarRol:output_type -> dbgs.v1.EliminarRolResponse
-	21, // 24: dbgs.v1.SeguridadService.VincularPermisoRol:output_type -> dbgs.v1.VincularPermisoRolResponse
-	23, // 25: dbgs.v1.SeguridadService.DesvincularPermisoRol:output_type -> dbgs.v1.DesvincularPermisoRolResponse
-	25, // 26: dbgs.v1.SeguridadService.ListarPermisosRol:output_type -> dbgs.v1.ListarPermisosRolResponse
-	14, // [14:27] is the sub-list for method output_type
-	1,  // [1:14] is the sub-list for method input_type
-	1,  // [1:1] is the sub-list for extension type_name
-	1,  // [1:1] is the sub-list for extension extendee
-	0,  // [0:1] is the sub-list for field type_name
+	29, // 1: dbgs.v1.ListarUsuariosResponse.usuarios:type_name -> dbgs.v1.UsuarioProto
+	0,  // 2: dbgs.v1.SeguridadService.GetSetupStatus:input_type -> dbgs.v1.GetSetupStatusRequest
+	2,  // 3: dbgs.v1.SeguridadService.CreateSetup:input_type -> dbgs.v1.CreateSetupRequest
+	3,  // 4: dbgs.v1.SeguridadService.Login:input_type -> dbgs.v1.LoginRequest
+	5,  // 5: dbgs.v1.SeguridadService.ValidarToken:input_type -> dbgs.v1.ValidarTokenRequest
+	7,  // 6: dbgs.v1.SeguridadService.VerificarPermiso:input_type -> dbgs.v1.VerificarPermisoRequest
+	9,  // 7: dbgs.v1.SeguridadService.CrearRol:input_type -> dbgs.v1.CrearRolRequest
+	11, // 8: dbgs.v1.SeguridadService.ListarRoles:input_type -> dbgs.v1.ListarRolesRequest
+	14, // 9: dbgs.v1.SeguridadService.ObtenerRol:input_type -> dbgs.v1.ObtenerRolRequest
+	16, // 10: dbgs.v1.SeguridadService.ActualizarRol:input_type -> dbgs.v1.ActualizarRolRequest
+	18, // 11: dbgs.v1.SeguridadService.EliminarRol:input_type -> dbgs.v1.EliminarRolRequest
+	20, // 12: dbgs.v1.SeguridadService.VincularPermisoRol:input_type -> dbgs.v1.VincularPermisoRolRequest
+	22, // 13: dbgs.v1.SeguridadService.DesvincularPermisoRol:input_type -> dbgs.v1.DesvincularPermisoRolRequest
+	24, // 14: dbgs.v1.SeguridadService.ListarPermisosRol:input_type -> dbgs.v1.ListarPermisosRolRequest
+	26, // 15: dbgs.v1.SeguridadService.CrearUsuario:input_type -> dbgs.v1.CrearUsuarioRequest
+	28, // 16: dbgs.v1.SeguridadService.ListarUsuarios:input_type -> dbgs.v1.ListarUsuariosRequest
+	31, // 17: dbgs.v1.SeguridadService.ObtenerUsuario:input_type -> dbgs.v1.ObtenerUsuarioRequest
+	33, // 18: dbgs.v1.SeguridadService.ActualizarUsuario:input_type -> dbgs.v1.ActualizarUsuarioRequest
+	35, // 19: dbgs.v1.SeguridadService.EliminarUsuario:input_type -> dbgs.v1.EliminarUsuarioRequest
+	1,  // 20: dbgs.v1.SeguridadService.GetSetupStatus:output_type -> dbgs.v1.GetSetupStatusResponse
+	4,  // 21: dbgs.v1.SeguridadService.CreateSetup:output_type -> dbgs.v1.LoginResponse
+	4,  // 22: dbgs.v1.SeguridadService.Login:output_type -> dbgs.v1.LoginResponse
+	6,  // 23: dbgs.v1.SeguridadService.ValidarToken:output_type -> dbgs.v1.ValidarTokenResponse
+	8,  // 24: dbgs.v1.SeguridadService.VerificarPermiso:output_type -> dbgs.v1.VerificarPermisoResponse
+	10, // 25: dbgs.v1.SeguridadService.CrearRol:output_type -> dbgs.v1.CrearRolResponse
+	13, // 26: dbgs.v1.SeguridadService.ListarRoles:output_type -> dbgs.v1.ListarRolesResponse
+	15, // 27: dbgs.v1.SeguridadService.ObtenerRol:output_type -> dbgs.v1.ObtenerRolResponse
+	17, // 28: dbgs.v1.SeguridadService.ActualizarRol:output_type -> dbgs.v1.ActualizarRolResponse
+	19, // 29: dbgs.v1.SeguridadService.EliminarRol:output_type -> dbgs.v1.EliminarRolResponse
+	21, // 30: dbgs.v1.SeguridadService.VincularPermisoRol:output_type -> dbgs.v1.VincularPermisoRolResponse
+	23, // 31: dbgs.v1.SeguridadService.DesvincularPermisoRol:output_type -> dbgs.v1.DesvincularPermisoRolResponse
+	25, // 32: dbgs.v1.SeguridadService.ListarPermisosRol:output_type -> dbgs.v1.ListarPermisosRolResponse
+	27, // 33: dbgs.v1.SeguridadService.CrearUsuario:output_type -> dbgs.v1.CrearUsuarioResponse
+	30, // 34: dbgs.v1.SeguridadService.ListarUsuarios:output_type -> dbgs.v1.ListarUsuariosResponse
+	32, // 35: dbgs.v1.SeguridadService.ObtenerUsuario:output_type -> dbgs.v1.ObtenerUsuarioResponse
+	34, // 36: dbgs.v1.SeguridadService.ActualizarUsuario:output_type -> dbgs.v1.ActualizarUsuarioResponse
+	36, // 37: dbgs.v1.SeguridadService.EliminarUsuario:output_type -> dbgs.v1.EliminarUsuarioResponse
+	20, // [20:38] is the sub-list for method output_type
+	2,  // [2:20] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_seguridad_servicio_proto_init() }
@@ -1567,7 +2387,7 @@ func file_seguridad_servicio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_seguridad_servicio_proto_rawDesc), len(file_seguridad_servicio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

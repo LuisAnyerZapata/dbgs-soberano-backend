@@ -32,6 +32,11 @@ const (
 	SeguridadService_VincularPermisoRol_FullMethodName    = "/dbgs.v1.SeguridadService/VincularPermisoRol"
 	SeguridadService_DesvincularPermisoRol_FullMethodName = "/dbgs.v1.SeguridadService/DesvincularPermisoRol"
 	SeguridadService_ListarPermisosRol_FullMethodName     = "/dbgs.v1.SeguridadService/ListarPermisosRol"
+	SeguridadService_CrearUsuario_FullMethodName          = "/dbgs.v1.SeguridadService/CrearUsuario"
+	SeguridadService_ListarUsuarios_FullMethodName        = "/dbgs.v1.SeguridadService/ListarUsuarios"
+	SeguridadService_ObtenerUsuario_FullMethodName        = "/dbgs.v1.SeguridadService/ObtenerUsuario"
+	SeguridadService_ActualizarUsuario_FullMethodName     = "/dbgs.v1.SeguridadService/ActualizarUsuario"
+	SeguridadService_EliminarUsuario_FullMethodName       = "/dbgs.v1.SeguridadService/EliminarUsuario"
 )
 
 // SeguridadServiceClient is the client API for SeguridadService service.
@@ -56,6 +61,11 @@ type SeguridadServiceClient interface {
 	VincularPermisoRol(ctx context.Context, in *VincularPermisoRolRequest, opts ...grpc.CallOption) (*VincularPermisoRolResponse, error)
 	DesvincularPermisoRol(ctx context.Context, in *DesvincularPermisoRolRequest, opts ...grpc.CallOption) (*DesvincularPermisoRolResponse, error)
 	ListarPermisosRol(ctx context.Context, in *ListarPermisosRolRequest, opts ...grpc.CallOption) (*ListarPermisosRolResponse, error)
+	CrearUsuario(ctx context.Context, in *CrearUsuarioRequest, opts ...grpc.CallOption) (*CrearUsuarioResponse, error)
+	ListarUsuarios(ctx context.Context, in *ListarUsuariosRequest, opts ...grpc.CallOption) (*ListarUsuariosResponse, error)
+	ObtenerUsuario(ctx context.Context, in *ObtenerUsuarioRequest, opts ...grpc.CallOption) (*ObtenerUsuarioResponse, error)
+	ActualizarUsuario(ctx context.Context, in *ActualizarUsuarioRequest, opts ...grpc.CallOption) (*ActualizarUsuarioResponse, error)
+	EliminarUsuario(ctx context.Context, in *EliminarUsuarioRequest, opts ...grpc.CallOption) (*EliminarUsuarioResponse, error)
 }
 
 type seguridadServiceClient struct {
@@ -196,6 +206,56 @@ func (c *seguridadServiceClient) ListarPermisosRol(ctx context.Context, in *List
 	return out, nil
 }
 
+func (c *seguridadServiceClient) CrearUsuario(ctx context.Context, in *CrearUsuarioRequest, opts ...grpc.CallOption) (*CrearUsuarioResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CrearUsuarioResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_CrearUsuario_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ListarUsuarios(ctx context.Context, in *ListarUsuariosRequest, opts ...grpc.CallOption) (*ListarUsuariosResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListarUsuariosResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ListarUsuarios_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ObtenerUsuario(ctx context.Context, in *ObtenerUsuarioRequest, opts ...grpc.CallOption) (*ObtenerUsuarioResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ObtenerUsuarioResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ObtenerUsuario_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ActualizarUsuario(ctx context.Context, in *ActualizarUsuarioRequest, opts ...grpc.CallOption) (*ActualizarUsuarioResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ActualizarUsuarioResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ActualizarUsuario_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) EliminarUsuario(ctx context.Context, in *EliminarUsuarioRequest, opts ...grpc.CallOption) (*EliminarUsuarioResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EliminarUsuarioResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_EliminarUsuario_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SeguridadServiceServer is the server API for SeguridadService service.
 // All implementations must embed UnimplementedSeguridadServiceServer
 // for forward compatibility.
@@ -218,6 +278,11 @@ type SeguridadServiceServer interface {
 	VincularPermisoRol(context.Context, *VincularPermisoRolRequest) (*VincularPermisoRolResponse, error)
 	DesvincularPermisoRol(context.Context, *DesvincularPermisoRolRequest) (*DesvincularPermisoRolResponse, error)
 	ListarPermisosRol(context.Context, *ListarPermisosRolRequest) (*ListarPermisosRolResponse, error)
+	CrearUsuario(context.Context, *CrearUsuarioRequest) (*CrearUsuarioResponse, error)
+	ListarUsuarios(context.Context, *ListarUsuariosRequest) (*ListarUsuariosResponse, error)
+	ObtenerUsuario(context.Context, *ObtenerUsuarioRequest) (*ObtenerUsuarioResponse, error)
+	ActualizarUsuario(context.Context, *ActualizarUsuarioRequest) (*ActualizarUsuarioResponse, error)
+	EliminarUsuario(context.Context, *EliminarUsuarioRequest) (*EliminarUsuarioResponse, error)
 	mustEmbedUnimplementedSeguridadServiceServer()
 }
 
@@ -266,6 +331,21 @@ func (UnimplementedSeguridadServiceServer) DesvincularPermisoRol(context.Context
 }
 func (UnimplementedSeguridadServiceServer) ListarPermisosRol(context.Context, *ListarPermisosRolRequest) (*ListarPermisosRolResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListarPermisosRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) CrearUsuario(context.Context, *CrearUsuarioRequest) (*CrearUsuarioResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CrearUsuario not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ListarUsuarios(context.Context, *ListarUsuariosRequest) (*ListarUsuariosResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListarUsuarios not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ObtenerUsuario(context.Context, *ObtenerUsuarioRequest) (*ObtenerUsuarioResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ObtenerUsuario not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ActualizarUsuario(context.Context, *ActualizarUsuarioRequest) (*ActualizarUsuarioResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActualizarUsuario not implemented")
+}
+func (UnimplementedSeguridadServiceServer) EliminarUsuario(context.Context, *EliminarUsuarioRequest) (*EliminarUsuarioResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EliminarUsuario not implemented")
 }
 func (UnimplementedSeguridadServiceServer) mustEmbedUnimplementedSeguridadServiceServer() {}
 func (UnimplementedSeguridadServiceServer) testEmbeddedByValue()                          {}
@@ -522,6 +602,96 @@ func _SeguridadService_ListarPermisosRol_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SeguridadService_CrearUsuario_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CrearUsuarioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).CrearUsuario(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_CrearUsuario_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).CrearUsuario(ctx, req.(*CrearUsuarioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ListarUsuarios_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListarUsuariosRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ListarUsuarios(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ListarUsuarios_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ListarUsuarios(ctx, req.(*ListarUsuariosRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ObtenerUsuario_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObtenerUsuarioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ObtenerUsuario(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ObtenerUsuario_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ObtenerUsuario(ctx, req.(*ObtenerUsuarioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ActualizarUsuario_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActualizarUsuarioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ActualizarUsuario(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ActualizarUsuario_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ActualizarUsuario(ctx, req.(*ActualizarUsuarioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_EliminarUsuario_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EliminarUsuarioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).EliminarUsuario(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_EliminarUsuario_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).EliminarUsuario(ctx, req.(*EliminarUsuarioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SeguridadService_ServiceDesc is the grpc.ServiceDesc for SeguridadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -580,6 +750,26 @@ var SeguridadService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListarPermisosRol",
 			Handler:    _SeguridadService_ListarPermisosRol_Handler,
+		},
+		{
+			MethodName: "CrearUsuario",
+			Handler:    _SeguridadService_CrearUsuario_Handler,
+		},
+		{
+			MethodName: "ListarUsuarios",
+			Handler:    _SeguridadService_ListarUsuarios_Handler,
+		},
+		{
+			MethodName: "ObtenerUsuario",
+			Handler:    _SeguridadService_ObtenerUsuario_Handler,
+		},
+		{
+			MethodName: "ActualizarUsuario",
+			Handler:    _SeguridadService_ActualizarUsuario_Handler,
+		},
+		{
+			MethodName: "EliminarUsuario",
+			Handler:    _SeguridadService_EliminarUsuario_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

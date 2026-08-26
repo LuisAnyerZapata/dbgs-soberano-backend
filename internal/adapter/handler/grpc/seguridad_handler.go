@@ -245,3 +245,102 @@ func (h *SeguridadHandler) ListarPermisosRol(ctx context.Context, req *pb.Listar
 
     return &pb.ListarPermisosRolResponse{Permisos: permisos}, nil
 }
+
+// =========================================================================================================
+// CRUD DE USUARIOS
+// =========================================================================================================
+
+func (h *SeguridadHandler) CrearUsuario(ctx context.Context, req *pb.CrearUsuarioRequest) (*pb.CrearUsuarioResponse, error) {
+    if req.GetUsername() == "" || req.GetPassword() == "" || req.GetRolId() == "" {
+        return nil, status.Error(codes.InvalidArgument, "username, password y rol_id son obligatorios")
+    }
+
+    usuario, err := h.seguridadUseCase.CrearUsuario(ctx, req.GetUsername(), req.GetEmail(), req.GetPassword(), req.GetRolId(), req.GetEsTecnico())
+    if err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    return &pb.CrearUsuarioResponse{
+        Id:        usuario.ID,
+        Username:  usuario.Username,
+        Email:     usuario.Email,
+        RolId:     usuario.RolID,
+        EsTecnico: usuario.EsTecnico,
+        Estado:    usuario.Estado,
+        Mensaje:   "Usuario creado exitosamente",
+    }, nil
+}
+
+func (h *SeguridadHandler) ListarUsuarios(ctx context.Context, req *pb.ListarUsuariosRequest) (*pb.ListarUsuariosResponse, error) {
+    usuarios, err := h.seguridadUseCase.ListarUsuarios(ctx)
+    if err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    var pbUsuarios []*pb.UsuarioProto
+    for _, u := range usuarios {
+        pbUsuarios = append(pbUsuarios, &pb.UsuarioProto{
+            Id:        u.ID,
+            Username:  u.Username,
+            Email:     u.Email,
+            RolId:     u.RolID,
+            RolNombre: u.Rol.Nombre,
+            EsTecnico: u.EsTecnico,
+            Estado:    u.Estado,
+        })
+    }
+
+    return &pb.ListarUsuariosResponse{Usuarios: pbUsuarios}, nil
+}
+
+func (h *SeguridadHandler) ObtenerUsuario(ctx context.Context, req *pb.ObtenerUsuarioRequest) (*pb.ObtenerUsuarioResponse, error) {
+    if req.GetId() == "" {
+        return nil, status.Error(codes.InvalidArgument, "el ID del usuario es obligatorio")
+    }
+
+    usuario, err := h.seguridadUseCase.ObtenerUsuario(ctx, req.GetId())
+    if err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    return &pb.ObtenerUsuarioResponse{
+        Id:        usuario.ID,
+        Username:  usuario.Username,
+        Email:     usuario.Email,
+        RolId:     usuario.RolID,
+        RolNombre: usuario.Rol.Nombre,
+        EsTecnico: usuario.EsTecnico,
+        Estado:    usuario.Estado,
+    }, nil
+}
+
+func (h *SeguridadHandler) ActualizarUsuario(ctx context.Context, req *pb.ActualizarUsuarioRequest) (*pb.ActualizarUsuarioResponse, error) {
+    if req.GetId() == "" || req.GetRolId() == "" {
+        return nil, status.Error(codes.InvalidArgument, "el ID del usuario y rol_id son obligatorios")
+    }
+
+    if err := h.seguridadUseCase.ActualizarUsuario(ctx, req.GetId(), req.GetEmail(), req.GetRolId(), req.GetEsTecnico(), req.GetEstado()); err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    return &pb.ActualizarUsuarioResponse{
+        Id:        req.GetId(),
+        Email:     req.GetEmail(),
+        RolId:     req.GetRolId(),
+        EsTecnico: req.GetEsTecnico(),
+        Estado:    req.GetEstado(),
+        Mensaje:   "Usuario actualizado exitosamente",
+    }, nil
+}
+
+func (h *SeguridadHandler) EliminarUsuario(ctx context.Context, req *pb.EliminarUsuarioRequest) (*pb.EliminarUsuarioResponse, error) {
+    if req.GetId() == "" {
+        return nil, status.Error(codes.InvalidArgument, "el ID del usuario es obligatorio")
+    }
+
+    if err := h.seguridadUseCase.EliminarUsuario(ctx, req.GetId()); err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    return &pb.EliminarUsuarioResponse{Mensaje: "Usuario eliminado exitosamente"}, nil
+}
