@@ -7,11 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- `colecciones`: RPC `ActualizarColeccion` (`POST /v1/colecciones/{nombre}/actualizar`) — agrega columnas nuevas vía `ALTER TABLE ADD COLUMN` con validación de campos existentes y nombres reservados.
-- `colecciones`: RPC `EliminarColeccion` (`DELETE /v1/colecciones/{nombre}`) — hard delete con `confirmar=true` ejecuta `DROP TABLE` y elimina metadata; sin confirmar realiza soft delete (`esta_activa=false`).
+- `colecciones`: RPC `ActualizarColeccion` (`POST /v1/colecciones/{nombre}/actualizar`) — edición completa de tablas dinámicas con 5 operaciones: agregar columnas (`ADD COLUMN`), renombrar columnas (`RENAME COLUMN`), cambiar tipo (`ALTER COLUMN TYPE`), eliminar columnas (`DROP COLUMN` con `confirmar=true`) y renombrar tabla (`ALTER TABLE RENAME TO` con `confirmar=true`).
+- `colecciones`: mensajes `RenombrarColumnaProto` y `CambiarTipoColumnaProto` en el proto para las operaciones de edición.
+- `colecciones`: función `GenerarSQLRenombrarColumna` en el ddl generator.
+- `colecciones`: función `GenerarSQLCambiarTipoColumna` en el ddl generator.
+- `colecciones`: función `GenerarSQUEliminarColumna` en el ddl generator.
+- `colecciones`: función `GenerarSQLRenombrarTabla` en el ddl generator.
+- `colecciones`: método `RenombrarMetadatos` en el repositorio para actualizar nombre lógico y físico en el diccionario.
 - `colecciones`: RBAC con permisos `colecciones:actualizar` y `colecciones:eliminar` a nivel de use case; solo `ADMIN_PLATFORM` posee estos permisos.
-- `colecciones`: función `GenerarSQLAgregarColumnas` en el ddl generator para `ALTER TABLE` seguro.
-- `colecciones`: métodos `ActualizarMetadatos`, `DesactivarMetadatos` y `EliminarMetadatos` en el repositorio.
 - `colecciones`: reactivada la vinculación automática del trigger forense de auditoría en toda tabla dinámica creada por el motor DDL.
 - `auditoria`: migración `000008` con el trigger `trg_prohibir_modificacion` que bloquea `UPDATE`, `DELETE` y `TRUNCATE` sobre la bitácora a nivel de motor.
 - `docs`: actualización de README con estructura, servicios, endpoints y notas de los ocho dominios.
