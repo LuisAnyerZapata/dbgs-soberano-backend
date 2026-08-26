@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- `colecciones`: RPC `ActualizarColeccion` (`POST /v1/colecciones/{nombre}/actualizar`) — edición completa de tablas dinámicas con 5 operaciones: agregar columnas (`ADD COLUMN`), renombrar columnas (`RENAME COLUMN`), cambiar tipo (`ALTER COLUMN TYPE`), eliminar columnas (`DROP COLUMN` con `confirmar=true`) y renombrar tabla (`ALTER TABLE RENAME TO` con `confirmar=true`).
+- `seguridad`: los roles operativos (DBA, DEVELOPER, AUDITOR, ANALYST, SERVICE_ACCOUNT) ya no se definen en el repositorio; el Administrador de Plataforma los crea a través de la API (`POST /v1/seguridad/roles` + `POST /v1/seguridad/roles/{id}/permisos`).
+- `colecciones`: edicion completa de tablas dinamicas con 5 operaciones: agregar, renombrar, cambiar tipo, eliminar columnas y renombrar tabla.
 - `colecciones`: mensajes `RenombrarColumnaProto` y `CambiarTipoColumnaProto` en el proto para las operaciones de edición.
 - `colecciones`: función `GenerarSQLRenombrarColumna` en el ddl generator.
 - `colecciones`: función `GenerarSQLCambiarTipoColumna` en el ddl generator.

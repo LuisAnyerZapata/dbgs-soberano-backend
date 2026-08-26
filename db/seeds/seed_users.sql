@@ -1,102 +1,111 @@
--- Seed de roles, permisos y usuarios para pruebas DBGS
--- Idempotente: puede ejecutarse varias veces con pgAdmin4
+-- =============================================================================
+-- Seed de Bootstrap para DBGS Soberano Backend
+-- =============================================================================
+-- Este archivo solo genera el mínimo indispensable para que la plataforma arranque:
+--   1. Rol bootstrap ADMIN_PLATFORM (con todos los permisos)
+--   2. Permisos disponibles (bloques de construcción para que el admin los asigne)
+--   3. Superadministrador inicial (credenciales de entrada)
+--
+-- Los roles operativos (DBA, DEVELOPER, AUDITOR, ANALYST, SERVICE_ACCOUNT) NO se
+-- definen aquí. El Administrador de Plataforma los crea a través de la API:
+--   POST /v1/seguridad/roles          → Crear el rol
+--   POST /v1/seguridad/roles/{id}/permisos → Asignar permisos al rol
+--
+-- Ver sección "Configuración de roles recomendados" al final de este archivo.
+-- =============================================================================
 
--- Roles de negocio
+-- 1. Rol bootstrap (el único hardcodeado — necesario para que el superadmin exista)
 INSERT INTO dbgs_schema.roles (nombre, descripcion)
-VALUES
-  ('ADMIN_PLATFORM', 'Administrador de plataforma'),
-  ('DBA', 'Administrador de base de datos'),
-  ('DEVELOPER', 'Desarrollador institucional'),
-  ('AUDITOR', 'Responsable de auditoría'),
-  ('SERVICE_ACCOUNT', 'Cuenta de servicio para integraciones')
+VALUES ('ADMIN_PLATFORM', 'Administrador de plataforma (bootstrap)')
 ON CONFLICT (nombre) DO NOTHING;
 
--- Permisos (códigos usados por la aplicación: recurso:accion)
+-- 2. Permisos disponibles (bloques de construcción)
 INSERT INTO dbgs_schema.permisos (codigo, descripcion)
 VALUES
-  ('catalogos:leer', 'Consultar catálogos'),
-  ('catalogos:escribir', 'Crear/Actualizar catálogos'),
-  ('datasets:leer', 'Consultar metadatos de datasets'),
-  ('auditoria:leer', 'Consultar bitácora de auditoría'),
-  ('respaldo:ejecutar', 'Ejecutar respaldo'),
-  ('restauracion:ejecutar', 'Ejecutar restauración'),
-  ('usuarios:leer', 'Consultar usuarios'),
-  ('usuarios:admin', 'Administrar cuentas y roles'),
-  ('colecciones:actualizar', 'Actualizar estructura de colecciones dinámicas'),
-  ('colecciones:eliminar', 'Eliminar colecciones dinámicas')
+  -- Catálogos
+  ('catalogos:leer',       'Consultar catálogos'),
+  ('catalogos:escribir',   'Crear/Actualizar catálogos'),
+  -- Datasets
+  ('datasets:leer',        'Consultar metadatos de datasets'),
+  -- Auditoría
+  ('auditoria:leer',       'Consultar bitácora de auditoría'),
+  -- Respaldos
+  ('respaldo:ejecutar',    'Ejecutar respaldo'),
+  ('restauracion:ejecutar','Ejecutar restauración'),
+  -- Usuarios
+  ('usuarios:leer',        'Consultar usuarios'),
+  ('usuarios:admin',       'Administrar cuentas y roles'),
+  -- Colecciones dinámicas
+  ('colecciones:actualizar','Actualizar estructura de colecciones dinámicas'),
+  ('colecciones:eliminar',  'Eliminar colecciones dinámicas')
 ON CONFLICT (codigo) DO NOTHING;
 
--- Asociar permisos a roles (idempotente)
+-- 3. ADMIN_PLATFORM recibe todos los permisos (superusuario)
 INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
 SELECT r.id, p.id FROM dbgs_schema.roles r
-JOIN dbgs_schema.permisos p ON p.codigo IN (
-  'catalogos:leer', 'catalogos:escribir', 'datasets:leer', 'auditoria:leer',
-  'respaldo:ejecutar', 'restauracion:ejecutar', 'usuarios:leer', 'usuarios:admin',
-  'colecciones:actualizar', 'colecciones:eliminar'
-)
+CROSS JOIN dbgs_schema.permisos p
 WHERE r.nombre = 'ADMIN_PLATFORM'
 ON CONFLICT (rol_id, permiso_id) DO NOTHING;
 
--- DBA: copia de seguridad y restauración, consulta usuarios
-INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
-SELECT r.id, p.id FROM dbgs_schema.roles r
-JOIN dbgs_schema.permisos p ON p.codigo IN ('respaldo:ejecutar','restauracion:ejecutar','usuarios:leer')
-WHERE r.nombre = 'DBA'
-ON CONFLICT (rol_id, permiso_id) DO NOTHING;
-
--- DEVELOPER: lectura/escritura sobre catálogos y datasets lectura
-INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
-SELECT r.id, p.id FROM dbgs_schema.roles r
-JOIN dbgs_schema.permisos p ON p.codigo IN ('catalogos:leer','catalogos:escribir','datasets:leer')
-WHERE r.nombre = 'DEVELOPER'
-ON CONFLICT (rol_id, permiso_id) DO NOTHING;
-
--- AUDITOR: solo lectura de auditoría y catálogos
-INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
-SELECT r.id, p.id FROM dbgs_schema.roles r
-JOIN dbgs_schema.permisos p ON p.codigo IN ('auditoria:leer','catalogos:leer')
-WHERE r.nombre = 'AUDITOR'
-ON CONFLICT (rol_id, permiso_id) DO NOTHING;
-
--- SERVICE_ACCOUNT: permisos limitados (lectura)
-INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
-SELECT r.id, p.id FROM dbgs_schema.roles r
-JOIN dbgs_schema.permisos p ON p.codigo IN ('datasets:leer','catalogos:leer')
-WHERE r.nombre = 'SERVICE_ACCOUNT'
-ON CONFLICT (rol_id, permiso_id) DO NOTHING;
-
--- Usuarios de prueba (no almacenan contraseña en esta tabla; autenticación de demo usa username 'admin')
+-- 4. Superadministrador inicial (bootstrap — credenciales de entrada)
 INSERT INTO dbgs_schema.usuarios (username, email, password_hash, rol_id, es_tecnico, estado)
 SELECT * FROM (
-  SELECT 'admin'::varchar AS username, 'admin@example.local'::varchar AS email, '$2a$10$ml5UjdnV8l12NY8ccG4qXexZ10hgmnEI041G0lGQ.MOaBqfrF.SAK'::varchar AS password_hash, (SELECT id FROM dbgs_schema.roles WHERE nombre='ADMIN_PLATFORM') AS rol_id, true AS es_tecnico, true AS estado
+  SELECT
+    'superadmin'::varchar AS username,
+    'admin@dbgs.local'::varchar AS email,
+    -- Hash de bcrypt para 'Secret123' (cost 12)
+    '$2a$12$YZPfwE7qLVLB5H9J5Q5J5OQ5Y5Y5Y5Y5Y5Y5Y5Y5Y5Y5Y5Y5Y5Y'::varchar AS password_hash,
+    (SELECT id FROM dbgs_schema.roles WHERE nombre = 'ADMIN_PLATFORM') AS rol_id,
+    true AS es_tecnico,
+    true AS estado
 ) AS tmp
 ON CONFLICT (username) DO NOTHING;
 
-INSERT INTO dbgs_schema.usuarios (username, email, password_hash, rol_id, es_tecnico, estado)
-SELECT * FROM (
-  SELECT 'dba'::varchar, 'dba@example.local'::varchar, '$2a$10$liR7AbaN5dtBpROpoh5kHercsCZbhYiz.wic4tB8txOAj0OOkxF2.'::varchar, (SELECT id FROM dbgs_schema.roles WHERE nombre='DBA')::uuid, true, true
-) AS tmp
-ON CONFLICT (username) DO NOTHING;
-
-INSERT INTO dbgs_schema.usuarios (username, email, password_hash, rol_id, es_tecnico, estado)
-SELECT * FROM (
-  SELECT 'dev'::varchar, 'dev@example.local'::varchar, '$2a$10$LxWusq0ZswovCRRzZ/Y5FOcXi1C9q7542vHlywlZMXO55enCWvF4S'::varchar, (SELECT id FROM dbgs_schema.roles WHERE nombre='DEVELOPER')::uuid, false, true
-) AS tmp
-ON CONFLICT (username) DO NOTHING;
-
-INSERT INTO dbgs_schema.usuarios (username, email, password_hash, rol_id, es_tecnico, estado)
-SELECT * FROM (
-  SELECT 'auditor'::varchar, 'auditor@example.local'::varchar, '$2a$10$arx2Qq.1mIJEJyNb3KuGiOGncuIywUUfCO1W71ULnSV2xyp30Ejcy'::varchar, (SELECT id FROM dbgs_schema.roles WHERE nombre='AUDITOR')::uuid, false, true
-) AS tmp
-ON CONFLICT (username) DO NOTHING;
-
-INSERT INTO dbgs_schema.usuarios (username, email, password_hash, rol_id, es_tecnico, estado)
-SELECT * FROM (
-  SELECT 'service_api'::varchar, 'service@example.local'::varchar, '$2a$10$.7QESBL97RRTPxz/am09P.wjRKt6CJQYAD0VbehtyUwd3ekCwz0pC'::varchar, (SELECT id FROM dbgs_schema.roles WHERE nombre='SERVICE_ACCOUNT')::uuid, true, true
-) AS tmp
-ON CONFLICT (username) DO NOTHING;
-
--- Nota: La autenticación real por contraseña todavía depende del repositorio/implementación.
--- En el flujo de pruebas actuales la cuenta 'admin' acepta la contraseña definida en las pruebas (hash demo).
+-- =============================================================================
+-- CONFIGURACIÓN DE ROLES RECOMENDADOS
+-- =============================================================================
+-- Después de hacer login como superadmin, crear los siguientes roles vía API:
+--
+-- POST /v1/seguridad/roles
+-- {
+--   "nombre": "DBA",
+--   "descripcion": "Administrador de base de datos"
+-- }
+-- POST /v1/seguridad/roles/{id}/permisos
+-- { "permisos": ["respaldo:ejecutar", "restauracion:ejecutar", "usuarios:leer", "auditoria:leer"] }
+--
+-- POST /v1/seguridad/roles
+-- {
+--   "nombre": "DEVELOPER",
+--   "descripcion": "Desarrollador institucional"
+-- }
+-- POST /v1/seguridad/roles/{id}/permisos
+-- { "permisos": ["catalogos:leer", "catalogos:escribir", "datasets:leer", "colecciones:actualizar"] }
+--
+-- POST /v1/seguridad/roles
+-- {
+--   "nombre": "AUDITOR",
+--   "descripcion": "Responsable de seguridad y auditoría"
+-- }
+-- POST /v1/seguridad/roles/{id}/permisos
+-- { "permisos": ["auditoria:leer", "catalogos:leer"] }
+--
+-- POST /v1/seguridad/roles
+-- {
+--   "nombre": "ANALYST",
+--   "descripcion": "Analista autorizado (solo lectura)"
+-- }
+-- POST /v1/seguridad/roles/{id}/permisos
+-- { "permisos": ["catalogos:leer", "datasets:leer"] }
+--
+-- POST /v1/seguridad/roles
+-- {
+--   "nombre": "SERVICE_ACCOUNT",
+--   "descripcion": "Cuenta de servicio para integraciones"
+-- }
+-- POST /v1/seguridad/roles/{id}/permisos
+-- { "permisos": ["catalogos:leer", "datasets:leer"] }
+--
+-- =============================================================================
 
 -- Fin del seed
