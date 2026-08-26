@@ -17,7 +17,30 @@ type ListarColeccionesOutput struct {
     Total       int64                    `json:"total"`
 }
 
+type ActualizarColeccionInput struct {
+    Nombre   string                  `json:"nombre"`
+    Campos   []entity.CampoDinamico `json:"campos"`
+}
+
+type ActualizarColeccionOutput struct {
+    ID             string `json:"id"`
+    NombreLogico   string `json:"nombre_logico"`
+    CamposAgregados int   `json:"campos_agregados"`
+}
+
+type EliminarColeccionInput struct {
+    Nombre   string `json:"nombre"`
+    Confirmar bool  `json:"confirmar"`
+}
+
+type EliminarColeccionOutput struct {
+    NombreLogico   string `json:"nombre_logico"`
+    AccionRealizada string `json:"accion_realizada"`
+}
+
 type ColeccionPort interface {
     CrearColeccion(ctx context.Context, input CrearColeccionInput) (*entity.ColeccionRegistro, error)
-    ListarColecciones(ctx context.Context, limite, offset int) (*ListarColeccionesOutput, error) // NUEVO
+    ListarColecciones(ctx context.Context, limite, offset int) (*ListarColeccionesOutput, error)
+    ActualizarColeccion(ctx context.Context, input ActualizarColeccionInput) (*ActualizarColeccionOutput, error)
+    EliminarColeccion(ctx context.Context, input EliminarColeccionInput) (*EliminarColeccionOutput, error)
 }

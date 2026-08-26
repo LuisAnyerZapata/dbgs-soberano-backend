@@ -95,6 +95,54 @@ func ObtenerNombreTablaCompleto(nombreLogico string) string {
     return DBGS_SCHEMA + ".dyn_" + strings.ToLower(nombreLogico)
 }
 
+// GenerarSQLAgregarColumnas genera ALTER TABLE ... ADD COLUMN para cada campo nuevo.
+// No toca columnas existentes; valida nombres reservados y formato.
+func GenerarSQLAgregarColumnas(nombreFisico string, campos []entity.CampoDinamico) (string, error) {
+    if len(campos) == 0 {
+        return "", nil
+    }
+
+    partes := strings.Split(nombreFisico, ".")
+    esquema := partes[0]
+    tabla := partes[1]
+
+    var sentencias []string
+
+    for _, campo := range campos {
+        nombreCampo := strings.ToLower(campo.Nombre)
+
+        if nombreCampo == "id" || nombreCampo == "created_at" || nombreCampo == "updated_at" || nombreCampo == "created_by" || nombreCampo == "updated_by" {
+            return "", fmt.Errorf("el nombre de campo '%s' está reservado para el sistema", nombreCampo)
+        }
+
+        if !regexNombreSeguro.MatchString(nombreCampo) {
+            return "", fmt.Errorf("nombre de campo inválido: '%s'", nombreCampo)
+        }
+
+        tipoSQL, err := mapearTipoPostgres(campo.Tipo)
+        if err != nil {
+            return "", err
+        }
+
+        definicion := fmt.Sprintf("%s %s", pq.QuoteIdentifier(nombreCampo), tipoSQL)
+        if !campo.Nulo {
+            definicion += " NOT NULL"
+        }
+
+        sentencia := fmt.Sprintf("ALTER TABLE %s.%s ADD COLUMN IF NOT EXISTS %s",
+            esquema, pq.QuoteIdentifier(tabla), definicion)
+        sentencias = append(sentencias, sentencia+";")
+
+        if campo.Unico {
+            sentencia := fmt.Sprintf("CREATE UNIQUE INDEX IF NOT EXISTS idx_%s_%s ON %s.%s (%s)",
+                tabla, nombreCampo, esquema, pq.QuoteIdentifier(tabla), pq.QuoteIdentifier(nombreCampo))
+            sentencias = append(sentencias, sentencia+";")
+        }
+    }
+
+    return strings.Join(sentencias, "\n"), nil
+}
+
 // mapearTipoPostgres traduce nuestro enum seguro a tipos nativos de PostgreSQL
 func mapearTipoPostgres(tipo entity.FieldType) (string, error) {
     switch tipo {

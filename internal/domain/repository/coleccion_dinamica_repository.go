@@ -17,4 +17,13 @@ type ColeccionDinamicaRepository interface {
     ObtenerMetadatosPorNombre(ctx context.Context, nombreLogico string) (*entity.ColeccionRegistro, error)
 
     ListarMetadatos(ctx context.Context, limite, offset int) ([]entity.ColeccionRegistro, int64, error)
+
+    // ActualizarMetadatos sobrescribe la estructura JSON de una colección existente
+    ActualizarMetadatos(ctx context.Context, nombreLogico string, estructura []byte) error
+
+    // DesactivarMetadatos marca una colección como inactiva (soft delete)
+    DesactivarMetadatos(ctx context.Context, nombreLogico string) error
+
+    // EliminarMetadatos elimina el registro del diccionario de datos
+    EliminarMetadatos(ctx context.Context, nombreLogico string) error
 }

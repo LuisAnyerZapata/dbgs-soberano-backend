@@ -23,6 +23,21 @@ service ColeccionesService {
       get: "/v1/colecciones"
     };
   }
+
+  // Agrega nuevas columnas a una tabla dinámica existente (solo aditivo)
+  rpc ActualizarColeccion (ActualizarColeccionRequest) returns (ActualizarColeccionResponse) {
+    option (google.api.http) = {
+      post: "/v1/colecciones/{nombre}/actualizar"
+      body: "*"
+    };
+  }
+
+  // Elimina o desactiva una colección dinámica
+  rpc EliminarColeccion (EliminarColeccionRequest) returns (EliminarColeccionResponse) {
+    option (google.api.http) = {
+      delete: "/v1/colecciones/{nombre}"
+    };
+  }
 }
 
 // --- Mensajes para Crear ---
@@ -69,4 +84,31 @@ message ColeccionRegistroProto {
 message ListarColeccionesResponse {
   repeated ColeccionRegistroProto colecciones = 1;
   int32 total = 2;
+}
+
+// --- Mensajes para Actualizar (solo agregar columnas) ---
+
+message ActualizarColeccionRequest {
+  string nombre = 1;                       // Nombre lógico de la colección a actualizar
+  repeated CampoDinamicoProto campos = 2;  // Columnas nuevas a agregar (las existentes se ignoran)
+}
+
+message ActualizarColeccionResponse {
+  string id = 1;
+  string nombre_logico = 2;
+  int32 campos_agregados = 3;  // Cantidad de columnas efectivamente añadidas
+  string mensaje = 4;
+}
+
+// --- Mensajes para Eliminar ---
+
+message EliminarColeccionRequest {
+  string nombre = 1;    // Nombre lógico de la colección a eliminar
+  bool confirmar = 2;   // true = DROP TABLE + DELETE metadata; false = soft delete (esta_activa=false)
+}
+
+message EliminarColeccionResponse {
+  string nombre_logico = 1;
+  string accion_realizada = 2;  // "desactivada" o "eliminada"
+  string mensaje = 3;
 }

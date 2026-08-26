@@ -78,7 +78,7 @@ func main() {
     seguridadUseCase := usecase.NewSeguridadUseCase(seguridadRepo, cfg.Security.JWTSecret, cfg.Security.TokenTTLMinutes)
 
     integracionUseCase := usecase.NewIntegracionUseCase(integracionRepo)
-    coleccionUseCase := usecase.NewColeccionUseCase(coleccionRepo)
+    coleccionUseCase := usecase.NewColeccionUseCase(coleccionRepo, seguridadRepo)
 
     // Dominio de Respaldos: el motor ejecuta los scripts bash de db/backup con las
     // credenciales centralizadas; el caso de uso orquesta pg_dump/pg_restore asíncrono.

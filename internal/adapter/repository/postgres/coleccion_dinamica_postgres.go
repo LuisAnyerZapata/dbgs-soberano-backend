@@ -113,3 +113,59 @@ func (r *coleccionDinamicaPostgresRepository) ListarMetadatos(ctx context.Contex
     }
     return colecciones, total, nil
 }
+
+// ActualizarMetadatos sobrescribe la estructura JSON de una colección existente
+func (r *coleccionDinamicaPostgresRepository) ActualizarMetadatos(ctx context.Context, nombreLogico string, estructura []byte) error {
+    query := `
+        UPDATE dbgs_schema.colecciones_dinamicas
+        SET estructura = $1
+        WHERE LOWER(nombre_logico) = LOWER($2)
+    `
+    result, err := r.db.ExecContext(ctx, query, estructura, nombreLogico)
+    if err != nil {
+        log.Printf("ERROR EN BD (ColeccionDinamica.ActualizarMetadatos '%s'): %v", nombreLogico, err)
+        return entity.ErrErrorInterno
+    }
+    filas, _ := result.RowsAffected()
+    if filas == 0 {
+        return entity.ErrEntidadNoEncontrada
+    }
+    return nil
+}
+
+// DesactivarMetadatos marca una colección como inactiva (soft delete)
+func (r *coleccionDinamicaPostgresRepository) DesactivarMetadatos(ctx context.Context, nombreLogico string) error {
+    query := `
+        UPDATE dbgs_schema.colecciones_dinamicas
+        SET esta_activa = false
+        WHERE LOWER(nombre_logico) = LOWER($1)
+    `
+    result, err := r.db.ExecContext(ctx, query, nombreLogico)
+    if err != nil {
+        log.Printf("ERROR EN BD (ColeccionDinamica.DesactivarMetadatos '%s'): %v", nombreLogico, err)
+        return entity.ErrErrorInterno
+    }
+    filas, _ := result.RowsAffected()
+    if filas == 0 {
+        return entity.ErrEntidadNoEncontrada
+    }
+    return nil
+}
+
+// EliminarMetadatos elimina el registro del diccionario de datos
+func (r *coleccionDinamicaPostgresRepository) EliminarMetadatos(ctx context.Context, nombreLogico string) error {
+    query := `
+        DELETE FROM dbgs_schema.colecciones_dinamicas
+        WHERE LOWER(nombre_logico) = LOWER($1)
+    `
+    result, err := r.db.ExecContext(ctx, query, nombreLogico)
+    if err != nil {
+        log.Printf("ERROR EN BD (ColeccionDinamica.EliminarMetadatos '%s'): %v", nombreLogico, err)
+        return entity.ErrErrorInterno
+    }
+    filas, _ := result.RowsAffected()
+    if filas == 0 {
+        return entity.ErrEntidadNoEncontrada
+    }
+    return nil
+}

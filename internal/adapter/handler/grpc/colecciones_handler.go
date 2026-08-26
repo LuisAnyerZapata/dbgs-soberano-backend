@@ -67,7 +67,7 @@ func (h *ColeccionesHandler) ListarColecciones(ctx context.Context, req *pb.List
             NombreLogico:   c.NombreLogico,
             NombreFisico:   c.NombreFisico,
             Descripcion:    c.Descripcion,
-            EstructuraJson: string(c.EstructuraJSON), // Convertimos el []byte a string para el JSON
+            EstructuraJson: string(c.EstructuraJSON),
             EstaActiva:     c.EstaActiva,
             CreatedAt:      c.CreatedAt.Format(time.RFC3339),
         })
@@ -76,5 +76,60 @@ func (h *ColeccionesHandler) ListarColecciones(ctx context.Context, req *pb.List
     return &pb.ListarColeccionesResponse{
         Colecciones: pbColecciones,
         Total:       int32(output.Total),
+    }, nil
+}
+
+func (h *ColeccionesHandler) ActualizarColeccion(ctx context.Context, req *pb.ActualizarColeccionRequest) (*pb.ActualizarColeccionResponse, error) {
+    var camposDominio []entity.CampoDinamico
+    for _, c := range req.Campos {
+        camposDominio = append(camposDominio, entity.CampoDinamico{
+            Nombre:      c.GetNombre(),
+            Tipo:        entity.FieldType(c.GetTipo()),
+            Nulo:        c.GetNulo(),
+            Unico:       c.GetUnico(),
+            Descripcion: c.GetDescripcion(),
+        })
+    }
+
+    input := port.ActualizarColeccionInput{
+        Nombre: req.GetNombre(),
+        Campos: camposDominio,
+    }
+
+    output, err := h.useCase.ActualizarColeccion(ctx, input)
+    if err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    return &pb.ActualizarColeccionResponse{
+        Id:             output.ID,
+        NombreLogico:   output.NombreLogico,
+        CamposAgregados: int32(output.CamposAgregados),
+        Mensaje:        "Colección actualizada exitosamente",
+    }, nil
+}
+
+func (h *ColeccionesHandler) EliminarColeccion(ctx context.Context, req *pb.EliminarColeccionRequest) (*pb.EliminarColeccionResponse, error) {
+    input := port.EliminarColeccionInput{
+        Nombre:   req.GetNombre(),
+        Confirmar: req.GetConfirmar(),
+    }
+
+    output, err := h.useCase.EliminarColeccion(ctx, input)
+    if err != nil {
+        return nil, mapDomainErrorToGRPC(err)
+    }
+
+    var mensaje string
+    if output.AccionRealizada == "eliminada" {
+        mensaje = "Colección eliminada permanentemente"
+    } else {
+        mensaje = "Colección desactivada (tabla física preservada)"
+    }
+
+    return &pb.EliminarColeccionResponse{
+        NombreLogico:    output.NombreLogico,
+        AccionRealizada: output.AccionRealizada,
+        Mensaje:         mensaje,
     }, nil
 }

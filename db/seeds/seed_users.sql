@@ -21,7 +21,9 @@ VALUES
   ('respaldo:ejecutar', 'Ejecutar respaldo'),
   ('restauracion:ejecutar', 'Ejecutar restauración'),
   ('usuarios:leer', 'Consultar usuarios'),
-  ('usuarios:admin', 'Administrar cuentas y roles')
+  ('usuarios:admin', 'Administrar cuentas y roles'),
+  ('colecciones:actualizar', 'Actualizar estructura de colecciones dinámicas'),
+  ('colecciones:eliminar', 'Eliminar colecciones dinámicas')
 ON CONFLICT (codigo) DO NOTHING;
 
 -- Asociar permisos a roles (idempotente)
@@ -29,7 +31,8 @@ INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
 SELECT r.id, p.id FROM dbgs_schema.roles r
 JOIN dbgs_schema.permisos p ON p.codigo IN (
   'catalogos:leer', 'catalogos:escribir', 'datasets:leer', 'auditoria:leer',
-  'respaldo:ejecutar', 'restauracion:ejecutar', 'usuarios:leer', 'usuarios:admin'
+  'respaldo:ejecutar', 'restauracion:ejecutar', 'usuarios:leer', 'usuarios:admin',
+  'colecciones:actualizar', 'colecciones:eliminar'
 )
 WHERE r.nombre = 'ADMIN_PLATFORM'
 ON CONFLICT (rol_id, permiso_id) DO NOTHING;

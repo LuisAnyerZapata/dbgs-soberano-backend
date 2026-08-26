@@ -19,8 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ColeccionesService_CrearColeccion_FullMethodName    = "/dbgs.v1.ColeccionesService/CrearColeccion"
-	ColeccionesService_ListarColecciones_FullMethodName = "/dbgs.v1.ColeccionesService/ListarColecciones"
+	ColeccionesService_CrearColeccion_FullMethodName      = "/dbgs.v1.ColeccionesService/CrearColeccion"
+	ColeccionesService_ListarColecciones_FullMethodName   = "/dbgs.v1.ColeccionesService/ListarColecciones"
+	ColeccionesService_ActualizarColeccion_FullMethodName = "/dbgs.v1.ColeccionesService/ActualizarColeccion"
+	ColeccionesService_EliminarColeccion_FullMethodName   = "/dbgs.v1.ColeccionesService/EliminarColeccion"
 )
 
 // ColeccionesServiceClient is the client API for ColeccionesService service.
@@ -33,6 +35,10 @@ type ColeccionesServiceClient interface {
 	CrearColeccion(ctx context.Context, in *CrearColeccionRequest, opts ...grpc.CallOption) (*CrearColeccionResponse, error)
 	// Lista las colecciones dinámicas registradas en el diccionario de datos
 	ListarColecciones(ctx context.Context, in *ListarColeccionesRequest, opts ...grpc.CallOption) (*ListarColeccionesResponse, error)
+	// Agrega nuevas columnas a una tabla dinámica existente (solo aditivo)
+	ActualizarColeccion(ctx context.Context, in *ActualizarColeccionRequest, opts ...grpc.CallOption) (*ActualizarColeccionResponse, error)
+	// Elimina o desactiva una colección dinámica
+	EliminarColeccion(ctx context.Context, in *EliminarColeccionRequest, opts ...grpc.CallOption) (*EliminarColeccionResponse, error)
 }
 
 type coleccionesServiceClient struct {
@@ -63,6 +69,26 @@ func (c *coleccionesServiceClient) ListarColecciones(ctx context.Context, in *Li
 	return out, nil
 }
 
+func (c *coleccionesServiceClient) ActualizarColeccion(ctx context.Context, in *ActualizarColeccionRequest, opts ...grpc.CallOption) (*ActualizarColeccionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ActualizarColeccionResponse)
+	err := c.cc.Invoke(ctx, ColeccionesService_ActualizarColeccion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *coleccionesServiceClient) EliminarColeccion(ctx context.Context, in *EliminarColeccionRequest, opts ...grpc.CallOption) (*EliminarColeccionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EliminarColeccionResponse)
+	err := c.cc.Invoke(ctx, ColeccionesService_EliminarColeccion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ColeccionesServiceServer is the server API for ColeccionesService service.
 // All implementations must embed UnimplementedColeccionesServiceServer
 // for forward compatibility.
@@ -73,6 +99,10 @@ type ColeccionesServiceServer interface {
 	CrearColeccion(context.Context, *CrearColeccionRequest) (*CrearColeccionResponse, error)
 	// Lista las colecciones dinámicas registradas en el diccionario de datos
 	ListarColecciones(context.Context, *ListarColeccionesRequest) (*ListarColeccionesResponse, error)
+	// Agrega nuevas columnas a una tabla dinámica existente (solo aditivo)
+	ActualizarColeccion(context.Context, *ActualizarColeccionRequest) (*ActualizarColeccionResponse, error)
+	// Elimina o desactiva una colección dinámica
+	EliminarColeccion(context.Context, *EliminarColeccionRequest) (*EliminarColeccionResponse, error)
 	mustEmbedUnimplementedColeccionesServiceServer()
 }
 
@@ -88,6 +118,12 @@ func (UnimplementedColeccionesServiceServer) CrearColeccion(context.Context, *Cr
 }
 func (UnimplementedColeccionesServiceServer) ListarColecciones(context.Context, *ListarColeccionesRequest) (*ListarColeccionesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListarColecciones not implemented")
+}
+func (UnimplementedColeccionesServiceServer) ActualizarColeccion(context.Context, *ActualizarColeccionRequest) (*ActualizarColeccionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActualizarColeccion not implemented")
+}
+func (UnimplementedColeccionesServiceServer) EliminarColeccion(context.Context, *EliminarColeccionRequest) (*EliminarColeccionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EliminarColeccion not implemented")
 }
 func (UnimplementedColeccionesServiceServer) mustEmbedUnimplementedColeccionesServiceServer() {}
 func (UnimplementedColeccionesServiceServer) testEmbeddedByValue()                            {}
@@ -146,6 +182,42 @@ func _ColeccionesService_ListarColecciones_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ColeccionesService_ActualizarColeccion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActualizarColeccionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ColeccionesServiceServer).ActualizarColeccion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ColeccionesService_ActualizarColeccion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ColeccionesServiceServer).ActualizarColeccion(ctx, req.(*ActualizarColeccionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ColeccionesService_EliminarColeccion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EliminarColeccionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ColeccionesServiceServer).EliminarColeccion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ColeccionesService_EliminarColeccion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ColeccionesServiceServer).EliminarColeccion(ctx, req.(*EliminarColeccionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ColeccionesService_ServiceDesc is the grpc.ServiceDesc for ColeccionesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -160,6 +232,14 @@ var ColeccionesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListarColecciones",
 			Handler:    _ColeccionesService_ListarColecciones_Handler,
+		},
+		{
+			MethodName: "ActualizarColeccion",
+			Handler:    _ColeccionesService_ActualizarColeccion_Handler,
+		},
+		{
+			MethodName: "EliminarColeccion",
+			Handler:    _ColeccionesService_EliminarColeccion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
