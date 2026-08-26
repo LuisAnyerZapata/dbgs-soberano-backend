@@ -128,7 +128,7 @@ func (h *SeguridadHandler) CrearRol(ctx context.Context, req *pb.CrearRolRequest
         return nil, status.Error(codes.InvalidArgument, "el nombre del rol es obligatorio")
     }
 
-    rol, err := h.seguridadUseCase.CrearRol(ctx, req.GetNombre(), req.GetDescripcion())
+    rol, err := h.seguridadUseCase.CrearRol(ctx, req.GetNombre(), req.GetDescription())
     if err != nil {
         return nil, mapDomainErrorToGRPC(err)
     }
@@ -136,7 +136,7 @@ func (h *SeguridadHandler) CrearRol(ctx context.Context, req *pb.CrearRolRequest
     return &pb.CrearRolResponse{
         Id:          rol.ID,
         Nombre:      rol.Nombre,
-        Descripcion: rol.Descripcion,
+        Description: rol.Descripcion,
         Mensaje:     "Rol creado exitosamente",
     }, nil
 }
@@ -152,7 +152,7 @@ func (h *SeguridadHandler) ListarRoles(ctx context.Context, req *pb.ListarRolesR
         pbRoles = append(pbRoles, &pb.RolProto{
             Id:          r.ID,
             Nombre:      r.Nombre,
-            Descripcion: r.Descripcion,
+            Description: r.Descripcion,
         })
     }
 
@@ -172,7 +172,7 @@ func (h *SeguridadHandler) ObtenerRol(ctx context.Context, req *pb.ObtenerRolReq
     return &pb.ObtenerRolResponse{
         Id:          rol.ID,
         Nombre:      rol.Nombre,
-        Descripcion: rol.Descripcion,
+        Description: rol.Descripcion,
     }, nil
 }
 
@@ -181,14 +181,14 @@ func (h *SeguridadHandler) ActualizarRol(ctx context.Context, req *pb.Actualizar
         return nil, status.Error(codes.InvalidArgument, "el ID y nombre del rol son obligatorios")
     }
 
-    if err := h.seguridadUseCase.ActualizarRol(ctx, req.GetId(), req.GetNombre(), req.GetDescripcion()); err != nil {
+    if err := h.seguridadUseCase.ActualizarRol(ctx, req.GetId(), req.GetNombre(), req.GetDescription()); err != nil {
         return nil, mapDomainErrorToGRPC(err)
     }
 
     return &pb.ActualizarRolResponse{
         Id:          req.GetId(),
         Nombre:      req.GetNombre(),
-        Descripcion: req.GetDescripcion(),
+        Description: req.GetDescription(),
         Mensaje:     "Rol actualizado exitosamente",
     }, nil
 }
@@ -222,11 +222,11 @@ func (h *SeguridadHandler) VincularPermisoRol(ctx context.Context, req *pb.Vincu
 }
 
 func (h *SeguridadHandler) DesvincularPermisoRol(ctx context.Context, req *pb.DesvincularPermisoRolRequest) (*pb.DesvincularPermisoRolResponse, error) {
-    if req.GetRolId() == "" || req.GetPermisoId() == "" {
-        return nil, status.Error(codes.InvalidArgument, "el ID del rol y del permiso son obligatorios")
+    if req.GetRolId() == "" || req.GetPermisoCodigo() == "" {
+        return nil, status.Error(codes.InvalidArgument, "el ID del rol y el código del permiso son obligatorios")
     }
 
-    if err := h.seguridadUseCase.DesvincularPermiso(ctx, req.GetRolId(), req.GetPermisoId()); err != nil {
+    if err := h.seguridadUseCase.DesvincularPermiso(ctx, req.GetRolId(), req.GetPermisoCodigo()); err != nil {
         return nil, mapDomainErrorToGRPC(err)
     }
 

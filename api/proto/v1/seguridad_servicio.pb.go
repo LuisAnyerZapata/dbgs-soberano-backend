@@ -510,7 +510,7 @@ func (x *VerificarPermisoResponse) GetRazon() string {
 type CrearRolRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Nombre        string                 `protobuf:"bytes,1,opt,name=nombre,proto3" json:"nombre,omitempty"`
-	Descripcion   string                 `protobuf:"bytes,2,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -552,9 +552,9 @@ func (x *CrearRolRequest) GetNombre() string {
 	return ""
 }
 
-func (x *CrearRolRequest) GetDescripcion() string {
+func (x *CrearRolRequest) GetDescription() string {
 	if x != nil {
-		return x.Descripcion
+		return x.Description
 	}
 	return ""
 }
@@ -563,7 +563,7 @@ type CrearRolResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
-	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Mensaje       string                 `protobuf:"bytes,4,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -613,9 +613,9 @@ func (x *CrearRolResponse) GetNombre() string {
 	return ""
 }
 
-func (x *CrearRolResponse) GetDescripcion() string {
+func (x *CrearRolResponse) GetDescription() string {
 	if x != nil {
-		return x.Descripcion
+		return x.Description
 	}
 	return ""
 }
@@ -667,7 +667,7 @@ type RolProto struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
-	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -716,9 +716,9 @@ func (x *RolProto) GetNombre() string {
 	return ""
 }
 
-func (x *RolProto) GetDescripcion() string {
+func (x *RolProto) GetDescription() string {
 	if x != nil {
-		return x.Descripcion
+		return x.Description
 	}
 	return ""
 }
@@ -815,7 +815,7 @@ type ObtenerRolResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
-	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -864,9 +864,9 @@ func (x *ObtenerRolResponse) GetNombre() string {
 	return ""
 }
 
-func (x *ObtenerRolResponse) GetDescripcion() string {
+func (x *ObtenerRolResponse) GetDescription() string {
 	if x != nil {
-		return x.Descripcion
+		return x.Description
 	}
 	return ""
 }
@@ -875,7 +875,7 @@ type ActualizarRolRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
-	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -924,9 +924,9 @@ func (x *ActualizarRolRequest) GetNombre() string {
 	return ""
 }
 
-func (x *ActualizarRolRequest) GetDescripcion() string {
+func (x *ActualizarRolRequest) GetDescription() string {
 	if x != nil {
-		return x.Descripcion
+		return x.Description
 	}
 	return ""
 }
@@ -935,7 +935,7 @@ type ActualizarRolResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
-	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Mensaje       string                 `protobuf:"bytes,4,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -985,9 +985,9 @@ func (x *ActualizarRolResponse) GetNombre() string {
 	return ""
 }
 
-func (x *ActualizarRolResponse) GetDescripcion() string {
+func (x *ActualizarRolResponse) GetDescription() string {
 	if x != nil {
-		return x.Descripcion
+		return x.Description
 	}
 	return ""
 }
@@ -1194,7 +1194,7 @@ func (x *VincularPermisoRolResponse) GetMensaje() string {
 type DesvincularPermisoRolRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RolId         string                 `protobuf:"bytes,1,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
-	PermisoId     string                 `protobuf:"bytes,2,opt,name=permiso_id,json=permisoId,proto3" json:"permiso_id,omitempty"`
+	PermisoCodigo string                 `protobuf:"bytes,2,opt,name=permiso_codigo,json=permisoCodigo,proto3" json:"permiso_codigo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1236,9 +1236,9 @@ func (x *DesvincularPermisoRolRequest) GetRolId() string {
 	return ""
 }
 
-func (x *DesvincularPermisoRolRequest) GetPermisoId() string {
+func (x *DesvincularPermisoRolRequest) GetPermisoCodigo() string {
 	if x != nil {
-		return x.PermisoId
+		return x.PermisoCodigo
 	}
 	return ""
 }
@@ -1415,17 +1415,17 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\x05razon\x18\x02 \x01(\tR\x05razon\"K\n" +
 	"\x0fCrearRolRequest\x12\x16\n" +
 	"\x06nombre\x18\x01 \x01(\tR\x06nombre\x12 \n" +
-	"\vdescripcion\x18\x02 \x01(\tR\vdescripcion\"v\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\"v\n" +
 	"\x10CrearRolResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
-	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\x12\x18\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x18\n" +
 	"\amensaje\x18\x04 \x01(\tR\amensaje\"\x14\n" +
 	"\x12ListarRolesRequest\"T\n" +
 	"\bRolProto\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
-	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\">\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\">\n" +
 	"\x13ListarRolesResponse\x12'\n" +
 	"\x05roles\x18\x01 \x03(\v2\x11.dbgs.v1.RolProtoR\x05roles\"#\n" +
 	"\x11ObtenerRolRequest\x12\x0e\n" +
@@ -1433,15 +1433,15 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\x12ObtenerRolResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
-	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\"`\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\"`\n" +
 	"\x14ActualizarRolRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
-	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\"{\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\"{\n" +
 	"\x15ActualizarRolResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
 	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
-	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\x12\x18\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x18\n" +
 	"\amensaje\x18\x04 \x01(\tR\amensaje\"$\n" +
 	"\x12EliminarRolRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"/\n" +
@@ -1454,17 +1454,16 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\n" +
 	"vinculados\x18\x01 \x01(\x05R\n" +
 	"vinculados\x12\x18\n" +
-	"\amensaje\x18\x02 \x01(\tR\amensaje\"T\n" +
+	"\amensaje\x18\x02 \x01(\tR\amensaje\"\\\n" +
 	"\x1cDesvincularPermisoRolRequest\x12\x15\n" +
-	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\x12\x1d\n" +
-	"\n" +
-	"permiso_id\x18\x02 \x01(\tR\tpermisoId\"9\n" +
+	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\x12%\n" +
+	"\x0epermiso_codigo\x18\x02 \x01(\tR\rpermisoCodigo\"9\n" +
 	"\x1dDesvincularPermisoRolResponse\x12\x18\n" +
 	"\amensaje\x18\x01 \x01(\tR\amensaje\"1\n" +
 	"\x18ListarPermisosRolRequest\x12\x15\n" +
 	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\"7\n" +
 	"\x19ListarPermisosRolResponse\x12\x1a\n" +
-	"\bpermisos\x18\x01 \x03(\tR\bpermisos2\x8b\f\n" +
+	"\bpermisos\x18\x01 \x03(\tR\bpermisos2\x8f\f\n" +
 	"\x10SeguridadService\x12p\n" +
 	"\x0eGetSetupStatus\x12\x1e.dbgs.v1.GetSetupStatusRequest\x1a\x1f.dbgs.v1.GetSetupStatusResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/auth/setup-status\x12]\n" +
 	"\vCreateSetup\x12\x1b.dbgs.v1.CreateSetupRequest\x1a\x16.dbgs.v1.LoginResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth/setup\x12V\n" +
@@ -1477,8 +1476,8 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"ObtenerRol\x12\x1a.dbgs.v1.ObtenerRolRequest\x1a\x1b.dbgs.v1.ObtenerRolResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/seguridad/roles/{id}\x12s\n" +
 	"\rActualizarRol\x12\x1d.dbgs.v1.ActualizarRolRequest\x1a\x1e.dbgs.v1.ActualizarRolResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/v1/seguridad/roles/{id}\x12j\n" +
 	"\vEliminarRol\x12\x1b.dbgs.v1.EliminarRolRequest\x1a\x1c.dbgs.v1.EliminarRolResponse\" \x82\xd3\xe4\x93\x02\x1a*\x18/v1/seguridad/roles/{id}\x12\x8f\x01\n" +
-	"\x12VincularPermisoRol\x12\".dbgs.v1.VincularPermisoRolRequest\x1a#.dbgs.v1.VincularPermisoRolResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/seguridad/roles/{rol_id}/permisos\x12\xa2\x01\n" +
-	"\x15DesvincularPermisoRol\x12%.dbgs.v1.DesvincularPermisoRolRequest\x1a&.dbgs.v1.DesvincularPermisoRolResponse\":\x82\xd3\xe4\x93\x024*2/v1/seguridad/roles/{rol_id}/permisos/{permiso_id}\x12\x89\x01\n" +
+	"\x12VincularPermisoRol\x12\".dbgs.v1.VincularPermisoRolRequest\x1a#.dbgs.v1.VincularPermisoRolResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/seguridad/roles/{rol_id}/permisos\x12\xa6\x01\n" +
+	"\x15DesvincularPermisoRol\x12%.dbgs.v1.DesvincularPermisoRolRequest\x1a&.dbgs.v1.DesvincularPermisoRolResponse\">\x82\xd3\xe4\x93\x028*6/v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}\x12\x89\x01\n" +
 	"\x11ListarPermisosRol\x12!.dbgs.v1.ListarPermisosRolRequest\x1a\".dbgs.v1.ListarPermisosRolResponse\"-\x82\xd3\xe4\x93\x02'\x12%/v1/seguridad/roles/{rol_id}/permisosB+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
 
 var (

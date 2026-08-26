@@ -281,15 +281,16 @@ func (r *seguridadPostgresRepository) VincularPermisos(ctx context.Context, rolI
     return vinculados, nil
 }
 
-// DesvincularPermiso elimina un permiso de un rol
-func (r *seguridadPostgresRepository) DesvincularPermiso(ctx context.Context, rolID, permisoID string) error {
+// DesvincularPermiso elimina un permiso de un rol por código
+func (r *seguridadPostgresRepository) DesvincularPermiso(ctx context.Context, rolID, permisoCodigo string) error {
     query := `
         DELETE FROM dbgs_schema.roles_permisos
-        WHERE rol_id = $1 AND permiso_id = $2
+        WHERE rol_id = $1
+          AND permiso_id = (SELECT id FROM dbgs_schema.permisos WHERE codigo = $2)
     `
-    _, err := r.db.ExecContext(ctx, query, rolID, permisoID)
+    _, err := r.db.ExecContext(ctx, query, rolID, permisoCodigo)
     if err != nil {
-        log.Printf("ERROR EN BD (Seguridad.DesvincularPermiso): %v", err)
+        log.Printf("ERROR EN BD (Seguridad.DesvincularPermiso rol=%s codigo=%s): %v", rolID, permisoCodigo, err)
         return entity.ErrErrorInterno
     }
     return nil

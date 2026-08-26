@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `docs`: actualización de README con estructura, servicios, endpoints y notas de los ocho dominios.
 
 ### Fixed
+- `seguridad`: campo `description` en JSON de roles ahora acepta el nombre en inglés (`description` en vez de `descripcion`); alinear el proto con la API REST.
+- `seguridad`: endpoint `DELETE /v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}` ahora acepta el código del permiso (ej. `"datasets:leer"`) en vez del UUID interno; consistente con `VincularPermisoRol`.
 - `colecciones`: corregido `DROP TABLE` en `EliminarColeccion` — `nombre_fisico` ya contiene el schema, se eliminó la concatenación redundante que generaba un nombre inválido.
 - `auditoria`: eliminado el endpoint público `RegistrarEvento` (`POST /v1/auditoria/eventos`) para impedir la falsificación de trazas; la bitácora ahora es de solo lectura desde la API.
 - `auditoria`: corregido `ListarEventos` — cast explícito `::timestamptz` en parámetros de fecha (PostgreSQL no infería el tipo de un NULL enviado por lib/pq) y `COALESCE` para columnas nulas (`usuario_id`, `detalles`); el endpoint `GET /v1/auditoria/eventos` nunca había funcionado.

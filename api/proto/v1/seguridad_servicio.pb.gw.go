@@ -394,13 +394,13 @@ func request_SeguridadService_DesvincularPermisoRol_0(ctx context.Context, marsh
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rol_id", err)
 	}
-	val, ok = pathParams["permiso_id"]
+	val, ok = pathParams["permiso_codigo"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permiso_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permiso_codigo")
 	}
-	protoReq.PermisoId, err = runtime.String(val)
+	protoReq.PermisoCodigo, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permiso_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permiso_codigo", err)
 	}
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
@@ -423,13 +423,13 @@ func local_request_SeguridadService_DesvincularPermisoRol_0(ctx context.Context,
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rol_id", err)
 	}
-	val, ok = pathParams["permiso_id"]
+	val, ok = pathParams["permiso_codigo"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permiso_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "permiso_codigo")
 	}
-	protoReq.PermisoId, err = runtime.String(val)
+	protoReq.PermisoCodigo, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permiso_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "permiso_codigo", err)
 	}
 	msg, err := server.DesvincularPermisoRol(ctx, &protoReq)
 	return msg, metadata, err
@@ -706,7 +706,7 @@ func RegisterSeguridadServiceHandlerServer(ctx context.Context, mux *runtime.Ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/dbgs.v1.SeguridadService/DesvincularPermisoRol", runtime.WithHTTPPathPattern("/v1/seguridad/roles/{rol_id}/permisos/{permiso_id}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/dbgs.v1.SeguridadService/DesvincularPermisoRol", runtime.WithHTTPPathPattern("/v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -971,7 +971,7 @@ func RegisterSeguridadServiceHandlerClient(ctx context.Context, mux *runtime.Ser
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/dbgs.v1.SeguridadService/DesvincularPermisoRol", runtime.WithHTTPPathPattern("/v1/seguridad/roles/{rol_id}/permisos/{permiso_id}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/dbgs.v1.SeguridadService/DesvincularPermisoRol", runtime.WithHTTPPathPattern("/v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -1016,7 +1016,7 @@ var (
 	pattern_SeguridadService_ActualizarRol_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "seguridad", "roles", "id"}, ""))
 	pattern_SeguridadService_EliminarRol_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"v1", "seguridad", "roles", "id"}, ""))
 	pattern_SeguridadService_VincularPermisoRol_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "seguridad", "roles", "rol_id", "permisos"}, ""))
-	pattern_SeguridadService_DesvincularPermisoRol_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"v1", "seguridad", "roles", "rol_id", "permisos", "permiso_id"}, ""))
+	pattern_SeguridadService_DesvincularPermisoRol_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"v1", "seguridad", "roles", "rol_id", "permisos", "permiso_codigo"}, ""))
 	pattern_SeguridadService_ListarPermisosRol_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"v1", "seguridad", "roles", "rol_id", "permisos"}, ""))
 )
 

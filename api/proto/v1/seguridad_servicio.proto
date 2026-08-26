@@ -93,7 +93,7 @@ service SeguridadService {
 
   rpc DesvincularPermisoRol (DesvincularPermisoRolRequest) returns (DesvincularPermisoRolResponse) {
     option (google.api.http) = {
-      delete: "/v1/seguridad/roles/{rol_id}/permisos/{permiso_id}"
+      delete: "/v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}"
     };
   }
 
@@ -155,13 +155,13 @@ message VerificarPermisoResponse {
 
 message CrearRolRequest {
   string nombre = 1;
-  string descripcion = 2;
+  string description = 2 [json_name = "description"];
 }
 
 message CrearRolResponse {
   string id = 1;
   string nombre = 2;
-  string descripcion = 3;
+  string description = 3 [json_name = "description"];
   string mensaje = 4;
 }
 
@@ -170,7 +170,7 @@ message ListarRolesRequest {}
 message RolProto {
   string id = 1;
   string nombre = 2;
-  string descripcion = 3;
+  string description = 3 [json_name = "description"];
 }
 
 message ListarRolesResponse {
@@ -184,19 +184,19 @@ message ObtenerRolRequest {
 message ObtenerRolResponse {
   string id = 1;
   string nombre = 2;
-  string descripcion = 3;
+  string description = 3 [json_name = "description"];
 }
 
 message ActualizarRolRequest {
   string id = 1;
   string nombre = 2;
-  string descripcion = 3;
+  string description = 3 [json_name = "description"];
 }
 
 message ActualizarRolResponse {
   string id = 1;
   string nombre = 2;
-  string descripcion = 3;
+  string description = 3 [json_name = "description"];
   string mensaje = 4;
 }
 
@@ -222,7 +222,7 @@ message VincularPermisoRolResponse {
 
 message DesvincularPermisoRolRequest {
   string rol_id = 1;
-  string permiso_id = 2;
+  string permiso_codigo = 2;
 }
 
 message DesvincularPermisoRolResponse {

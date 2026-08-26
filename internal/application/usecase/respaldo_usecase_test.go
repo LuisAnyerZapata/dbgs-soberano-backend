@@ -140,7 +140,7 @@ func (s *stubSeguridadPermisos) EliminarRol(ctx context.Context, id string) erro
 func (s *stubSeguridadPermisos) VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error) {
 	return int64(len(codigos)), nil
 }
-func (s *stubSeguridadPermisos) DesvincularPermiso(ctx context.Context, rolID, permisoID string) error {
+func (s *stubSeguridadPermisos) DesvincularPermiso(ctx context.Context, rolID, permisoCodigo string) error {
 	return nil
 }
 func (s *stubSeguridadPermisos) ListarPermisosRol(ctx context.Context, rolID string) ([]string, error) {
