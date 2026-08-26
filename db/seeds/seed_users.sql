@@ -36,6 +36,8 @@ VALUES
   ('usuarios:leer',        'Consultar usuarios'),
   ('usuarios:admin',       'Administrar cuentas y roles'),
   -- Colecciones dinámicas
+  ('colecciones:crear',     'Crear colecciones dinámicas'),
+  ('colecciones:leer',      'Consultar colecciones dinámicas'),
   ('colecciones:actualizar','Actualizar estructura de colecciones dinámicas'),
   ('colecciones:eliminar',  'Eliminar colecciones dinámicas')
 ON CONFLICT (codigo) DO NOTHING;
@@ -80,7 +82,7 @@ ON CONFLICT (username) DO NOTHING;
 --   "descripcion": "Desarrollador institucional"
 -- }
 -- POST /v1/seguridad/roles/{id}/permisos
--- { "permisos": ["catalogos:leer", "catalogos:escribir", "datasets:leer", "colecciones:actualizar"] }
+-- { "permisos": ["catalogos:leer", "catalogos:escribir", "datasets:leer", "colecciones:crear", "colecciones:leer", "colecciones:actualizar"] }
 --
 -- POST /v1/seguridad/roles
 -- {

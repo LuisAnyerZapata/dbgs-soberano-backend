@@ -19,11 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SeguridadService_GetSetupStatus_FullMethodName   = "/dbgs.v1.SeguridadService/GetSetupStatus"
-	SeguridadService_CreateSetup_FullMethodName      = "/dbgs.v1.SeguridadService/CreateSetup"
-	SeguridadService_Login_FullMethodName            = "/dbgs.v1.SeguridadService/Login"
-	SeguridadService_ValidarToken_FullMethodName     = "/dbgs.v1.SeguridadService/ValidarToken"
-	SeguridadService_VerificarPermiso_FullMethodName = "/dbgs.v1.SeguridadService/VerificarPermiso"
+	SeguridadService_GetSetupStatus_FullMethodName        = "/dbgs.v1.SeguridadService/GetSetupStatus"
+	SeguridadService_CreateSetup_FullMethodName           = "/dbgs.v1.SeguridadService/CreateSetup"
+	SeguridadService_Login_FullMethodName                 = "/dbgs.v1.SeguridadService/Login"
+	SeguridadService_ValidarToken_FullMethodName          = "/dbgs.v1.SeguridadService/ValidarToken"
+	SeguridadService_VerificarPermiso_FullMethodName      = "/dbgs.v1.SeguridadService/VerificarPermiso"
+	SeguridadService_CrearRol_FullMethodName              = "/dbgs.v1.SeguridadService/CrearRol"
+	SeguridadService_ListarRoles_FullMethodName           = "/dbgs.v1.SeguridadService/ListarRoles"
+	SeguridadService_ObtenerRol_FullMethodName            = "/dbgs.v1.SeguridadService/ObtenerRol"
+	SeguridadService_ActualizarRol_FullMethodName         = "/dbgs.v1.SeguridadService/ActualizarRol"
+	SeguridadService_EliminarRol_FullMethodName           = "/dbgs.v1.SeguridadService/EliminarRol"
+	SeguridadService_VincularPermisoRol_FullMethodName    = "/dbgs.v1.SeguridadService/VincularPermisoRol"
+	SeguridadService_DesvincularPermisoRol_FullMethodName = "/dbgs.v1.SeguridadService/DesvincularPermisoRol"
+	SeguridadService_ListarPermisosRol_FullMethodName     = "/dbgs.v1.SeguridadService/ListarPermisosRol"
 )
 
 // SeguridadServiceClient is the client API for SeguridadService service.
@@ -40,6 +48,14 @@ type SeguridadServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ValidarToken(ctx context.Context, in *ValidarTokenRequest, opts ...grpc.CallOption) (*ValidarTokenResponse, error)
 	VerificarPermiso(ctx context.Context, in *VerificarPermisoRequest, opts ...grpc.CallOption) (*VerificarPermisoResponse, error)
+	CrearRol(ctx context.Context, in *CrearRolRequest, opts ...grpc.CallOption) (*CrearRolResponse, error)
+	ListarRoles(ctx context.Context, in *ListarRolesRequest, opts ...grpc.CallOption) (*ListarRolesResponse, error)
+	ObtenerRol(ctx context.Context, in *ObtenerRolRequest, opts ...grpc.CallOption) (*ObtenerRolResponse, error)
+	ActualizarRol(ctx context.Context, in *ActualizarRolRequest, opts ...grpc.CallOption) (*ActualizarRolResponse, error)
+	EliminarRol(ctx context.Context, in *EliminarRolRequest, opts ...grpc.CallOption) (*EliminarRolResponse, error)
+	VincularPermisoRol(ctx context.Context, in *VincularPermisoRolRequest, opts ...grpc.CallOption) (*VincularPermisoRolResponse, error)
+	DesvincularPermisoRol(ctx context.Context, in *DesvincularPermisoRolRequest, opts ...grpc.CallOption) (*DesvincularPermisoRolResponse, error)
+	ListarPermisosRol(ctx context.Context, in *ListarPermisosRolRequest, opts ...grpc.CallOption) (*ListarPermisosRolResponse, error)
 }
 
 type seguridadServiceClient struct {
@@ -100,6 +116,86 @@ func (c *seguridadServiceClient) VerificarPermiso(ctx context.Context, in *Verif
 	return out, nil
 }
 
+func (c *seguridadServiceClient) CrearRol(ctx context.Context, in *CrearRolRequest, opts ...grpc.CallOption) (*CrearRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CrearRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_CrearRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ListarRoles(ctx context.Context, in *ListarRolesRequest, opts ...grpc.CallOption) (*ListarRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListarRolesResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ListarRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ObtenerRol(ctx context.Context, in *ObtenerRolRequest, opts ...grpc.CallOption) (*ObtenerRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ObtenerRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ObtenerRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ActualizarRol(ctx context.Context, in *ActualizarRolRequest, opts ...grpc.CallOption) (*ActualizarRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ActualizarRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ActualizarRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) EliminarRol(ctx context.Context, in *EliminarRolRequest, opts ...grpc.CallOption) (*EliminarRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EliminarRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_EliminarRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) VincularPermisoRol(ctx context.Context, in *VincularPermisoRolRequest, opts ...grpc.CallOption) (*VincularPermisoRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VincularPermisoRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_VincularPermisoRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) DesvincularPermisoRol(ctx context.Context, in *DesvincularPermisoRolRequest, opts ...grpc.CallOption) (*DesvincularPermisoRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DesvincularPermisoRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_DesvincularPermisoRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *seguridadServiceClient) ListarPermisosRol(ctx context.Context, in *ListarPermisosRolRequest, opts ...grpc.CallOption) (*ListarPermisosRolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListarPermisosRolResponse)
+	err := c.cc.Invoke(ctx, SeguridadService_ListarPermisosRol_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SeguridadServiceServer is the server API for SeguridadService service.
 // All implementations must embed UnimplementedSeguridadServiceServer
 // for forward compatibility.
@@ -114,6 +210,14 @@ type SeguridadServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ValidarToken(context.Context, *ValidarTokenRequest) (*ValidarTokenResponse, error)
 	VerificarPermiso(context.Context, *VerificarPermisoRequest) (*VerificarPermisoResponse, error)
+	CrearRol(context.Context, *CrearRolRequest) (*CrearRolResponse, error)
+	ListarRoles(context.Context, *ListarRolesRequest) (*ListarRolesResponse, error)
+	ObtenerRol(context.Context, *ObtenerRolRequest) (*ObtenerRolResponse, error)
+	ActualizarRol(context.Context, *ActualizarRolRequest) (*ActualizarRolResponse, error)
+	EliminarRol(context.Context, *EliminarRolRequest) (*EliminarRolResponse, error)
+	VincularPermisoRol(context.Context, *VincularPermisoRolRequest) (*VincularPermisoRolResponse, error)
+	DesvincularPermisoRol(context.Context, *DesvincularPermisoRolRequest) (*DesvincularPermisoRolResponse, error)
+	ListarPermisosRol(context.Context, *ListarPermisosRolRequest) (*ListarPermisosRolResponse, error)
 	mustEmbedUnimplementedSeguridadServiceServer()
 }
 
@@ -138,6 +242,30 @@ func (UnimplementedSeguridadServiceServer) ValidarToken(context.Context, *Valida
 }
 func (UnimplementedSeguridadServiceServer) VerificarPermiso(context.Context, *VerificarPermisoRequest) (*VerificarPermisoResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerificarPermiso not implemented")
+}
+func (UnimplementedSeguridadServiceServer) CrearRol(context.Context, *CrearRolRequest) (*CrearRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CrearRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ListarRoles(context.Context, *ListarRolesRequest) (*ListarRolesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListarRoles not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ObtenerRol(context.Context, *ObtenerRolRequest) (*ObtenerRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ObtenerRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ActualizarRol(context.Context, *ActualizarRolRequest) (*ActualizarRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ActualizarRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) EliminarRol(context.Context, *EliminarRolRequest) (*EliminarRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method EliminarRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) VincularPermisoRol(context.Context, *VincularPermisoRolRequest) (*VincularPermisoRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method VincularPermisoRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) DesvincularPermisoRol(context.Context, *DesvincularPermisoRolRequest) (*DesvincularPermisoRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DesvincularPermisoRol not implemented")
+}
+func (UnimplementedSeguridadServiceServer) ListarPermisosRol(context.Context, *ListarPermisosRolRequest) (*ListarPermisosRolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListarPermisosRol not implemented")
 }
 func (UnimplementedSeguridadServiceServer) mustEmbedUnimplementedSeguridadServiceServer() {}
 func (UnimplementedSeguridadServiceServer) testEmbeddedByValue()                          {}
@@ -250,6 +378,150 @@ func _SeguridadService_VerificarPermiso_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SeguridadService_CrearRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CrearRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).CrearRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_CrearRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).CrearRol(ctx, req.(*CrearRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ListarRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListarRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ListarRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ListarRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ListarRoles(ctx, req.(*ListarRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ObtenerRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ObtenerRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ObtenerRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ObtenerRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ObtenerRol(ctx, req.(*ObtenerRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ActualizarRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ActualizarRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ActualizarRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ActualizarRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ActualizarRol(ctx, req.(*ActualizarRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_EliminarRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EliminarRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).EliminarRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_EliminarRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).EliminarRol(ctx, req.(*EliminarRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_VincularPermisoRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(VincularPermisoRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).VincularPermisoRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_VincularPermisoRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).VincularPermisoRol(ctx, req.(*VincularPermisoRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_DesvincularPermisoRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DesvincularPermisoRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).DesvincularPermisoRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_DesvincularPermisoRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).DesvincularPermisoRol(ctx, req.(*DesvincularPermisoRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SeguridadService_ListarPermisosRol_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListarPermisosRolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SeguridadServiceServer).ListarPermisosRol(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SeguridadService_ListarPermisosRol_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SeguridadServiceServer).ListarPermisosRol(ctx, req.(*ListarPermisosRolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SeguridadService_ServiceDesc is the grpc.ServiceDesc for SeguridadService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -276,6 +548,38 @@ var SeguridadService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerificarPermiso",
 			Handler:    _SeguridadService_VerificarPermiso_Handler,
+		},
+		{
+			MethodName: "CrearRol",
+			Handler:    _SeguridadService_CrearRol_Handler,
+		},
+		{
+			MethodName: "ListarRoles",
+			Handler:    _SeguridadService_ListarRoles_Handler,
+		},
+		{
+			MethodName: "ObtenerRol",
+			Handler:    _SeguridadService_ObtenerRol_Handler,
+		},
+		{
+			MethodName: "ActualizarRol",
+			Handler:    _SeguridadService_ActualizarRol_Handler,
+		},
+		{
+			MethodName: "EliminarRol",
+			Handler:    _SeguridadService_EliminarRol_Handler,
+		},
+		{
+			MethodName: "VincularPermisoRol",
+			Handler:    _SeguridadService_VincularPermisoRol_Handler,
+		},
+		{
+			MethodName: "DesvincularPermisoRol",
+			Handler:    _SeguridadService_DesvincularPermisoRol_Handler,
+		},
+		{
+			MethodName: "ListarPermisosRol",
+			Handler:    _SeguridadService_ListarPermisosRol_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

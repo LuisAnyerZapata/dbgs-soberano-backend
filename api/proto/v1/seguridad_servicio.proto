@@ -47,6 +47,61 @@ service SeguridadService {
       body: "*"
     };
   }
+
+  // --- CRUD de Roles ---
+
+  rpc CrearRol (CrearRolRequest) returns (CrearRolResponse) {
+    option (google.api.http) = {
+      post: "/v1/seguridad/roles"
+      body: "*"
+    };
+  }
+
+  rpc ListarRoles (ListarRolesRequest) returns (ListarRolesResponse) {
+    option (google.api.http) = {
+      get: "/v1/seguridad/roles"
+    };
+  }
+
+  rpc ObtenerRol (ObtenerRolRequest) returns (ObtenerRolResponse) {
+    option (google.api.http) = {
+      get: "/v1/seguridad/roles/{id}"
+    };
+  }
+
+  rpc ActualizarRol (ActualizarRolRequest) returns (ActualizarRolResponse) {
+    option (google.api.http) = {
+      put: "/v1/seguridad/roles/{id}"
+      body: "*"
+    };
+  }
+
+  rpc EliminarRol (EliminarRolRequest) returns (EliminarRolResponse) {
+    option (google.api.http) = {
+      delete: "/v1/seguridad/roles/{id}"
+    };
+  }
+
+  // --- Permisos de Roles ---
+
+  rpc VincularPermisoRol (VincularPermisoRolRequest) returns (VincularPermisoRolResponse) {
+    option (google.api.http) = {
+      post: "/v1/seguridad/roles/{rol_id}/permisos"
+      body: "*"
+    };
+  }
+
+  rpc DesvincularPermisoRol (DesvincularPermisoRolRequest) returns (DesvincularPermisoRolResponse) {
+    option (google.api.http) = {
+      delete: "/v1/seguridad/roles/{rol_id}/permisos/{permiso_id}"
+    };
+  }
+
+  rpc ListarPermisosRol (ListarPermisosRolRequest) returns (ListarPermisosRolResponse) {
+    option (google.api.http) = {
+      get: "/v1/seguridad/roles/{rol_id}/permisos"
+    };
+  }
 }
 
 message GetSetupStatusRequest {}
@@ -94,4 +149,90 @@ message VerificarPermisoRequest {
 message VerificarPermisoResponse {
   bool permitido = 1;
   string razon = 2;
+}
+
+// --- Mensajes de Roles ---
+
+message CrearRolRequest {
+  string nombre = 1;
+  string descripcion = 2;
+}
+
+message CrearRolResponse {
+  string id = 1;
+  string nombre = 2;
+  string descripcion = 3;
+  string mensaje = 4;
+}
+
+message ListarRolesRequest {}
+
+message RolProto {
+  string id = 1;
+  string nombre = 2;
+  string descripcion = 3;
+}
+
+message ListarRolesResponse {
+  repeated RolProto roles = 1;
+}
+
+message ObtenerRolRequest {
+  string id = 1;
+}
+
+message ObtenerRolResponse {
+  string id = 1;
+  string nombre = 2;
+  string descripcion = 3;
+}
+
+message ActualizarRolRequest {
+  string id = 1;
+  string nombre = 2;
+  string descripcion = 3;
+}
+
+message ActualizarRolResponse {
+  string id = 1;
+  string nombre = 2;
+  string descripcion = 3;
+  string mensaje = 4;
+}
+
+message EliminarRolRequest {
+  string id = 1;
+}
+
+message EliminarRolResponse {
+  string mensaje = 1;
+}
+
+// --- Mensajes de Permisos de Roles ---
+
+message VincularPermisoRolRequest {
+  string rol_id = 1;
+  repeated string permisos = 2; // Códigos de permisos a vincular
+}
+
+message VincularPermisoRolResponse {
+  int32 vinculados = 1;
+  string mensaje = 2;
+}
+
+message DesvincularPermisoRolRequest {
+  string rol_id = 1;
+  string permiso_id = 2;
+}
+
+message DesvincularPermisoRolResponse {
+  string mensaje = 1;
+}
+
+message ListarPermisosRolRequest {
+  string rol_id = 1;
+}
+
+message ListarPermisosRolResponse {
+  repeated string permisos = 1;
 }

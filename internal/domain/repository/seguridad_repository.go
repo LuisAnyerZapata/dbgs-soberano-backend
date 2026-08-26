@@ -23,4 +23,16 @@ type SeguridadRepository interface {
     // AsegurarRolSuperAdmin garantiza que el rol de máximo privilegio exista en la base de datos.
     // Si no existe, lo crea. Si existe, devuelve su ID. Vital para el Bootstrapping sin dependencia de Seeds.
     AsegurarRolSuperAdmin(ctx context.Context) (string, error)
+
+    // CRUD de Roles
+    CrearRol(ctx context.Context, nombre, descripcion string) (*entity.Rol, error)
+    ListarRoles(ctx context.Context) ([]entity.Rol, error)
+    ObtenerRolPorNombre(ctx context.Context, nombre string) (*entity.Rol, error)
+    ActualizarRol(ctx context.Context, id, nombre, descripcion string) error
+    EliminarRol(ctx context.Context, id string) error
+
+    // Permisos de Roles
+    VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error)
+    DesvincularPermiso(ctx context.Context, rolID, permisoID string) error
+    ListarPermisosRol(ctx context.Context, rolID string) ([]string, error)
 }

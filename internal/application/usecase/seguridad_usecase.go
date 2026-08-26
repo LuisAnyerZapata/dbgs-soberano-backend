@@ -178,3 +178,69 @@ func (uc *seguridadUseCase) generarTokens(usuario *entity.Usuario) (*port.LoginR
         Username:    usuario.Username,
     }, nil
 }
+
+// =========================================================================================================
+// CRUD DE ROLES
+// =========================================================================================================
+
+// CrearRol crea un nuevo rol en el sistema
+func (uc *seguridadUseCase) CrearRol(ctx context.Context, nombre, descripcion string) (*entity.Rol, error) {
+    if nombre == "" {
+        return nil, domain.ErrDatosInvalidos
+    }
+    return uc.repo.CrearRol(ctx, nombre, descripcion)
+}
+
+// ListarRoles obtiene todos los roles registrados
+func (uc *seguridadUseCase) ListarRoles(ctx context.Context) ([]entity.Rol, error) {
+    return uc.repo.ListarRoles(ctx)
+}
+
+// ObtenerRol busca un rol por ID
+func (uc *seguridadUseCase) ObtenerRol(ctx context.Context, id string) (*entity.Rol, error) {
+    rol, err := uc.repo.ObtenerRolPorID(ctx, id)
+    if err != nil {
+        return nil, err
+    }
+    return rol, nil
+}
+
+// ActualizarRol modifica nombre y descripción de un rol
+func (uc *seguridadUseCase) ActualizarRol(ctx context.Context, id, nombre, descripcion string) error {
+    if id == "" || nombre == "" {
+        return domain.ErrDatosInvalidos
+    }
+    return uc.repo.ActualizarRol(ctx, id, nombre, descripcion)
+}
+
+// EliminarRol elimina un rol del sistema
+func (uc *seguridadUseCase) EliminarRol(ctx context.Context, id string) error {
+    if id == "" {
+        return domain.ErrDatosInvalidos
+    }
+    return uc.repo.EliminarRol(ctx, id)
+}
+
+// VincularPermisos vincula múltiples permisos a un rol
+func (uc *seguridadUseCase) VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error) {
+    if rolID == "" || len(codigos) == 0 {
+        return 0, domain.ErrDatosInvalidos
+    }
+    return uc.repo.VincularPermisos(ctx, rolID, codigos)
+}
+
+// DesvincularPermiso elimina un permiso de un rol
+func (uc *seguridadUseCase) DesvincularPermiso(ctx context.Context, rolID, permisoID string) error {
+    if rolID == "" || permisoID == "" {
+        return domain.ErrDatosInvalidos
+    }
+    return uc.repo.DesvincularPermiso(ctx, rolID, permisoID)
+}
+
+// ListarPermisosRol obtiene los códigos de permisos de un rol
+func (uc *seguridadUseCase) ListarPermisosRol(ctx context.Context, rolID string) ([]string, error) {
+    if rolID == "" {
+        return nil, domain.ErrDatosInvalidos
+    }
+    return uc.repo.ListarPermisosRol(ctx, rolID)
+}

@@ -47,4 +47,16 @@ type SeguridadUseCasePort interface {
     ValidarAcceso(ctx context.Context, input ValidarAccesoInput) (bool, error)
     Login(ctx context.Context, username, password string) (*LoginResult, error)
     ValidarToken(ctx context.Context, token string) (*TokenValidationResult, error)
+
+    // CRUD de Roles
+    CrearRol(ctx context.Context, nombre, descripcion string) (*entity.Rol, error)
+    ListarRoles(ctx context.Context) ([]entity.Rol, error)
+    ObtenerRol(ctx context.Context, id string) (*entity.Rol, error)
+    ActualizarRol(ctx context.Context, id, nombre, descripcion string) error
+    EliminarRol(ctx context.Context, id string) error
+
+    // Permisos de Roles
+    VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error)
+    DesvincularPermiso(ctx context.Context, rolID, permisoID string) error
+    ListarPermisosRol(ctx context.Context, rolID string) ([]string, error)
 }

@@ -64,6 +64,31 @@ func (s *stubSeguridadRepository) AsegurarRolSuperAdmin(ctx context.Context) (st
 	return s.rol.ID, nil
 }
 
+func (s *stubSeguridadRepository) CrearRol(ctx context.Context, nombre, descripcion string) (*entity.Rol, error) {
+	return &entity.Rol{ID: "stub-rol", Nombre: nombre, Descripcion: descripcion}, nil
+}
+func (s *stubSeguridadRepository) ListarRoles(ctx context.Context) ([]entity.Rol, error) {
+	return nil, nil
+}
+func (s *stubSeguridadRepository) ObtenerRolPorNombre(ctx context.Context, nombre string) (*entity.Rol, error) {
+	return &entity.Rol{ID: "stub-rol", Nombre: nombre}, nil
+}
+func (s *stubSeguridadRepository) ActualizarRol(ctx context.Context, id, nombre, descripcion string) error {
+	return nil
+}
+func (s *stubSeguridadRepository) EliminarRol(ctx context.Context, id string) error {
+	return nil
+}
+func (s *stubSeguridadRepository) VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error) {
+	return int64(len(codigos)), nil
+}
+func (s *stubSeguridadRepository) DesvincularPermiso(ctx context.Context, rolID, permisoID string) error {
+	return nil
+}
+func (s *stubSeguridadRepository) ListarPermisosRol(ctx context.Context, rolID string) ([]string, error) {
+	return nil, nil
+}
+
 var _ repository.SeguridadRepository = (*stubSeguridadRepository)(nil)
 
 func TestLoginAutenticaUsuarioYGeneraToken(t *testing.T) {

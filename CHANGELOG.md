@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `seguridad`: CRUD completo de roles vía API REST/gRPC: `CrearRol`, `ListarRoles`, `ObtenerRol`, `ActualizarRol`, `EliminarRol`, `VincularPermisoRol`, `DesvincularPermisoRol`, `ListarPermisosRol`.
 - `seguridad`: los roles operativos (DBA, DEVELOPER, AUDITOR, ANALYST, SERVICE_ACCOUNT) ya no se definen en el repositorio; el Administrador de Plataforma los crea a través de la API (`POST /v1/seguridad/roles` + `POST /v1/seguridad/roles/{id}/permisos`).
 - `colecciones`: edicion completa de tablas dinamicas con 5 operaciones: agregar, renombrar, cambiar tipo, eliminar columnas y renombrar tabla.
 - `colecciones`: mensajes `RenombrarColumnaProto` y `CambiarTipoColumnaProto` en el proto para las operaciones de edición.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 	"DBGS_SOBERANO_BACKEND/internal/domain/repository"
@@ -170,4 +171,152 @@ func (r *seguridadPostgresRepository) AsegurarRolSuperAdmin(ctx context.Context)
     }
 
     return id, nil
+}
+
+// CrearRol inserta un nuevo rol en la base de datos
+func (r *seguridadPostgresRepository) CrearRol(ctx context.Context, nombre, descripcion string) (*entity.Rol, error) {
+    query := `
+        INSERT INTO dbgs_schema.roles (nombre, descripcion)
+        VALUES ($1, $2)
+        RETURNING id, nombre, descripcion
+    `
+    var rol entity.Rol
+    if err := r.db.QueryRowContext(ctx, query, nombre, descripcion).Scan(&rol.ID, &rol.Nombre, &rol.Descripcion); err != nil {
+        log.Printf("ERROR EN BD (Seguridad.CrearRol): %v", err)
+        return nil, entity.ErrErrorInterno
+    }
+    return &rol, nil
+}
+
+// ListarRoles obtiene todos los roles registrados
+func (r *seguridadPostgresRepository) ListarRoles(ctx context.Context) ([]entity.Rol, error) {
+    query := `SELECT id, nombre, descripcion FROM dbgs_schema.roles ORDER BY nombre`
+    rows, err := r.db.QueryContext(ctx, query)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.ListarRoles): %v", err)
+        return nil, entity.ErrErrorInterno
+    }
+    defer rows.Close()
+
+    var roles []entity.Rol
+    for rows.Next() {
+        var rol entity.Rol
+        if err := rows.Scan(&rol.ID, &rol.Nombre, &rol.Descripcion); err != nil {
+            log.Printf("ERROR EN BD (Seguridad.ListarRoles scan): %v", err)
+            return nil, entity.ErrErrorInterno
+        }
+        roles = append(roles, rol)
+    }
+    return roles, nil
+}
+
+// ObtenerRolPorNombre busca un rol por su nombre
+func (r *seguridadPostgresRepository) ObtenerRolPorNombre(ctx context.Context, nombre string) (*entity.Rol, error) {
+    query := `SELECT id, nombre, descripcion FROM dbgs_schema.roles WHERE nombre = $1`
+    var rol entity.Rol
+    if err := r.db.QueryRowContext(ctx, query, nombre).Scan(&rol.ID, &rol.Nombre, &rol.Descripcion); err != nil {
+        if err == sql.ErrNoRows {
+            return nil, entity.ErrEntidadNoEncontrada
+        }
+        log.Printf("ERROR EN BD (Seguridad.ObtenerRolPorNombre '%s'): %v", nombre, err)
+        return nil, entity.ErrErrorInterno
+    }
+    return &rol, nil
+}
+
+// ActualizarRol modifica nombre y descripción de un rol
+func (r *seguridadPostgresRepository) ActualizarRol(ctx context.Context, id, nombre, descripcion string) error {
+    query := `
+        UPDATE dbgs_schema.roles
+        SET nombre = $1, descripcion = $2
+        WHERE id = $3
+    `
+    result, err := r.db.ExecContext(ctx, query, nombre, descripcion, id)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.ActualizarRol '%s'): %v", id, err)
+        return entity.ErrErrorInterno
+    }
+    filas, _ := result.RowsAffected()
+    if filas == 0 {
+        return entity.ErrEntidadNoEncontrada
+    }
+    return nil
+}
+
+// EliminarRol elimina un rol de la base de datos
+func (r *seguridadPostgresRepository) EliminarRol(ctx context.Context, id string) error {
+    // Primero desvincular todos los permisos
+    _, _ = r.db.ExecContext(ctx, `DELETE FROM dbgs_schema.roles_permisos WHERE rol_id = $1`, id)
+    // Luego eliminar el rol
+    query := `DELETE FROM dbgs_schema.roles WHERE id = $1`
+    result, err := r.db.ExecContext(ctx, query, id)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.EliminarRol '%s'): %v", id, err)
+        return entity.ErrErrorInterno
+    }
+    filas, _ := result.RowsAffected()
+    if filas == 0 {
+        return entity.ErrEntidadNoEncontrada
+    }
+    return nil
+}
+
+// VincularPermisos vincula múltiples permisos a un rol
+func (r *seguridadPostgresRepository) VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error) {
+    query := `
+        INSERT INTO dbgs_schema.roles_permisos (rol_id, permiso_id)
+        SELECT $1, p.id FROM dbgs_schema.permisos p WHERE p.codigo = $2
+        ON CONFLICT (rol_id, permiso_id) DO NOTHING
+    `
+    var vinculados int64
+    for _, codigo := range codigos {
+        result, err := r.db.ExecContext(ctx, query, rolID, codigo)
+        if err != nil {
+            log.Printf("ERROR EN BD (Seguridad.VincularPermisos rol=%s permiso=%s): %v", rolID, codigo, err)
+            continue
+        }
+        filas, _ := result.RowsAffected()
+        vinculados += filas
+    }
+    return vinculados, nil
+}
+
+// DesvincularPermiso elimina un permiso de un rol
+func (r *seguridadPostgresRepository) DesvincularPermiso(ctx context.Context, rolID, permisoID string) error {
+    query := `
+        DELETE FROM dbgs_schema.roles_permisos
+        WHERE rol_id = $1 AND permiso_id = $2
+    `
+    _, err := r.db.ExecContext(ctx, query, rolID, permisoID)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.DesvincularPermiso): %v", err)
+        return entity.ErrErrorInterno
+    }
+    return nil
+}
+
+// ListarPermisosRol obtiene los códigos de permisos de un rol
+func (r *seguridadPostgresRepository) ListarPermisosRol(ctx context.Context, rolID string) ([]string, error) {
+    query := `
+        SELECT p.codigo FROM dbgs_schema.permisos p
+        JOIN dbgs_schema.roles_permisos rp ON rp.permiso_id = p.id
+        WHERE rp.rol_id = $1
+        ORDER BY p.codigo
+    `
+    rows, err := r.db.QueryContext(ctx, query, rolID)
+    if err != nil {
+        log.Printf("ERROR EN BD (Seguridad.ListarPermisosRol): %v", err)
+        return nil, entity.ErrErrorInterno
+    }
+    defer rows.Close()
+
+    var permisos []string
+    for rows.Next() {
+        var codigo string
+        if err := rows.Scan(&codigo); err != nil {
+            return nil, entity.ErrErrorInterno
+        }
+        permisos = append(permisos, codigo)
+    }
+    return permisos, nil
 }

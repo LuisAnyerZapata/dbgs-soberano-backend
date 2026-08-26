@@ -122,6 +122,31 @@ func (s *stubSeguridadPermisos) AsegurarRolSuperAdmin(ctx context.Context) (stri
 	return "rol-admin", nil
 }
 
+func (s *stubSeguridadPermisos) CrearRol(ctx context.Context, nombre, descripcion string) (*entity.Rol, error) {
+	return &entity.Rol{ID: "stub-rol", Nombre: nombre, Descripcion: descripcion}, nil
+}
+func (s *stubSeguridadPermisos) ListarRoles(ctx context.Context) ([]entity.Rol, error) {
+	return nil, nil
+}
+func (s *stubSeguridadPermisos) ObtenerRolPorNombre(ctx context.Context, nombre string) (*entity.Rol, error) {
+	return &entity.Rol{ID: "stub-rol", Nombre: nombre}, nil
+}
+func (s *stubSeguridadPermisos) ActualizarRol(ctx context.Context, id, nombre, descripcion string) error {
+	return nil
+}
+func (s *stubSeguridadPermisos) EliminarRol(ctx context.Context, id string) error {
+	return nil
+}
+func (s *stubSeguridadPermisos) VincularPermisos(ctx context.Context, rolID string, codigos []string) (int64, error) {
+	return int64(len(codigos)), nil
+}
+func (s *stubSeguridadPermisos) DesvincularPermiso(ctx context.Context, rolID, permisoID string) error {
+	return nil
+}
+func (s *stubSeguridadPermisos) ListarPermisosRol(ctx context.Context, rolID string) ([]string, error) {
+	return nil, nil
+}
+
 var _ repository.SeguridadRepository = (*stubSeguridadPermisos)(nil)
 
 // stubMotor simula pg_dump/pg_restore creando/borrando archivos reales en un directorio temporal.

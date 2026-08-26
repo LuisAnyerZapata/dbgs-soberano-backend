@@ -507,6 +507,874 @@ func (x *VerificarPermisoResponse) GetRazon() string {
 	return ""
 }
 
+type CrearRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Nombre        string                 `protobuf:"bytes,1,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	Descripcion   string                 `protobuf:"bytes,2,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CrearRolRequest) Reset() {
+	*x = CrearRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CrearRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CrearRolRequest) ProtoMessage() {}
+
+func (x *CrearRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CrearRolRequest.ProtoReflect.Descriptor instead.
+func (*CrearRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CrearRolRequest) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *CrearRolRequest) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+type CrearRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Mensaje       string                 `protobuf:"bytes,4,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CrearRolResponse) Reset() {
+	*x = CrearRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CrearRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CrearRolResponse) ProtoMessage() {}
+
+func (x *CrearRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CrearRolResponse.ProtoReflect.Descriptor instead.
+func (*CrearRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CrearRolResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CrearRolResponse) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *CrearRolResponse) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+func (x *CrearRolResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type ListarRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListarRolesRequest) Reset() {
+	*x = ListarRolesRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListarRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListarRolesRequest) ProtoMessage() {}
+
+func (x *ListarRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListarRolesRequest.ProtoReflect.Descriptor instead.
+func (*ListarRolesRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{11}
+}
+
+type RolProto struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RolProto) Reset() {
+	*x = RolProto{}
+	mi := &file_seguridad_servicio_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RolProto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RolProto) ProtoMessage() {}
+
+func (x *RolProto) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RolProto.ProtoReflect.Descriptor instead.
+func (*RolProto) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *RolProto) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *RolProto) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *RolProto) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+type ListarRolesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Roles         []*RolProto            `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListarRolesResponse) Reset() {
+	*x = ListarRolesResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListarRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListarRolesResponse) ProtoMessage() {}
+
+func (x *ListarRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListarRolesResponse.ProtoReflect.Descriptor instead.
+func (*ListarRolesResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *ListarRolesResponse) GetRoles() []*RolProto {
+	if x != nil {
+		return x.Roles
+	}
+	return nil
+}
+
+type ObtenerRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObtenerRolRequest) Reset() {
+	*x = ObtenerRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObtenerRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObtenerRolRequest) ProtoMessage() {}
+
+func (x *ObtenerRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObtenerRolRequest.ProtoReflect.Descriptor instead.
+func (*ObtenerRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ObtenerRolRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ObtenerRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObtenerRolResponse) Reset() {
+	*x = ObtenerRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObtenerRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObtenerRolResponse) ProtoMessage() {}
+
+func (x *ObtenerRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObtenerRolResponse.ProtoReflect.Descriptor instead.
+func (*ObtenerRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ObtenerRolResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ObtenerRolResponse) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *ObtenerRolResponse) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+type ActualizarRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActualizarRolRequest) Reset() {
+	*x = ActualizarRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActualizarRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActualizarRolRequest) ProtoMessage() {}
+
+func (x *ActualizarRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActualizarRolRequest.ProtoReflect.Descriptor instead.
+func (*ActualizarRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ActualizarRolRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ActualizarRolRequest) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *ActualizarRolRequest) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+type ActualizarRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Nombre        string                 `protobuf:"bytes,2,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	Descripcion   string                 `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`
+	Mensaje       string                 `protobuf:"bytes,4,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ActualizarRolResponse) Reset() {
+	*x = ActualizarRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ActualizarRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ActualizarRolResponse) ProtoMessage() {}
+
+func (x *ActualizarRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ActualizarRolResponse.ProtoReflect.Descriptor instead.
+func (*ActualizarRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ActualizarRolResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ActualizarRolResponse) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *ActualizarRolResponse) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+func (x *ActualizarRolResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type EliminarRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EliminarRolRequest) Reset() {
+	*x = EliminarRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EliminarRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EliminarRolRequest) ProtoMessage() {}
+
+func (x *EliminarRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EliminarRolRequest.ProtoReflect.Descriptor instead.
+func (*EliminarRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *EliminarRolRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type EliminarRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mensaje       string                 `protobuf:"bytes,1,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EliminarRolResponse) Reset() {
+	*x = EliminarRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EliminarRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EliminarRolResponse) ProtoMessage() {}
+
+func (x *EliminarRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EliminarRolResponse.ProtoReflect.Descriptor instead.
+func (*EliminarRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *EliminarRolResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type VincularPermisoRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RolId         string                 `protobuf:"bytes,1,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	Permisos      []string               `protobuf:"bytes,2,rep,name=permisos,proto3" json:"permisos,omitempty"` // Códigos de permisos a vincular
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VincularPermisoRolRequest) Reset() {
+	*x = VincularPermisoRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VincularPermisoRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VincularPermisoRolRequest) ProtoMessage() {}
+
+func (x *VincularPermisoRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VincularPermisoRolRequest.ProtoReflect.Descriptor instead.
+func (*VincularPermisoRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *VincularPermisoRolRequest) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *VincularPermisoRolRequest) GetPermisos() []string {
+	if x != nil {
+		return x.Permisos
+	}
+	return nil
+}
+
+type VincularPermisoRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Vinculados    int32                  `protobuf:"varint,1,opt,name=vinculados,proto3" json:"vinculados,omitempty"`
+	Mensaje       string                 `protobuf:"bytes,2,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VincularPermisoRolResponse) Reset() {
+	*x = VincularPermisoRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VincularPermisoRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VincularPermisoRolResponse) ProtoMessage() {}
+
+func (x *VincularPermisoRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VincularPermisoRolResponse.ProtoReflect.Descriptor instead.
+func (*VincularPermisoRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *VincularPermisoRolResponse) GetVinculados() int32 {
+	if x != nil {
+		return x.Vinculados
+	}
+	return 0
+}
+
+func (x *VincularPermisoRolResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type DesvincularPermisoRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RolId         string                 `protobuf:"bytes,1,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	PermisoId     string                 `protobuf:"bytes,2,opt,name=permiso_id,json=permisoId,proto3" json:"permiso_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DesvincularPermisoRolRequest) Reset() {
+	*x = DesvincularPermisoRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DesvincularPermisoRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DesvincularPermisoRolRequest) ProtoMessage() {}
+
+func (x *DesvincularPermisoRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DesvincularPermisoRolRequest.ProtoReflect.Descriptor instead.
+func (*DesvincularPermisoRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *DesvincularPermisoRolRequest) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+func (x *DesvincularPermisoRolRequest) GetPermisoId() string {
+	if x != nil {
+		return x.PermisoId
+	}
+	return ""
+}
+
+type DesvincularPermisoRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Mensaje       string                 `protobuf:"bytes,1,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DesvincularPermisoRolResponse) Reset() {
+	*x = DesvincularPermisoRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DesvincularPermisoRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DesvincularPermisoRolResponse) ProtoMessage() {}
+
+func (x *DesvincularPermisoRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DesvincularPermisoRolResponse.ProtoReflect.Descriptor instead.
+func (*DesvincularPermisoRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *DesvincularPermisoRolResponse) GetMensaje() string {
+	if x != nil {
+		return x.Mensaje
+	}
+	return ""
+}
+
+type ListarPermisosRolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RolId         string                 `protobuf:"bytes,1,opt,name=rol_id,json=rolId,proto3" json:"rol_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListarPermisosRolRequest) Reset() {
+	*x = ListarPermisosRolRequest{}
+	mi := &file_seguridad_servicio_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListarPermisosRolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListarPermisosRolRequest) ProtoMessage() {}
+
+func (x *ListarPermisosRolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListarPermisosRolRequest.ProtoReflect.Descriptor instead.
+func (*ListarPermisosRolRequest) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ListarPermisosRolRequest) GetRolId() string {
+	if x != nil {
+		return x.RolId
+	}
+	return ""
+}
+
+type ListarPermisosRolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Permisos      []string               `protobuf:"bytes,1,rep,name=permisos,proto3" json:"permisos,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListarPermisosRolResponse) Reset() {
+	*x = ListarPermisosRolResponse{}
+	mi := &file_seguridad_servicio_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListarPermisosRolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListarPermisosRolResponse) ProtoMessage() {}
+
+func (x *ListarPermisosRolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_seguridad_servicio_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListarPermisosRolResponse.ProtoReflect.Descriptor instead.
+func (*ListarPermisosRolResponse) Descriptor() ([]byte, []int) {
+	return file_seguridad_servicio_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ListarPermisosRolResponse) GetPermisos() []string {
+	if x != nil {
+		return x.Permisos
+	}
+	return nil
+}
+
 var File_seguridad_servicio_proto protoreflect.FileDescriptor
 
 const file_seguridad_servicio_proto_rawDesc = "" +
@@ -544,13 +1412,74 @@ const file_seguridad_servicio_proto_rawDesc = "" +
 	"\x06accion\x18\x03 \x01(\tR\x06accion\"N\n" +
 	"\x18VerificarPermisoResponse\x12\x1c\n" +
 	"\tpermitido\x18\x01 \x01(\bR\tpermitido\x12\x14\n" +
-	"\x05razon\x18\x02 \x01(\tR\x05razon2\xb6\x04\n" +
+	"\x05razon\x18\x02 \x01(\tR\x05razon\"K\n" +
+	"\x0fCrearRolRequest\x12\x16\n" +
+	"\x06nombre\x18\x01 \x01(\tR\x06nombre\x12 \n" +
+	"\vdescripcion\x18\x02 \x01(\tR\vdescripcion\"v\n" +
+	"\x10CrearRolResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
+	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\x12\x18\n" +
+	"\amensaje\x18\x04 \x01(\tR\amensaje\"\x14\n" +
+	"\x12ListarRolesRequest\"T\n" +
+	"\bRolProto\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
+	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\">\n" +
+	"\x13ListarRolesResponse\x12'\n" +
+	"\x05roles\x18\x01 \x03(\v2\x11.dbgs.v1.RolProtoR\x05roles\"#\n" +
+	"\x11ObtenerRolRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"^\n" +
+	"\x12ObtenerRolResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
+	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\"`\n" +
+	"\x14ActualizarRolRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
+	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\"{\n" +
+	"\x15ActualizarRolResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06nombre\x18\x02 \x01(\tR\x06nombre\x12 \n" +
+	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\x12\x18\n" +
+	"\amensaje\x18\x04 \x01(\tR\amensaje\"$\n" +
+	"\x12EliminarRolRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"/\n" +
+	"\x13EliminarRolResponse\x12\x18\n" +
+	"\amensaje\x18\x01 \x01(\tR\amensaje\"N\n" +
+	"\x19VincularPermisoRolRequest\x12\x15\n" +
+	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\x12\x1a\n" +
+	"\bpermisos\x18\x02 \x03(\tR\bpermisos\"V\n" +
+	"\x1aVincularPermisoRolResponse\x12\x1e\n" +
+	"\n" +
+	"vinculados\x18\x01 \x01(\x05R\n" +
+	"vinculados\x12\x18\n" +
+	"\amensaje\x18\x02 \x01(\tR\amensaje\"T\n" +
+	"\x1cDesvincularPermisoRolRequest\x12\x15\n" +
+	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\x12\x1d\n" +
+	"\n" +
+	"permiso_id\x18\x02 \x01(\tR\tpermisoId\"9\n" +
+	"\x1dDesvincularPermisoRolResponse\x12\x18\n" +
+	"\amensaje\x18\x01 \x01(\tR\amensaje\"1\n" +
+	"\x18ListarPermisosRolRequest\x12\x15\n" +
+	"\x06rol_id\x18\x01 \x01(\tR\x05rolId\"7\n" +
+	"\x19ListarPermisosRolResponse\x12\x1a\n" +
+	"\bpermisos\x18\x01 \x03(\tR\bpermisos2\x8b\f\n" +
 	"\x10SeguridadService\x12p\n" +
 	"\x0eGetSetupStatus\x12\x1e.dbgs.v1.GetSetupStatusRequest\x1a\x1f.dbgs.v1.GetSetupStatusResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/auth/setup-status\x12]\n" +
 	"\vCreateSetup\x12\x1b.dbgs.v1.CreateSetupRequest\x1a\x16.dbgs.v1.LoginResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/auth/setup\x12V\n" +
 	"\x05Login\x12\x15.dbgs.v1.LoginRequest\x1a\x16.dbgs.v1.LoginResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/v1/seguridad/login\x12s\n" +
 	"\fValidarToken\x12\x1c.dbgs.v1.ValidarTokenRequest\x1a\x1d.dbgs.v1.ValidarTokenResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/seguridad/validar-token\x12\x83\x01\n" +
-	"\x10VerificarPermiso\x12 .dbgs.v1.VerificarPermisoRequest\x1a!.dbgs.v1.VerificarPermisoResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/v1/seguridad/verificar-permisoB+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
+	"\x10VerificarPermiso\x12 .dbgs.v1.VerificarPermisoRequest\x1a!.dbgs.v1.VerificarPermisoResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/v1/seguridad/verificar-permiso\x12_\n" +
+	"\bCrearRol\x12\x18.dbgs.v1.CrearRolRequest\x1a\x19.dbgs.v1.CrearRolResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/v1/seguridad/roles\x12e\n" +
+	"\vListarRoles\x12\x1b.dbgs.v1.ListarRolesRequest\x1a\x1c.dbgs.v1.ListarRolesResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/seguridad/roles\x12g\n" +
+	"\n" +
+	"ObtenerRol\x12\x1a.dbgs.v1.ObtenerRolRequest\x1a\x1b.dbgs.v1.ObtenerRolResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/seguridad/roles/{id}\x12s\n" +
+	"\rActualizarRol\x12\x1d.dbgs.v1.ActualizarRolRequest\x1a\x1e.dbgs.v1.ActualizarRolResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/v1/seguridad/roles/{id}\x12j\n" +
+	"\vEliminarRol\x12\x1b.dbgs.v1.EliminarRolRequest\x1a\x1c.dbgs.v1.EliminarRolResponse\" \x82\xd3\xe4\x93\x02\x1a*\x18/v1/seguridad/roles/{id}\x12\x8f\x01\n" +
+	"\x12VincularPermisoRol\x12\".dbgs.v1.VincularPermisoRolRequest\x1a#.dbgs.v1.VincularPermisoRolResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/seguridad/roles/{rol_id}/permisos\x12\xa2\x01\n" +
+	"\x15DesvincularPermisoRol\x12%.dbgs.v1.DesvincularPermisoRolRequest\x1a&.dbgs.v1.DesvincularPermisoRolResponse\":\x82\xd3\xe4\x93\x024*2/v1/seguridad/roles/{rol_id}/permisos/{permiso_id}\x12\x89\x01\n" +
+	"\x11ListarPermisosRol\x12!.dbgs.v1.ListarPermisosRolRequest\x1a\".dbgs.v1.ListarPermisosRolResponse\"-\x82\xd3\xe4\x93\x02'\x12%/v1/seguridad/roles/{rol_id}/permisosB+Z)DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1b\x06proto3"
 
 var (
 	file_seguridad_servicio_proto_rawDescOnce sync.Once
@@ -564,34 +1493,68 @@ func file_seguridad_servicio_proto_rawDescGZIP() []byte {
 	return file_seguridad_servicio_proto_rawDescData
 }
 
-var file_seguridad_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_seguridad_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_seguridad_servicio_proto_goTypes = []any{
-	(*GetSetupStatusRequest)(nil),    // 0: dbgs.v1.GetSetupStatusRequest
-	(*GetSetupStatusResponse)(nil),   // 1: dbgs.v1.GetSetupStatusResponse
-	(*CreateSetupRequest)(nil),       // 2: dbgs.v1.CreateSetupRequest
-	(*LoginRequest)(nil),             // 3: dbgs.v1.LoginRequest
-	(*LoginResponse)(nil),            // 4: dbgs.v1.LoginResponse
-	(*ValidarTokenRequest)(nil),      // 5: dbgs.v1.ValidarTokenRequest
-	(*ValidarTokenResponse)(nil),     // 6: dbgs.v1.ValidarTokenResponse
-	(*VerificarPermisoRequest)(nil),  // 7: dbgs.v1.VerificarPermisoRequest
-	(*VerificarPermisoResponse)(nil), // 8: dbgs.v1.VerificarPermisoResponse
+	(*GetSetupStatusRequest)(nil),         // 0: dbgs.v1.GetSetupStatusRequest
+	(*GetSetupStatusResponse)(nil),        // 1: dbgs.v1.GetSetupStatusResponse
+	(*CreateSetupRequest)(nil),            // 2: dbgs.v1.CreateSetupRequest
+	(*LoginRequest)(nil),                  // 3: dbgs.v1.LoginRequest
+	(*LoginResponse)(nil),                 // 4: dbgs.v1.LoginResponse
+	(*ValidarTokenRequest)(nil),           // 5: dbgs.v1.ValidarTokenRequest
+	(*ValidarTokenResponse)(nil),          // 6: dbgs.v1.ValidarTokenResponse
+	(*VerificarPermisoRequest)(nil),       // 7: dbgs.v1.VerificarPermisoRequest
+	(*VerificarPermisoResponse)(nil),      // 8: dbgs.v1.VerificarPermisoResponse
+	(*CrearRolRequest)(nil),               // 9: dbgs.v1.CrearRolRequest
+	(*CrearRolResponse)(nil),              // 10: dbgs.v1.CrearRolResponse
+	(*ListarRolesRequest)(nil),            // 11: dbgs.v1.ListarRolesRequest
+	(*RolProto)(nil),                      // 12: dbgs.v1.RolProto
+	(*ListarRolesResponse)(nil),           // 13: dbgs.v1.ListarRolesResponse
+	(*ObtenerRolRequest)(nil),             // 14: dbgs.v1.ObtenerRolRequest
+	(*ObtenerRolResponse)(nil),            // 15: dbgs.v1.ObtenerRolResponse
+	(*ActualizarRolRequest)(nil),          // 16: dbgs.v1.ActualizarRolRequest
+	(*ActualizarRolResponse)(nil),         // 17: dbgs.v1.ActualizarRolResponse
+	(*EliminarRolRequest)(nil),            // 18: dbgs.v1.EliminarRolRequest
+	(*EliminarRolResponse)(nil),           // 19: dbgs.v1.EliminarRolResponse
+	(*VincularPermisoRolRequest)(nil),     // 20: dbgs.v1.VincularPermisoRolRequest
+	(*VincularPermisoRolResponse)(nil),    // 21: dbgs.v1.VincularPermisoRolResponse
+	(*DesvincularPermisoRolRequest)(nil),  // 22: dbgs.v1.DesvincularPermisoRolRequest
+	(*DesvincularPermisoRolResponse)(nil), // 23: dbgs.v1.DesvincularPermisoRolResponse
+	(*ListarPermisosRolRequest)(nil),      // 24: dbgs.v1.ListarPermisosRolRequest
+	(*ListarPermisosRolResponse)(nil),     // 25: dbgs.v1.ListarPermisosRolResponse
 }
 var file_seguridad_servicio_proto_depIdxs = []int32{
-	0, // 0: dbgs.v1.SeguridadService.GetSetupStatus:input_type -> dbgs.v1.GetSetupStatusRequest
-	2, // 1: dbgs.v1.SeguridadService.CreateSetup:input_type -> dbgs.v1.CreateSetupRequest
-	3, // 2: dbgs.v1.SeguridadService.Login:input_type -> dbgs.v1.LoginRequest
-	5, // 3: dbgs.v1.SeguridadService.ValidarToken:input_type -> dbgs.v1.ValidarTokenRequest
-	7, // 4: dbgs.v1.SeguridadService.VerificarPermiso:input_type -> dbgs.v1.VerificarPermisoRequest
-	1, // 5: dbgs.v1.SeguridadService.GetSetupStatus:output_type -> dbgs.v1.GetSetupStatusResponse
-	4, // 6: dbgs.v1.SeguridadService.CreateSetup:output_type -> dbgs.v1.LoginResponse
-	4, // 7: dbgs.v1.SeguridadService.Login:output_type -> dbgs.v1.LoginResponse
-	6, // 8: dbgs.v1.SeguridadService.ValidarToken:output_type -> dbgs.v1.ValidarTokenResponse
-	8, // 9: dbgs.v1.SeguridadService.VerificarPermiso:output_type -> dbgs.v1.VerificarPermisoResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	12, // 0: dbgs.v1.ListarRolesResponse.roles:type_name -> dbgs.v1.RolProto
+	0,  // 1: dbgs.v1.SeguridadService.GetSetupStatus:input_type -> dbgs.v1.GetSetupStatusRequest
+	2,  // 2: dbgs.v1.SeguridadService.CreateSetup:input_type -> dbgs.v1.CreateSetupRequest
+	3,  // 3: dbgs.v1.SeguridadService.Login:input_type -> dbgs.v1.LoginRequest
+	5,  // 4: dbgs.v1.SeguridadService.ValidarToken:input_type -> dbgs.v1.ValidarTokenRequest
+	7,  // 5: dbgs.v1.SeguridadService.VerificarPermiso:input_type -> dbgs.v1.VerificarPermisoRequest
+	9,  // 6: dbgs.v1.SeguridadService.CrearRol:input_type -> dbgs.v1.CrearRolRequest
+	11, // 7: dbgs.v1.SeguridadService.ListarRoles:input_type -> dbgs.v1.ListarRolesRequest
+	14, // 8: dbgs.v1.SeguridadService.ObtenerRol:input_type -> dbgs.v1.ObtenerRolRequest
+	16, // 9: dbgs.v1.SeguridadService.ActualizarRol:input_type -> dbgs.v1.ActualizarRolRequest
+	18, // 10: dbgs.v1.SeguridadService.EliminarRol:input_type -> dbgs.v1.EliminarRolRequest
+	20, // 11: dbgs.v1.SeguridadService.VincularPermisoRol:input_type -> dbgs.v1.VincularPermisoRolRequest
+	22, // 12: dbgs.v1.SeguridadService.DesvincularPermisoRol:input_type -> dbgs.v1.DesvincularPermisoRolRequest
+	24, // 13: dbgs.v1.SeguridadService.ListarPermisosRol:input_type -> dbgs.v1.ListarPermisosRolRequest
+	1,  // 14: dbgs.v1.SeguridadService.GetSetupStatus:output_type -> dbgs.v1.GetSetupStatusResponse
+	4,  // 15: dbgs.v1.SeguridadService.CreateSetup:output_type -> dbgs.v1.LoginResponse
+	4,  // 16: dbgs.v1.SeguridadService.Login:output_type -> dbgs.v1.LoginResponse
+	6,  // 17: dbgs.v1.SeguridadService.ValidarToken:output_type -> dbgs.v1.ValidarTokenResponse
+	8,  // 18: dbgs.v1.SeguridadService.VerificarPermiso:output_type -> dbgs.v1.VerificarPermisoResponse
+	10, // 19: dbgs.v1.SeguridadService.CrearRol:output_type -> dbgs.v1.CrearRolResponse
+	13, // 20: dbgs.v1.SeguridadService.ListarRoles:output_type -> dbgs.v1.ListarRolesResponse
+	15, // 21: dbgs.v1.SeguridadService.ObtenerRol:output_type -> dbgs.v1.ObtenerRolResponse
+	17, // 22: dbgs.v1.SeguridadService.ActualizarRol:output_type -> dbgs.v1.ActualizarRolResponse
+	19, // 23: dbgs.v1.SeguridadService.EliminarRol:output_type -> dbgs.v1.EliminarRolResponse
+	21, // 24: dbgs.v1.SeguridadService.VincularPermisoRol:output_type -> dbgs.v1.VincularPermisoRolResponse
+	23, // 25: dbgs.v1.SeguridadService.DesvincularPermisoRol:output_type -> dbgs.v1.DesvincularPermisoRolResponse
+	25, // 26: dbgs.v1.SeguridadService.ListarPermisosRol:output_type -> dbgs.v1.ListarPermisosRolResponse
+	14, // [14:27] is the sub-list for method output_type
+	1,  // [1:14] is the sub-list for method input_type
+	1,  // [1:1] is the sub-list for extension type_name
+	1,  // [1:1] is the sub-list for extension extendee
+	0,  // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_seguridad_servicio_proto_init() }
@@ -605,7 +1568,7 @@ func file_seguridad_servicio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_seguridad_servicio_proto_rawDesc), len(file_seguridad_servicio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

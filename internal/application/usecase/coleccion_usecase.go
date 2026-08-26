@@ -17,6 +17,8 @@ import (
 )
 
 const (
+    permisoColeccionCrear     = "colecciones:crear"
+    permisoColeccionLeer      = "colecciones:leer"
     permisoColeccionActualizar = "colecciones:actualizar"
     permisoColeccionEliminar   = "colecciones:eliminar"
 )
@@ -32,6 +34,10 @@ func NewColeccionUseCase(repo repository.ColeccionDinamicaRepository, seguridad 
 
 // CrearColeccion orquesta todo el proceso de creación dinámica
 func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.CrearColeccionInput) (*entity.ColeccionRegistro, error) {
+    if _, err := uc.autorizar(ctx, permisoColeccionCrear); err != nil {
+        return nil, err
+    }
+
     // 1. Validaciones de negocio iniciales
     if input.Nombre == "" || len(input.Campos) == 0 {
         return nil, domain.ErrDatosInvalidos
@@ -107,6 +113,10 @@ func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.Crear
 
 // ListarColecciones obtiene el inventario de tablas dinámicas
 func (uc *coleccionUseCase) ListarColecciones(ctx context.Context, limite, offset int) (*port.ListarColeccionesOutput, error) {
+    if _, err := uc.autorizar(ctx, permisoColeccionLeer); err != nil {
+        return nil, err
+    }
+
     if limite <= 0 {
         limite = 20
     }
