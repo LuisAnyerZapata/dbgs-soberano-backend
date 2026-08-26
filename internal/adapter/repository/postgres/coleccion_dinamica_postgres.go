@@ -152,6 +152,25 @@ func (r *coleccionDinamicaPostgresRepository) DesactivarMetadatos(ctx context.Co
     return nil
 }
 
+// RenombrarMetadatos actualiza el nombre lógico y físico de una colección
+func (r *coleccionDinamicaPostgresRepository) RenombrarMetadatos(ctx context.Context, nombreActual, nombreNuevo, fisicoNuevo string) error {
+    query := `
+        UPDATE dbgs_schema.colecciones_dinamicas
+        SET nombre_logico = $1, nombre_fisico = $2
+        WHERE LOWER(nombre_logico) = LOWER($3)
+    `
+    result, err := r.db.ExecContext(ctx, query, nombreNuevo, fisicoNuevo, nombreActual)
+    if err != nil {
+        log.Printf("ERROR EN BD (ColeccionDinamica.RenombrarMetadatos '%s' → '%s'): %v", nombreActual, nombreNuevo, err)
+        return entity.ErrErrorInterno
+    }
+    filas, _ := result.RowsAffected()
+    if filas == 0 {
+        return entity.ErrEntidadNoEncontrada
+    }
+    return nil
+}
+
 // EliminarMetadatos elimina el registro del diccionario de datos
 func (r *coleccionDinamicaPostgresRepository) EliminarMetadatos(ctx context.Context, nombreLogico string) error {
     query := `

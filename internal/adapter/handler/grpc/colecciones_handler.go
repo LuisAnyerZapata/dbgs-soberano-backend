@@ -2,13 +2,12 @@ package grpc
 
 import (
     "context"
+    "fmt"
     "time"
 
     pb "DBGS_SOBERANO_BACKEND/api/proto/v1"
     "DBGS_SOBERANO_BACKEND/internal/application/port"
     "DBGS_SOBERANO_BACKEND/internal/domain/entity"
-
-
 )
 
 type ColeccionesHandler struct {
@@ -80,9 +79,9 @@ func (h *ColeccionesHandler) ListarColecciones(ctx context.Context, req *pb.List
 }
 
 func (h *ColeccionesHandler) ActualizarColeccion(ctx context.Context, req *pb.ActualizarColeccionRequest) (*pb.ActualizarColeccionResponse, error) {
-    var camposDominio []entity.CampoDinamico
-    for _, c := range req.Campos {
-        camposDominio = append(camposDominio, entity.CampoDinamico{
+    var camposAgregar []entity.CampoDinamico
+    for _, c := range req.CamposAgregar {
+        camposAgregar = append(camposAgregar, entity.CampoDinamico{
             Nombre:      c.GetNombre(),
             Tipo:        entity.FieldType(c.GetTipo()),
             Nulo:        c.GetNulo(),
@@ -91,9 +90,31 @@ func (h *ColeccionesHandler) ActualizarColeccion(ctx context.Context, req *pb.Ac
         })
     }
 
+    var camposRenombrar []port.RenombrarColumnaInput
+    for _, r := range req.CamposRenombrar {
+        camposRenombrar = append(camposRenombrar, port.RenombrarColumnaInput{
+            NombreActual: r.GetNombreActual(),
+            NombreNuevo:  r.GetNombreNuevo(),
+        })
+    }
+
+    var camposTipo []port.CambiarTipoColumnaInput
+    for _, t := range req.CamposTipo {
+        camposTipo = append(camposTipo, port.CambiarTipoColumnaInput{
+            Nombre:    t.GetNombre(),
+            NuevoTipo: t.GetNuevoTipo(),
+        })
+    }
+
     input := port.ActualizarColeccionInput{
-        Nombre: req.GetNombre(),
-        Campos: camposDominio,
+        Nombre:          req.GetNombre(),
+        NuevoNombre:     req.GetNuevoNombre(),
+        Descripcion:     req.GetDescripcion(),
+        CamposAgregar:   camposAgregar,
+        CamposRenombrar: camposRenombrar,
+        CamposTipo:      camposTipo,
+        CamposEliminar:  req.CamposEliminar,
+        Confirmar:       req.GetConfirmar(),
     }
 
     output, err := h.useCase.ActualizarColeccion(ctx, input)
@@ -101,11 +122,24 @@ func (h *ColeccionesHandler) ActualizarColeccion(ctx context.Context, req *pb.Ac
         return nil, mapDomainErrorToGRPC(err)
     }
 
+    var msg string
+    if output.NombreTablaAnterior != "" {
+        msg = fmt.Sprintf("Tabla renombrada desde %s. Operaciones aplicadas: %d agregados, %d renombrados, %d tipo cambiado, %d eliminados",
+            output.NombreTablaAnterior, output.CamposAgregados, output.CamposRenombrados, output.CamposTipoCambiado, output.CamposEliminados)
+    } else {
+        msg = fmt.Sprintf("Operaciones aplicadas: %d agregados, %d renombrados, %d tipo cambiado, %d eliminados",
+            output.CamposAgregados, output.CamposRenombrados, output.CamposTipoCambiado, output.CamposEliminados)
+    }
+
     return &pb.ActualizarColeccionResponse{
-        Id:             output.ID,
-        NombreLogico:   output.NombreLogico,
-        CamposAgregados: int32(output.CamposAgregados),
-        Mensaje:        "Colección actualizada exitosamente",
+        Id:                   output.ID,
+        NombreLogico:         output.NombreLogico,
+        CamposAgregados:      int32(output.CamposAgregados),
+        CamposRenombrados:    int32(output.CamposRenombrados),
+        CamposTipoCambiado:   int32(output.CamposTipoCambiado),
+        CamposEliminar:       int32(output.CamposEliminados),
+        NombreTablaAnterior:  output.NombreTablaAnterior,
+        Mensaje:              msg,
     }, nil
 }
 

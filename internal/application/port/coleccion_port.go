@@ -17,15 +17,35 @@ type ListarColeccionesOutput struct {
     Total       int64                    `json:"total"`
 }
 
+type RenombrarColumnaInput struct {
+    NombreActual string `json:"nombre_actual"`
+    NombreNuevo  string `json:"nombre_nuevo"`
+}
+
+type CambiarTipoColumnaInput struct {
+    Nombre    string `json:"nombre"`
+    NuevoTipo string `json:"nuevo_tipo"`
+}
+
 type ActualizarColeccionInput struct {
-    Nombre   string                  `json:"nombre"`
-    Campos   []entity.CampoDinamico `json:"campos"`
+    Nombre          string                   `json:"nombre"`
+    NuevoNombre     string                   `json:"nuevo_nombre"`
+    Descripcion     string                   `json:"descripcion"`
+    CamposAgregar   []entity.CampoDinamico   `json:"campos_agregar"`
+    CamposRenombrar []RenombrarColumnaInput  `json:"campos_renombrar"`
+    CamposTipo      []CambiarTipoColumnaInput `json:"campos_tipo"`
+    CamposEliminar  []string                 `json:"campos_eliminar"`
+    Confirmar       bool                     `json:"confirmar"`
 }
 
 type ActualizarColeccionOutput struct {
-    ID             string `json:"id"`
-    NombreLogico   string `json:"nombre_logico"`
-    CamposAgregados int   `json:"campos_agregados"`
+    ID                string `json:"id"`
+    NombreLogico      string `json:"nombre_logico"`
+    CamposAgregados   int    `json:"campos_agregados"`
+    CamposRenombrados int    `json:"campos_renombrados"`
+    CamposTipoCambiado int   `json:"campos_tipo_cambiado"`
+    CamposEliminados  int    `json:"campos_eliminar"`
+    NombreTablaAnterior string `json:"nombre_tabla_anterior"`
 }
 
 type EliminarColeccionInput struct {

@@ -24,6 +24,9 @@ type ColeccionDinamicaRepository interface {
     // DesactivarMetadatos marca una colección como inactiva (soft delete)
     DesactivarMetadatos(ctx context.Context, nombreLogico string) error
 
+    // RenombrarMetadatos actualiza el nombre lógico y físico de una colección
+    RenombrarMetadatos(ctx context.Context, nombreActual, nombreNuevo, fisicoNuevo string) error
+
     // EliminarMetadatos elimina el registro del diccionario de datos
     EliminarMetadatos(ctx context.Context, nombreLogico string) error
 }

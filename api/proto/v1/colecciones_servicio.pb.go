@@ -431,17 +431,127 @@ func (x *ListarColeccionesResponse) GetTotal() int32 {
 	return 0
 }
 
-type ActualizarColeccionRequest struct {
+type RenombrarColumnaProto struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Nombre        string                 `protobuf:"bytes,1,opt,name=nombre,proto3" json:"nombre,omitempty"` // Nombre lógico de la colección a actualizar
-	Campos        []*CampoDinamicoProto  `protobuf:"bytes,2,rep,name=campos,proto3" json:"campos,omitempty"` // Columnas nuevas a agregar (las existentes se ignoran)
+	NombreActual  string                 `protobuf:"bytes,1,opt,name=nombre_actual,json=nombreActual,proto3" json:"nombre_actual,omitempty"`
+	NombreNuevo   string                 `protobuf:"bytes,2,opt,name=nombre_nuevo,json=nombreNuevo,proto3" json:"nombre_nuevo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
+func (x *RenombrarColumnaProto) Reset() {
+	*x = RenombrarColumnaProto{}
+	mi := &file_colecciones_servicio_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RenombrarColumnaProto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenombrarColumnaProto) ProtoMessage() {}
+
+func (x *RenombrarColumnaProto) ProtoReflect() protoreflect.Message {
+	mi := &file_colecciones_servicio_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenombrarColumnaProto.ProtoReflect.Descriptor instead.
+func (*RenombrarColumnaProto) Descriptor() ([]byte, []int) {
+	return file_colecciones_servicio_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RenombrarColumnaProto) GetNombreActual() string {
+	if x != nil {
+		return x.NombreActual
+	}
+	return ""
+}
+
+func (x *RenombrarColumnaProto) GetNombreNuevo() string {
+	if x != nil {
+		return x.NombreNuevo
+	}
+	return ""
+}
+
+type CambiarTipoColumnaProto struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Nombre        string                 `protobuf:"bytes,1,opt,name=nombre,proto3" json:"nombre,omitempty"`
+	NuevoTipo     string                 `protobuf:"bytes,2,opt,name=nuevo_tipo,json=nuevoTipo,proto3" json:"nuevo_tipo,omitempty"` // STRING, TEXT, INTEGER, FLOAT, BOOLEAN, UUID, JSONB, TIMESTAMPTZ
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CambiarTipoColumnaProto) Reset() {
+	*x = CambiarTipoColumnaProto{}
+	mi := &file_colecciones_servicio_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CambiarTipoColumnaProto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CambiarTipoColumnaProto) ProtoMessage() {}
+
+func (x *CambiarTipoColumnaProto) ProtoReflect() protoreflect.Message {
+	mi := &file_colecciones_servicio_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CambiarTipoColumnaProto.ProtoReflect.Descriptor instead.
+func (*CambiarTipoColumnaProto) Descriptor() ([]byte, []int) {
+	return file_colecciones_servicio_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CambiarTipoColumnaProto) GetNombre() string {
+	if x != nil {
+		return x.Nombre
+	}
+	return ""
+}
+
+func (x *CambiarTipoColumnaProto) GetNuevoTipo() string {
+	if x != nil {
+		return x.NuevoTipo
+	}
+	return ""
+}
+
+type ActualizarColeccionRequest struct {
+	state           protoimpl.MessageState     `protogen:"open.v1"`
+	Nombre          string                     `protobuf:"bytes,1,opt,name=nombre,proto3" json:"nombre,omitempty"`                                          // Nombre actual (del URL)
+	NuevoNombre     string                     `protobuf:"bytes,2,opt,name=nuevo_nombre,json=nuevoNombre,proto3" json:"nuevo_nombre,omitempty"`             // Renombrar tabla (requiere confirmar)
+	Descripcion     string                     `protobuf:"bytes,3,opt,name=descripcion,proto3" json:"descripcion,omitempty"`                                // Actualizar descripción (vacío = sin cambio)
+	CamposAgregar   []*CampoDinamicoProto      `protobuf:"bytes,4,rep,name=campos_agregar,json=camposAgregar,proto3" json:"campos_agregar,omitempty"`       // Columnas nuevas a agregar
+	CamposRenombrar []*RenombrarColumnaProto   `protobuf:"bytes,5,rep,name=campos_renombrar,json=camposRenombrar,proto3" json:"campos_renombrar,omitempty"` // Columnas a renombrar
+	CamposTipo      []*CambiarTipoColumnaProto `protobuf:"bytes,6,rep,name=campos_tipo,json=camposTipo,proto3" json:"campos_tipo,omitempty"`                // Columnas a cambiar tipo
+	CamposEliminar  []string                   `protobuf:"bytes,7,rep,name=campos_eliminar,json=camposEliminar,proto3" json:"campos_eliminar,omitempty"`    // Nombres de columnas a eliminar
+	Confirmar       bool                       `protobuf:"varint,8,opt,name=confirmar,proto3" json:"confirmar,omitempty"`                                   // Requerido para drops y rename de tabla
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
 func (x *ActualizarColeccionRequest) Reset() {
 	*x = ActualizarColeccionRequest{}
-	mi := &file_colecciones_servicio_proto_msgTypes[6]
+	mi := &file_colecciones_servicio_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -453,7 +563,7 @@ func (x *ActualizarColeccionRequest) String() string {
 func (*ActualizarColeccionRequest) ProtoMessage() {}
 
 func (x *ActualizarColeccionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_colecciones_servicio_proto_msgTypes[6]
+	mi := &file_colecciones_servicio_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +576,7 @@ func (x *ActualizarColeccionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActualizarColeccionRequest.ProtoReflect.Descriptor instead.
 func (*ActualizarColeccionRequest) Descriptor() ([]byte, []int) {
-	return file_colecciones_servicio_proto_rawDescGZIP(), []int{6}
+	return file_colecciones_servicio_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ActualizarColeccionRequest) GetNombre() string {
@@ -476,26 +586,72 @@ func (x *ActualizarColeccionRequest) GetNombre() string {
 	return ""
 }
 
-func (x *ActualizarColeccionRequest) GetCampos() []*CampoDinamicoProto {
+func (x *ActualizarColeccionRequest) GetNuevoNombre() string {
 	if x != nil {
-		return x.Campos
+		return x.NuevoNombre
+	}
+	return ""
+}
+
+func (x *ActualizarColeccionRequest) GetDescripcion() string {
+	if x != nil {
+		return x.Descripcion
+	}
+	return ""
+}
+
+func (x *ActualizarColeccionRequest) GetCamposAgregar() []*CampoDinamicoProto {
+	if x != nil {
+		return x.CamposAgregar
 	}
 	return nil
 }
 
+func (x *ActualizarColeccionRequest) GetCamposRenombrar() []*RenombrarColumnaProto {
+	if x != nil {
+		return x.CamposRenombrar
+	}
+	return nil
+}
+
+func (x *ActualizarColeccionRequest) GetCamposTipo() []*CambiarTipoColumnaProto {
+	if x != nil {
+		return x.CamposTipo
+	}
+	return nil
+}
+
+func (x *ActualizarColeccionRequest) GetCamposEliminar() []string {
+	if x != nil {
+		return x.CamposEliminar
+	}
+	return nil
+}
+
+func (x *ActualizarColeccionRequest) GetConfirmar() bool {
+	if x != nil {
+		return x.Confirmar
+	}
+	return false
+}
+
 type ActualizarColeccionResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	NombreLogico    string                 `protobuf:"bytes,2,opt,name=nombre_logico,json=nombreLogico,proto3" json:"nombre_logico,omitempty"`
-	CamposAgregados int32                  `protobuf:"varint,3,opt,name=campos_agregados,json=camposAgregados,proto3" json:"campos_agregados,omitempty"` // Cantidad de columnas efectivamente añadidas
-	Mensaje         string                 `protobuf:"bytes,4,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	NombreLogico        string                 `protobuf:"bytes,2,opt,name=nombre_logico,json=nombreLogico,proto3" json:"nombre_logico,omitempty"`
+	CamposAgregados     int32                  `protobuf:"varint,3,opt,name=campos_agregados,json=camposAgregados,proto3" json:"campos_agregados,omitempty"`
+	CamposRenombrados   int32                  `protobuf:"varint,4,opt,name=campos_renombrados,json=camposRenombrados,proto3" json:"campos_renombrados,omitempty"`
+	CamposTipoCambiado  int32                  `protobuf:"varint,5,opt,name=campos_tipo_cambiado,json=camposTipoCambiado,proto3" json:"campos_tipo_cambiado,omitempty"`
+	CamposEliminar      int32                  `protobuf:"varint,6,opt,name=campos_eliminar,json=camposEliminar,proto3" json:"campos_eliminar,omitempty"`
+	NombreTablaAnterior string                 `protobuf:"bytes,7,opt,name=nombre_tabla_anterior,json=nombreTablaAnterior,proto3" json:"nombre_tabla_anterior,omitempty"` // Solo se llena si se renombró la tabla
+	Mensaje             string                 `protobuf:"bytes,8,opt,name=mensaje,proto3" json:"mensaje,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *ActualizarColeccionResponse) Reset() {
 	*x = ActualizarColeccionResponse{}
-	mi := &file_colecciones_servicio_proto_msgTypes[7]
+	mi := &file_colecciones_servicio_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -507,7 +663,7 @@ func (x *ActualizarColeccionResponse) String() string {
 func (*ActualizarColeccionResponse) ProtoMessage() {}
 
 func (x *ActualizarColeccionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_colecciones_servicio_proto_msgTypes[7]
+	mi := &file_colecciones_servicio_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -520,7 +676,7 @@ func (x *ActualizarColeccionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ActualizarColeccionResponse.ProtoReflect.Descriptor instead.
 func (*ActualizarColeccionResponse) Descriptor() ([]byte, []int) {
-	return file_colecciones_servicio_proto_rawDescGZIP(), []int{7}
+	return file_colecciones_servicio_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ActualizarColeccionResponse) GetId() string {
@@ -544,6 +700,34 @@ func (x *ActualizarColeccionResponse) GetCamposAgregados() int32 {
 	return 0
 }
 
+func (x *ActualizarColeccionResponse) GetCamposRenombrados() int32 {
+	if x != nil {
+		return x.CamposRenombrados
+	}
+	return 0
+}
+
+func (x *ActualizarColeccionResponse) GetCamposTipoCambiado() int32 {
+	if x != nil {
+		return x.CamposTipoCambiado
+	}
+	return 0
+}
+
+func (x *ActualizarColeccionResponse) GetCamposEliminar() int32 {
+	if x != nil {
+		return x.CamposEliminar
+	}
+	return 0
+}
+
+func (x *ActualizarColeccionResponse) GetNombreTablaAnterior() string {
+	if x != nil {
+		return x.NombreTablaAnterior
+	}
+	return ""
+}
+
 func (x *ActualizarColeccionResponse) GetMensaje() string {
 	if x != nil {
 		return x.Mensaje
@@ -561,7 +745,7 @@ type EliminarColeccionRequest struct {
 
 func (x *EliminarColeccionRequest) Reset() {
 	*x = EliminarColeccionRequest{}
-	mi := &file_colecciones_servicio_proto_msgTypes[8]
+	mi := &file_colecciones_servicio_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -573,7 +757,7 @@ func (x *EliminarColeccionRequest) String() string {
 func (*EliminarColeccionRequest) ProtoMessage() {}
 
 func (x *EliminarColeccionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_colecciones_servicio_proto_msgTypes[8]
+	mi := &file_colecciones_servicio_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -586,7 +770,7 @@ func (x *EliminarColeccionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EliminarColeccionRequest.ProtoReflect.Descriptor instead.
 func (*EliminarColeccionRequest) Descriptor() ([]byte, []int) {
-	return file_colecciones_servicio_proto_rawDescGZIP(), []int{8}
+	return file_colecciones_servicio_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *EliminarColeccionRequest) GetNombre() string {
@@ -614,7 +798,7 @@ type EliminarColeccionResponse struct {
 
 func (x *EliminarColeccionResponse) Reset() {
 	*x = EliminarColeccionResponse{}
-	mi := &file_colecciones_servicio_proto_msgTypes[9]
+	mi := &file_colecciones_servicio_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -626,7 +810,7 @@ func (x *EliminarColeccionResponse) String() string {
 func (*EliminarColeccionResponse) ProtoMessage() {}
 
 func (x *EliminarColeccionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_colecciones_servicio_proto_msgTypes[9]
+	mi := &file_colecciones_servicio_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -639,7 +823,7 @@ func (x *EliminarColeccionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EliminarColeccionResponse.ProtoReflect.Descriptor instead.
 func (*EliminarColeccionResponse) Descriptor() ([]byte, []int) {
-	return file_colecciones_servicio_proto_rawDescGZIP(), []int{9}
+	return file_colecciones_servicio_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *EliminarColeccionResponse) GetNombreLogico() string {
@@ -699,15 +883,33 @@ const file_colecciones_servicio_proto_rawDesc = "" +
 	"created_at\x18\a \x01(\tR\tcreatedAt\"t\n" +
 	"\x19ListarColeccionesResponse\x12A\n" +
 	"\vcolecciones\x18\x01 \x03(\v2\x1f.dbgs.v1.ColeccionRegistroProtoR\vcolecciones\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"i\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"_\n" +
+	"\x15RenombrarColumnaProto\x12#\n" +
+	"\rnombre_actual\x18\x01 \x01(\tR\fnombreActual\x12!\n" +
+	"\fnombre_nuevo\x18\x02 \x01(\tR\vnombreNuevo\"P\n" +
+	"\x17CambiarTipoColumnaProto\x12\x16\n" +
+	"\x06nombre\x18\x01 \x01(\tR\x06nombre\x12\x1d\n" +
+	"\n" +
+	"nuevo_tipo\x18\x02 \x01(\tR\tnuevoTipo\"\x92\x03\n" +
 	"\x1aActualizarColeccionRequest\x12\x16\n" +
-	"\x06nombre\x18\x01 \x01(\tR\x06nombre\x123\n" +
-	"\x06campos\x18\x02 \x03(\v2\x1b.dbgs.v1.CampoDinamicoProtoR\x06campos\"\x97\x01\n" +
+	"\x06nombre\x18\x01 \x01(\tR\x06nombre\x12!\n" +
+	"\fnuevo_nombre\x18\x02 \x01(\tR\vnuevoNombre\x12 \n" +
+	"\vdescripcion\x18\x03 \x01(\tR\vdescripcion\x12B\n" +
+	"\x0ecampos_agregar\x18\x04 \x03(\v2\x1b.dbgs.v1.CampoDinamicoProtoR\rcamposAgregar\x12I\n" +
+	"\x10campos_renombrar\x18\x05 \x03(\v2\x1e.dbgs.v1.RenombrarColumnaProtoR\x0fcamposRenombrar\x12A\n" +
+	"\vcampos_tipo\x18\x06 \x03(\v2 .dbgs.v1.CambiarTipoColumnaProtoR\n" +
+	"camposTipo\x12'\n" +
+	"\x0fcampos_eliminar\x18\a \x03(\tR\x0ecamposEliminar\x12\x1c\n" +
+	"\tconfirmar\x18\b \x01(\bR\tconfirmar\"\xd5\x02\n" +
 	"\x1bActualizarColeccionResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12#\n" +
 	"\rnombre_logico\x18\x02 \x01(\tR\fnombreLogico\x12)\n" +
-	"\x10campos_agregados\x18\x03 \x01(\x05R\x0fcamposAgregados\x12\x18\n" +
-	"\amensaje\x18\x04 \x01(\tR\amensaje\"P\n" +
+	"\x10campos_agregados\x18\x03 \x01(\x05R\x0fcamposAgregados\x12-\n" +
+	"\x12campos_renombrados\x18\x04 \x01(\x05R\x11camposRenombrados\x120\n" +
+	"\x14campos_tipo_cambiado\x18\x05 \x01(\x05R\x12camposTipoCambiado\x12'\n" +
+	"\x0fcampos_eliminar\x18\x06 \x01(\x05R\x0ecamposEliminar\x122\n" +
+	"\x15nombre_tabla_anterior\x18\a \x01(\tR\x13nombreTablaAnterior\x12\x18\n" +
+	"\amensaje\x18\b \x01(\tR\amensaje\"P\n" +
 	"\x18EliminarColeccionRequest\x12\x16\n" +
 	"\x06nombre\x18\x01 \x01(\tR\x06nombre\x12\x1c\n" +
 	"\tconfirmar\x18\x02 \x01(\bR\tconfirmar\"\x85\x01\n" +
@@ -733,7 +935,7 @@ func file_colecciones_servicio_proto_rawDescGZIP() []byte {
 	return file_colecciones_servicio_proto_rawDescData
 }
 
-var file_colecciones_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_colecciones_servicio_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_colecciones_servicio_proto_goTypes = []any{
 	(*CampoDinamicoProto)(nil),          // 0: dbgs.v1.CampoDinamicoProto
 	(*CrearColeccionRequest)(nil),       // 1: dbgs.v1.CrearColeccionRequest
@@ -741,28 +943,32 @@ var file_colecciones_servicio_proto_goTypes = []any{
 	(*ListarColeccionesRequest)(nil),    // 3: dbgs.v1.ListarColeccionesRequest
 	(*ColeccionRegistroProto)(nil),      // 4: dbgs.v1.ColeccionRegistroProto
 	(*ListarColeccionesResponse)(nil),   // 5: dbgs.v1.ListarColeccionesResponse
-	(*ActualizarColeccionRequest)(nil),  // 6: dbgs.v1.ActualizarColeccionRequest
-	(*ActualizarColeccionResponse)(nil), // 7: dbgs.v1.ActualizarColeccionResponse
-	(*EliminarColeccionRequest)(nil),    // 8: dbgs.v1.EliminarColeccionRequest
-	(*EliminarColeccionResponse)(nil),   // 9: dbgs.v1.EliminarColeccionResponse
+	(*RenombrarColumnaProto)(nil),       // 6: dbgs.v1.RenombrarColumnaProto
+	(*CambiarTipoColumnaProto)(nil),     // 7: dbgs.v1.CambiarTipoColumnaProto
+	(*ActualizarColeccionRequest)(nil),  // 8: dbgs.v1.ActualizarColeccionRequest
+	(*ActualizarColeccionResponse)(nil), // 9: dbgs.v1.ActualizarColeccionResponse
+	(*EliminarColeccionRequest)(nil),    // 10: dbgs.v1.EliminarColeccionRequest
+	(*EliminarColeccionResponse)(nil),   // 11: dbgs.v1.EliminarColeccionResponse
 }
 var file_colecciones_servicio_proto_depIdxs = []int32{
-	0, // 0: dbgs.v1.CrearColeccionRequest.campos:type_name -> dbgs.v1.CampoDinamicoProto
-	4, // 1: dbgs.v1.ListarColeccionesResponse.colecciones:type_name -> dbgs.v1.ColeccionRegistroProto
-	0, // 2: dbgs.v1.ActualizarColeccionRequest.campos:type_name -> dbgs.v1.CampoDinamicoProto
-	1, // 3: dbgs.v1.ColeccionesService.CrearColeccion:input_type -> dbgs.v1.CrearColeccionRequest
-	3, // 4: dbgs.v1.ColeccionesService.ListarColecciones:input_type -> dbgs.v1.ListarColeccionesRequest
-	6, // 5: dbgs.v1.ColeccionesService.ActualizarColeccion:input_type -> dbgs.v1.ActualizarColeccionRequest
-	8, // 6: dbgs.v1.ColeccionesService.EliminarColeccion:input_type -> dbgs.v1.EliminarColeccionRequest
-	2, // 7: dbgs.v1.ColeccionesService.CrearColeccion:output_type -> dbgs.v1.CrearColeccionResponse
-	5, // 8: dbgs.v1.ColeccionesService.ListarColecciones:output_type -> dbgs.v1.ListarColeccionesResponse
-	7, // 9: dbgs.v1.ColeccionesService.ActualizarColeccion:output_type -> dbgs.v1.ActualizarColeccionResponse
-	9, // 10: dbgs.v1.ColeccionesService.EliminarColeccion:output_type -> dbgs.v1.EliminarColeccionResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0,  // 0: dbgs.v1.CrearColeccionRequest.campos:type_name -> dbgs.v1.CampoDinamicoProto
+	4,  // 1: dbgs.v1.ListarColeccionesResponse.colecciones:type_name -> dbgs.v1.ColeccionRegistroProto
+	0,  // 2: dbgs.v1.ActualizarColeccionRequest.campos_agregar:type_name -> dbgs.v1.CampoDinamicoProto
+	6,  // 3: dbgs.v1.ActualizarColeccionRequest.campos_renombrar:type_name -> dbgs.v1.RenombrarColumnaProto
+	7,  // 4: dbgs.v1.ActualizarColeccionRequest.campos_tipo:type_name -> dbgs.v1.CambiarTipoColumnaProto
+	1,  // 5: dbgs.v1.ColeccionesService.CrearColeccion:input_type -> dbgs.v1.CrearColeccionRequest
+	3,  // 6: dbgs.v1.ColeccionesService.ListarColecciones:input_type -> dbgs.v1.ListarColeccionesRequest
+	8,  // 7: dbgs.v1.ColeccionesService.ActualizarColeccion:input_type -> dbgs.v1.ActualizarColeccionRequest
+	10, // 8: dbgs.v1.ColeccionesService.EliminarColeccion:input_type -> dbgs.v1.EliminarColeccionRequest
+	2,  // 9: dbgs.v1.ColeccionesService.CrearColeccion:output_type -> dbgs.v1.CrearColeccionResponse
+	5,  // 10: dbgs.v1.ColeccionesService.ListarColecciones:output_type -> dbgs.v1.ListarColeccionesResponse
+	9,  // 11: dbgs.v1.ColeccionesService.ActualizarColeccion:output_type -> dbgs.v1.ActualizarColeccionResponse
+	11, // 12: dbgs.v1.ColeccionesService.EliminarColeccion:output_type -> dbgs.v1.EliminarColeccionResponse
+	9,  // [9:13] is the sub-list for method output_type
+	5,  // [5:9] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_colecciones_servicio_proto_init() }
@@ -776,7 +982,7 @@ func file_colecciones_servicio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_colecciones_servicio_proto_rawDesc), len(file_colecciones_servicio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

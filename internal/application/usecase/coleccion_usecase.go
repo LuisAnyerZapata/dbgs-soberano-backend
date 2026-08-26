@@ -4,6 +4,7 @@ import (
     "context"
     "encoding/json"
     "fmt"
+    "strings"
     "time"
     "database/sql"
 
@@ -116,13 +117,19 @@ func (uc *coleccionUseCase) ListarColecciones(ctx context.Context, limite, offse
     return &port.ListarColeccionesOutput{Colecciones: colecciones, Total: total}, nil
 }
 
-// ActualizarColeccion agrega nuevas columnas a una tabla dinámica existente (solo aditivo)
+// ActualizarColeccion edita una tabla dinámica: agregar, renombrar, cambiar tipo y eliminar columnas; renombrar tabla.
 func (uc *coleccionUseCase) ActualizarColeccion(ctx context.Context, input port.ActualizarColeccionInput) (*port.ActualizarColeccionOutput, error) {
     if _, err := uc.autorizar(ctx, permisoColeccionActualizar); err != nil {
         return nil, err
     }
 
-    if input.Nombre == "" || len(input.Campos) == 0 {
+    if input.Nombre == "" {
+        return nil, domain.ErrDatosInvalidos
+    }
+
+    tieneOperaciones := len(input.CamposAgregar) > 0 || len(input.CamposRenombrar) > 0 ||
+        len(input.CamposTipo) > 0 || len(input.CamposEliminar) > 0 || input.NuevoNombre != ""
+    if !tieneOperaciones && input.Descripcion == "" {
         return nil, domain.ErrDatosInvalidos
     }
 
@@ -131,12 +138,19 @@ func (uc *coleccionUseCase) ActualizarColeccion(ctx context.Context, input port.
     if err != nil {
         return nil, err
     }
-
     if !registro.EstaActiva {
         return nil, domain.ErrRegistroInactivo
     }
 
-    // Parsear estructura actual para identificar campos existentes
+    // Validar que operaciones destructivas tengan confirmación
+    if len(input.CamposEliminar) > 0 && !input.Confirmar {
+        return nil, fmt.Errorf("%w: eliminación de columnas requiere confirmar=true", domain.ErrDatosInvalidos)
+    }
+    if input.NuevoNombre != "" && input.NuevoNombre != input.Nombre && !input.Confirmar {
+        return nil, fmt.Errorf("%w: renombrar tabla requiere confirmar=true", domain.ErrDatosInvalidos)
+    }
+
+    // Parsear estructura actual
     var camposExistentes []entity.CampoDinamico
     if err := json.Unmarshal(registro.EstructuraJSON, &camposExistentes); err != nil {
         return nil, domain.ErrErrorInterno
@@ -147,46 +161,146 @@ func (uc *coleccionUseCase) ActualizarColeccion(ctx context.Context, input port.
         existentes[c.Nombre] = true
     }
 
-    // Filtrar solo campos nuevos
+    output := &port.ActualizarColeccionOutput{
+        ID:           registro.ID,
+        NombreLogico: registro.NombreLogico,
+    }
+
+    // 1. Renombrar tabla (DDL + metadata)
+    nombreFisicoActual := registro.NombreFisico
+    if input.NuevoNombre != "" && input.NuevoNombre != input.Nombre {
+        sqlRename, err := GenerarSQLRenombrarTabla(nombreFisicoActual, input.NuevoNombre)
+        if err != nil {
+            return nil, err
+        }
+        if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlRename); err != nil {
+            return nil, err
+        }
+        nuevoFisico := DBGS_SCHEMA + ".dyn_" + strings.ToLower(input.NuevoNombre)
+        if err := uc.coleccionRepo.RenombrarMetadatos(ctx, input.Nombre, input.NuevoNombre, nuevoFisico); err != nil {
+            return nil, err
+        }
+        output.NombreTablaAnterior = nombreFisicoActual
+        output.NombreLogico = input.NuevoNombre
+        nombreFisicoActual = nuevoFisico
+    }
+
+    // 2. Agregar columnas
     var camposNuevos []entity.CampoDinamico
-    for _, c := range input.Campos {
+    for _, c := range input.CamposAgregar {
         if !existentes[c.Nombre] {
             camposNuevos = append(camposNuevos, c)
         }
     }
-
-    if len(camposNuevos) == 0 {
-        return &port.ActualizarColeccionOutput{
-            ID: registro.ID, NombreLogico: registro.NombreLogico, CamposAgregados: 0,
-        }, nil
+    if len(camposNuevos) > 0 {
+        sqlAdd, err := GenerarSQLAgregarColumnas(nombreFisicoActual, camposNuevos)
+        if err != nil {
+            return nil, err
+        }
+        if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlAdd); err != nil {
+            return nil, err
+        }
+        output.CamposAgregados = len(camposNuevos)
     }
 
-    // Generar y ejecutar DDL
-    sqlAlter, err := GenerarSQLAgregarColumnas(registro.NombreFisico, camposNuevos)
+    // 3. Renombrar columnas
+    for _, r := range input.CamposRenombrar {
+        sqlRename, err := GenerarSQLRenombrarColumna(nombreFisicoActual, r.NombreActual, r.NombreNuevo)
+        if err != nil {
+            return nil, err
+        }
+        if sqlRename == "" {
+            continue
+        }
+        if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlRename); err != nil {
+            return nil, err
+        }
+        output.CamposRenombrados++
+    }
+
+    // 4. Cambiar tipo de columnas
+    for _, t := range input.CamposTipo {
+        sqlType, err := GenerarSQLCambiarTipoColumna(nombreFisicoActual, t.Nombre, entity.FieldType(t.NuevoTipo))
+        if err != nil {
+            return nil, err
+        }
+        if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlType); err != nil {
+            return nil, err
+        }
+        output.CamposTipoCambiado++
+    }
+
+    // 5. Eliminar columnas (solo con confirmar)
+    for _, nombreCol := range input.CamposEliminar {
+        sqlDrop, err := GenerarSQUEliminarColumna(nombreFisicoActual, nombreCol)
+        if err != nil {
+            return nil, err
+        }
+        if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlDrop); err != nil {
+            return nil, err
+        }
+        output.CamposEliminados++
+    }
+
+    // Reconstruir estructura JSON desde la BD real
+    // Recargar metadatos si se renombró la tabla
+    nombreActualRef := input.Nombre
+    if input.NuevoNombre != "" && output.NombreTablaAnterior != "" {
+        nombreActualRef = input.NuevoNombre
+    }
+    registroFinal, err := uc.coleccionRepo.ObtenerMetadatosPorNombre(ctx, nombreActualRef)
     if err != nil {
         return nil, err
     }
 
-    if err := uc.coleccionRepo.EjecutarDDL(ctx, sqlAlter); err != nil {
-        return nil, err
+    // Reconstruir: partir de existentes, aplicar cambios al array
+    var camposActualizados []entity.CampoDinamico
+    for _, c := range camposExistentes {
+        // Saltar columnas eliminadas
+        eliminada := false
+        for _, del := range input.CamposEliminar {
+            if c.Nombre == del {
+                eliminada = true
+                break
+            }
+        }
+        if eliminada {
+            continue
+        }
+        // Aplicar renombrados
+        for _, rn := range input.CamposRenombrar {
+            if c.Nombre == rn.NombreActual {
+                c.Nombre = rn.NombreNuevo
+                break
+            }
+        }
+        // Aplicar cambio de tipo
+        for _, ct := range input.CamposTipo {
+            if c.Nombre == ct.Nombre {
+                c.Tipo = entity.FieldType(ct.NuevoTipo)
+                break
+            }
+        }
+        camposActualizados = append(camposActualizados, c)
     }
+    // Agregar los nuevos
+    camposActualizados = append(camposActualizados, camposNuevos...)
 
-    // Merge de estructura JSON
-    camposActualizados := append(camposExistentes, camposNuevos...)
     estructuraNueva, err := json.Marshal(camposActualizados)
     if err != nil {
         return nil, domain.ErrErrorInterno
     }
 
-    if err := uc.coleccionRepo.ActualizarMetadatos(ctx, input.Nombre, estructuraNueva); err != nil {
+    // Actualizar descripción si cambió
+    if input.Descripcion != "" {
+        registroFinal.Descripcion = input.Descripcion
+    }
+
+    if err := uc.coleccionRepo.ActualizarMetadatos(ctx, nombreActualRef, estructuraNueva); err != nil {
         return nil, err
     }
 
-    return &port.ActualizarColeccionOutput{
-        ID:              registro.ID,
-        NombreLogico:    registro.NombreLogico,
-        CamposAgregados: len(camposNuevos),
-    }, nil
+    return output, nil
 }
 
 // EliminarColeccion elimina o desactiva una colección dinámica

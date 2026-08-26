@@ -143,6 +143,83 @@ func GenerarSQLAgregarColumnas(nombreFisico string, campos []entity.CampoDinamic
     return strings.Join(sentencias, "\n"), nil
 }
 
+// GenerarSQLRenombrarColumna genera ALTER TABLE ... RENAME COLUMN
+func GenerarSQLRenombrarColumna(nombreFisico, nombreActual, nombreNuevo string) (string, error) {
+    nombreActual = strings.ToLower(nombreActual)
+    nombreNuevo = strings.ToLower(nombreNuevo)
+
+    if nombreActual == nombreNuevo {
+        return "", nil
+    }
+
+    if !regexNombreSeguro.MatchString(nombreNuevo) {
+        return "", fmt.Errorf("nombre de columna nuevo inválido: '%s'", nombreNuevo)
+    }
+
+    reservados := map[string]bool{"id": true, "created_at": true, "updated_at": true, "created_by": true, "updated_by": true}
+    if reservados[nombreNuevo] {
+        return "", fmt.Errorf("el nombre de campo '%s' está reservado para el sistema", nombreNuevo)
+    }
+
+    partes := strings.Split(nombreFisico, ".")
+    return fmt.Sprintf("ALTER TABLE %s.%s RENAME COLUMN %s TO %s;",
+        partes[0], pq.QuoteIdentifier(partes[1]),
+        pq.QuoteIdentifier(nombreActual), pq.QuoteIdentifier(nombreNuevo)), nil
+}
+
+// GenerarSQLCambiarTipoColumna genera ALTER TABLE ... ALTER COLUMN ... TYPE
+func GenerarSQLCambiarTipoColumna(nombreFisico, nombreColumna string, nuevoTipo entity.FieldType) (string, error) {
+    nombreColumna = strings.ToLower(nombreColumna)
+
+    if !regexNombreSeguro.MatchString(nombreColumna) {
+        return "", fmt.Errorf("nombre de columna inválido: '%s'", nombreColumna)
+    }
+
+    tipoSQL, err := mapearTipoPostgres(nuevoTipo)
+    if err != nil {
+        return "", err
+    }
+
+    partes := strings.Split(nombreFisico, ".")
+    return fmt.Sprintf("ALTER TABLE %s.%s ALTER COLUMN %s TYPE %s;",
+        partes[0], pq.QuoteIdentifier(partes[1]),
+        pq.QuoteIdentifier(nombreColumna), tipoSQL), nil
+}
+
+// GenerarSQUEliminarColumna genera ALTER TABLE ... DROP COLUMN IF EXISTS
+func GenerarSQUEliminarColumna(nombreFisico, nombreColumna string) (string, error) {
+    nombreColumna = strings.ToLower(nombreColumna)
+
+    reservados := map[string]bool{"id": true, "created_at": true, "updated_at": true, "created_by": true, "updated_by": true}
+    if reservados[nombreColumna] {
+        return "", fmt.Errorf("no se puede eliminar la columna del sistema '%s'", nombreColumna)
+    }
+
+    if !regexNombreSeguro.MatchString(nombreColumna) {
+        return "", fmt.Errorf("nombre de columna inválido: '%s'", nombreColumna)
+    }
+
+    partes := strings.Split(nombreFisico, ".")
+    return fmt.Sprintf("ALTER TABLE %s.%s DROP COLUMN IF EXISTS %s;",
+        partes[0], pq.QuoteIdentifier(partes[1]),
+        pq.QuoteIdentifier(nombreColumna)), nil
+}
+
+// GenerarSQLRenombrarTabla genera ALTER TABLE ... RENAME TO
+func GenerarSQLRenombrarTabla(nombreFisicoActual, nombreLogicoNuevo string) (string, error) {
+    nombreLogicoNuevo = strings.ToLower(nombreLogicoNuevo)
+
+    if !regexNombreSeguro.MatchString(nombreLogicoNuevo) {
+        return "", fmt.Errorf("nombre de tabla nuevo inválido: '%s'", nombreLogicoNuevo)
+    }
+
+    nuevoFisico := "dyn_" + nombreLogicoNuevo
+    partes := strings.Split(nombreFisicoActual, ".")
+    return fmt.Sprintf("ALTER TABLE %s.%s RENAME TO %s;",
+        partes[0], pq.QuoteIdentifier(partes[1]),
+        pq.QuoteIdentifier(nuevoFisico)), nil
+}
+
 // mapearTipoPostgres traduce nuestro enum seguro a tipos nativos de PostgreSQL
 func mapearTipoPostgres(tipo entity.FieldType) (string, error) {
     switch tipo {

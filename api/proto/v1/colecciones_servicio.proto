@@ -86,18 +86,38 @@ message ListarColeccionesResponse {
   int32 total = 2;
 }
 
-// --- Mensajes para Actualizar (solo agregar columnas) ---
+// --- Mensajes para Actualizar (edición completa) ---
+
+message RenombrarColumnaProto {
+  string nombre_actual = 1;
+  string nombre_nuevo = 2;
+}
+
+message CambiarTipoColumnaProto {
+  string nombre = 1;
+  string nuevo_tipo = 2; // STRING, TEXT, INTEGER, FLOAT, BOOLEAN, UUID, JSONB, TIMESTAMPTZ
+}
 
 message ActualizarColeccionRequest {
-  string nombre = 1;                       // Nombre lógico de la colección a actualizar
-  repeated CampoDinamicoProto campos = 2;  // Columnas nuevas a agregar (las existentes se ignoran)
+  string nombre = 1;                                // Nombre actual (del URL)
+  string nuevo_nombre = 2;                          // Renombrar tabla (requiere confirmar)
+  string descripcion = 3;                           // Actualizar descripción (vacío = sin cambio)
+  repeated CampoDinamicoProto campos_agregar = 4;   // Columnas nuevas a agregar
+  repeated RenombrarColumnaProto campos_renombrar = 5; // Columnas a renombrar
+  repeated CambiarTipoColumnaProto campos_tipo = 6; // Columnas a cambiar tipo
+  repeated string campos_eliminar = 7;              // Nombres de columnas a eliminar
+  bool confirmar = 8;                              // Requerido para drops y rename de tabla
 }
 
 message ActualizarColeccionResponse {
   string id = 1;
   string nombre_logico = 2;
-  int32 campos_agregados = 3;  // Cantidad de columnas efectivamente añadidas
-  string mensaje = 4;
+  int32 campos_agregados = 3;
+  int32 campos_renombrados = 4;
+  int32 campos_tipo_cambiado = 5;
+  int32 campos_eliminar = 6;
+  string nombre_tabla_anterior = 7;  // Solo se llena si se renombró la tabla
+  string mensaje = 8;
 }
 
 // --- Mensajes para Eliminar ---
