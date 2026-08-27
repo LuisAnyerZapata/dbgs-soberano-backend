@@ -8,13 +8,18 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"sync"
 	"time"
 )
 
-// MotorScripts ejecuta los scripts oficiales de db/backup (pg_dump/pg_restore)
-// inyectando las credenciales por entorno. Serializa las operaciones con un
-// mutex para evitar que dos pg_dump concurrentes escriban el mismo archivo.
+const backupPrefijo = "dbgs_backup_"
+
+// MotorScripts ejecuta los respaldos PostgreSQL. En sistemas Unix delega en los
+// scripts oficiales de db/backup (bash); en Windows invoca pg_dump/pg_restore
+// directamente, ya que ese SO no expone bash de forma nativa. Serializa las
+// operaciones con un mutex para evitar que dos pg_dump concurrentes escriban el
+// mismo archivo.
 type MotorScripts struct {
 	scriptsDir string
 	dbHost     string
@@ -39,12 +44,42 @@ func NewMotorScripts(scriptsDir, host string, port int, user, password, name str
 	}
 }
 
-// EjecutarCreacion lanza backup_dbgs.sh contra destinoDir y retorna la ruta
-// del .dump recién creado.
+// EjecutarCreacion genera un .dump de la base de datos y retorna la ruta del
+// archivo recién creado. Usa bash+script en Unix y pg_dump directo en Windows.
 func (m *MotorScripts) EjecutarCreacion(ctx context.Context, destinoDir string) (string, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
+	if runtime.GOOS == "windows" {
+		return m.ejecutarCreacionWindows(ctx, destinoDir)
+	}
+	return m.ejecutarCreacionUnix(ctx, destinoDir)
+}
+
+// EjecutarRestauracion restaura un .dump sobre la base de datos.
+func (m *MotorScripts) EjecutarRestauracion(ctx context.Context, rutaArchivo string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if runtime.GOOS == "windows" {
+		return m.ejecutarRestauracionWindows(ctx, rutaArchivo)
+	}
+	script := filepath.Join(m.scriptsDir, "restore_dbgs.sh")
+	cmd := exec.CommandContext(ctx, "bash", script, rutaArchivo)
+	cmd.Env = append(os.Environ(), append(m.entorno(), "AUTO_APPROVE=1")...)
+
+	salida, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("pg_restore falló sobre %s: %s", rutaArchivo, truncarSalida(salida, err))
+	}
+	return nil
+}
+
+// ---------------------------------------------------------------------------
+// Unix (bash + scripts oficiales de db/backup)
+// ---------------------------------------------------------------------------
+
+func (m *MotorScripts) ejecutarCreacionUnix(ctx context.Context, destinoDir string) (string, error) {
 	script := filepath.Join(m.scriptsDir, "backup_dbgs.sh")
 	cmd := exec.CommandContext(ctx, "bash", script, destinoDir)
 	cmd.Env = append(os.Environ(), m.entorno()...)
@@ -61,14 +96,62 @@ func (m *MotorScripts) EjecutarCreacion(ctx context.Context, destinoDir string) 
 	return ruta, nil
 }
 
-// EjecutarRestauracion lanza restore_dbgs.sh con AUTO_APPROVE=1 sobre rutaArchivo.
-func (m *MotorScripts) EjecutarRestauracion(ctx context.Context, rutaArchivo string) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
+// ---------------------------------------------------------------------------
+// Windows (pg_dump / pg_restore directos, sin dependencia de bash)
+// ---------------------------------------------------------------------------
 
-	script := filepath.Join(m.scriptsDir, "restore_dbgs.sh")
-	cmd := exec.CommandContext(ctx, "bash", script, rutaArchivo)
-	cmd.Env = append(os.Environ(), append(m.entorno(), "AUTO_APPROVE=1")...)
+// ejecutarCreacionWindows replica el flujo de backup_dbgs.sh llamando al binario
+// pg_dump.exe que PostgreSQL instala en el PATH de Windows.
+func (m *MotorScripts) ejecutarCreacionWindows(ctx context.Context, destinoDir string) (string, error) {
+	if err := os.MkdirAll(destinoDir, 0o755); err != nil {
+		return "", fmt.Errorf("no se pudo crear el directorio de respaldo: %w", err)
+	}
+
+	backupFile := filepath.Join(destinoDir, fmt.Sprintf("%s%s.dump", backupPrefijo, time.Now().Format("20060102_150405")))
+
+	cmd := exec.CommandContext(ctx, "pg_dump",
+		"-h", m.dbHost,
+		"-p", m.dbPort,
+		"-U", m.dbUser,
+		"-F", "c",
+		"-b",
+		"-v",
+		"-f", backupFile,
+		m.dbName,
+	)
+	cmd.Env = append(os.Environ(), "PGPASSWORD="+m.dbPassword)
+
+	salida, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("pg_dump falló: %s", truncarSalida(salida, err))
+	}
+
+	ruta, err := archivoMasReciente(destinoDir)
+	if err != nil {
+		return "", fmt.Errorf("pg_dump terminó pero no se encontró el archivo de respaldo: %w", err)
+	}
+	return ruta, nil
+}
+
+// ejecutarRestauracionWindows replica el flujo de restore_dbgs.sh llamando al
+// binario pg_restore.exe que PostgreSQL instala en el PATH de Windows.
+func (m *MotorScripts) ejecutarRestauracionWindows(ctx context.Context, rutaArchivo string) error {
+	if _, err := os.Stat(rutaArchivo); err != nil {
+		return fmt.Errorf("el archivo de respaldo no existe: %s", rutaArchivo)
+	}
+
+	cmd := exec.CommandContext(ctx, "pg_restore",
+		"-h", m.dbHost,
+		"-p", m.dbPort,
+		"-U", m.dbUser,
+		"-d", m.dbName,
+		"--clean",
+		"--if-exists",
+		"--no-owner",
+		"-v",
+		rutaArchivo,
+	)
+	cmd.Env = append(os.Environ(), "PGPASSWORD="+m.dbPassword)
 
 	salida, err := cmd.CombinedOutput()
 	if err != nil {
@@ -90,7 +173,7 @@ func (m *MotorScripts) entorno() []string {
 }
 
 // archivoMasReciente localiza el dbgs_backup_*.dump con fecha de modificación
-// más reciente dentro de dir (el nombre exacto lo decide el script con su timestamp).
+// más reciente dentro de dir (el nombre exacto lo decide el motor con su timestamp).
 func archivoMasReciente(dir string) (string, error) {
 	entradas, err := os.ReadDir(dir)
 	if err != nil {

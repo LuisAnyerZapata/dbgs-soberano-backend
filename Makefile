@@ -2,7 +2,25 @@
 # DBGS_SOBERANO_BACKEND - Automation Makefile
 # ==============================================================================
 
-APP_NAME := dbgs_soberano_backend
+# ==============================================================================
+# WINDOWS COMPATIBILITY
+# Ejecuta estos comandos dentro de Git Bash (o la consola MSYS2), que ya trae
+# make, sed, rm, curl y bash. No se soporta el CMD/PowerShell nativo de Windows.
+# ==============================================================================
+
+# Detección de Windows (Git Bash / cmd / PowerShell exponen OS=Windows_NT).
+# Añade la extensión .exe al binario compilado.
+ifeq ($(OS),Windows_NT)
+  APP_NAME := dbgs_soberano_backend.exe
+  BIN_EXT := .exe
+else
+  APP_NAME := dbgs_soberano_backend
+  BIN_EXT :=
+endif
+
+# Intérprete de Python portable: usa python3 en Unix y python en Windows.
+PY_EXE := $(shell command -v python3 2>/dev/null || command -v python 2>/dev/null || echo python3)
+
 MAIN_PACKAGE := ./cmd/server/main.go
 BUILD_DIR := ./bin
 PROTO_DIR := ./api/proto/v1
@@ -14,12 +32,12 @@ GOPATH := $(shell go env GOPATH)
 export PATH := $(GOPATH)/bin:$(PATH)
 
 CONFIG_JSON := ./config/config.json
-DB_USER ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("user", "postgres"))' 2>/dev/null), postgres)
-DB_PASSWORD ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("password", "postgres"))' 2>/dev/null), postgres)
-DB_HOST ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("host", "localhost"))' 2>/dev/null), localhost)
-DB_PORT ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("port", "5432"))' 2>/dev/null), 5432)
-DB_NAME ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("name", "dbgs_soberano"))' 2>/dev/null), dbgs_soberano)
-DB_SSLMODE ?= $(or $(shell python3 -c 'import json; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("ssl_mode", "disable"))' 2>/dev/null), disable)
+DB_USER ?= $(or $(shell $(PY_EXE) -c 'import json,sys; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("user", "postgres"))' 2>/dev/null), postgres)
+DB_PASSWORD ?= $(or $(shell $(PY_EXE) -c 'import json,sys; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("password", "postgres"))' 2>/dev/null), postgres)
+DB_HOST ?= $(or $(shell $(PY_EXE) -c 'import json,sys; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("host", "localhost"))' 2>/dev/null), localhost)
+DB_PORT ?= $(or $(shell $(PY_EXE) -c 'import json,sys; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("port", "5432"))' 2>/dev/null), 5432)
+DB_NAME ?= $(or $(shell $(PY_EXE) -c 'import json,sys; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("name", "dbgs_soberano"))' 2>/dev/null), dbgs_soberano)
+DB_SSLMODE ?= $(or $(shell $(PY_EXE) -c 'import json,sys; data=json.load(open("$(CONFIG_JSON)")); print(data.get("database", {}).get("ssl_mode", "disable"))' 2>/dev/null), disable)
 DATABASE_URL := "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSLMODE)"
 
 .PHONY: help setup proto-deps proto proto-clean clean build run dev test test-coverage fmt lint deps install-migrate migrate-up migrate-down seed backup restore

@@ -14,8 +14,16 @@ CONFIG_FILE="${DB_CONFIG_FILE:-${REPO_ROOT}/config/config.json}"
 read_config_value() {
     local key="$1"
     local default="$2"
-    if [ -f "${CONFIG_FILE}" ] && command -v python3 >/dev/null 2>&1; then
-        python3 - "${CONFIG_FILE}" "${key}" "${default}" <<'PY'
+    local py_cmd="${PY_BIN:-}"
+    if [ -z "${py_cmd}" ]; then
+        if command -v python3 >/dev/null 2>&1; then
+            py_cmd="python3"
+        elif command -v python >/dev/null 2>&1; then
+            py_cmd="python"
+        fi
+    fi
+    if [ -f "${CONFIG_FILE}" ] && [ -n "${py_cmd}" ]; then
+        "${py_cmd}" - "${CONFIG_FILE}" "${key}" "${default}" <<'PY'
 import json, sys
 config_path, key, default = sys.argv[1], sys.argv[2], sys.argv[3]
 try:

@@ -31,6 +31,8 @@ Antes de instalar y ejecutar el proyecto, asegúrese de contar con lo siguiente:
 - `make` para automatizar tareas comunes.
 - Acceso a la base de datos PostgreSQL con credenciales válidas.
 
+> **Windows**: usa la consola **Git Bash** (o MSYS2) para ejecutar los comandos `make`, ya que incluye `make`, `bash`, `sed`, `rm` y `curl`. Asegúrate de que `pg_dump`, `pg_restore` y `psql` estén en el `PATH`. El Makefile detecta Windows y genera el binario `dbgs_soberano_backend.exe`; el motor de respaldos invoca `pg_dump`/`pg_restore` directamente (sin depender de bash) para generar y restaurar los `.dump`.
+
 ## Instalación
 1. Clone el repositorio y acceda al directorio del proyecto:
 

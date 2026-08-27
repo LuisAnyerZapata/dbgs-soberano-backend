@@ -47,6 +47,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `seguridad`: autenticación JWT, hashing BCrypt y repositorio de seguridad.
 
 ### Changed
+- Soporte para ejecutar el backend en Windows: el Makefile es ahora portable (detección de `python3`/`python` y extensión `.exe` del binario en Windows; se ejecuta dentro de Git Bash).
+- El motor de respaldos es multiplataforma: en Unix sigue delegando en los scripts bash de `db/backup`, y en Windows invoca `pg_dump`/`pg_restore` directamente (sin depender de bash), replicando los mismos flags de los scripts.
+- Los scripts `backup_dbgs.sh` / `restore_dbgs.sh` ahora usan `python3` con fallback a `python` para leer `config.json`.
 - Estructura inicial de proyecto y configuración base.
 
 ### Initial release
