@@ -118,3 +118,10 @@ func MissingRepoMethod(name string) error {
 	log.Printf("WARNING: método %s no implementado en repositorio", name)
 	return domain.InternalError.WithMessage("funcionalidad no disponible")
 }
+
+// isUniqueViolation retorna true si el error es una violación de constraint único
+// de PostgreSQL (código 23505).
+func isUniqueViolation(err error) bool {
+	var pqErr *pq.Error
+	return errors.As(err, &pqErr) && pqErr.Code == "23505"
+}

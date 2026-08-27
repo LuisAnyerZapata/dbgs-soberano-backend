@@ -389,7 +389,7 @@ func (u *respaldoUseCase) EjecutarHealthCheck(ctx context.Context, input port.He
 
 // autorizar valida sesión y permiso granular. Devuelve el usuario autenticado.
 func (u *respaldoUseCase) autorizar(ctx context.Context, permiso string) (*entity.Usuario, error) {
-	usuario, ok := ctx.Value("user").(*entity.Usuario)
+	usuario, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario)
 	if !ok || usuario == nil {
 		return nil, fmt.Errorf("%w: el dominio de respaldos exige un usuario autenticado", domain.ErrAccesoNoAutorizado)
 	}

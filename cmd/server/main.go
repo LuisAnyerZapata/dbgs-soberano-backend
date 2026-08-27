@@ -68,6 +68,8 @@ func main() {
     integracionRepo := postgres.NewIntegracionPostgresRepository(db)
     coleccionRepo := postgres.NewColeccionDinamicaPostgresRepository(db)
     datosDinamicosRepo := postgres.NewDatosDinamicosPostgresRepository(db)
+    conexionRepo := postgres.NewConexionPostgresRepository(db)
+    apiRepo := postgres.NewApiPublicadaPostgresRepository(db)
 
     catalogoUseCase := usecase.NewCatalogoUseCase(catalogoRepo)
     auditoriaUseCase := usecase.NewAuditoriaUseCase(auditoriaRepo)
@@ -79,6 +81,12 @@ func main() {
 
     integracionUseCase := usecase.NewIntegracionUseCase(integracionRepo)
     coleccionUseCase := usecase.NewColeccionUseCase(coleccionRepo, seguridadRepo)
+
+    // Dominio de Conexiones y APIs públicas. El adaptador de bases externas
+    // resuelve la conectividad real contra fuentes Postgres/MySQL.
+    conexionExternaAdapter := postgres.NewConexionExternaAdapter()
+    conexionUseCase := usecase.NewConexionUseCase(conexionRepo, conexionExternaAdapter, apiRepo, cfg.Security.JWTSecret)
+    apiUseCase := usecase.NewApiPublicadaUseCase(apiRepo, conexionRepo, cfg.Security.JWTSecret)
 
     // Dominio de Respaldos: el motor ejecuta los scripts bash de db/backup con las
     // credenciales centralizadas; el caso de uso orquesta pg_dump/pg_restore asíncrono.
@@ -111,6 +119,8 @@ func main() {
     coleccionHandler := grpcHandler.NewColeccionesHandler(coleccionUseCase)
     datosDinamicosHandler := grpcHandler.NewDatosDinamicosHandler(datosDinamicosUseCase)
     respaldoHandler := grpcHandler.NewRespaldoHandler(respaldoUseCase)
+    conexionesHandler := grpcHandler.NewConexionesHandler(conexionUseCase)
+    apisHandler := grpcHandler.NewApisHandler(apiUseCase)
     
     // Interceptores para autorización y validación de integraciones
     unifiedAuthInterceptor := grpcInterceptors.NewAuthInterceptor(seguridadUseCase, integracionUseCase)
@@ -133,6 +143,8 @@ func main() {
     pb.RegisterColeccionesServiceServer(grpcServer, coleccionHandler)
     pb.RegisterDatosDinamicosServiceServer(grpcServer, datosDinamicosHandler)
     pb.RegisterRespaldoServiceServer(grpcServer, respaldoHandler)
+    pb.RegisterConexionesServiceServer(grpcServer, conexionesHandler)
+    pb.RegisterApisServiceServer(grpcServer, apisHandler)
 
     // Habilitar reflexión para herramientas de depuración como grpcurl
     reflection.Register(grpcServer)
@@ -193,6 +205,12 @@ func main() {
     }
     if err := pb.RegisterRespaldoServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
         log.Fatalf("Fallo al registrar RespaldoService en el Gateway: %v", err)
+    }
+    if err := pb.RegisterConexionesServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
+        log.Fatalf("Fallo al registrar ConexionesService en el Gateway: %v", err)
+    }
+    if err := pb.RegisterApisServiceHandlerFromEndpoint(ctx, gatewayMux, endpoint, dialOpts); err != nil {
+        log.Fatalf("Fallo al registrar ApisService en el Gateway: %v", err)
     }
 
     // Se envuelve el Mux en un middleware CORS. Esto es estrictamente necesario

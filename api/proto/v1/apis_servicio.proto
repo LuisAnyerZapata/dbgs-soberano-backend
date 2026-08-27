@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// Servicio gRPC para la publicación y administración de APIs de servicio
+// (APIs públicas de solo lectura sobre tablas/conexiones registradas).
+service ApisService {
+  rpc CrearApi (CrearApiRequest) returns (ApiResponse) {
+    option (google.api.http) = {
+      post: "/v1/apis"
+      body: "*"
+    };
+  }
+
+  rpc ListarApis (ListarApisRequest) returns (ListarApisResponse) {
+    option (google.api.http) = {
+      get: "/v1/apis"
+    };
+  }
+
+  rpc ObtenerApi (ObtenerApiRequest) returns (ApiResponse) {
+    option (google.api.http) = {
+      get: "/v1/apis/{id}"
+    };
+  }
+
+  rpc CambiarEstadoApi (CambiarEstadoApiRequest) returns (ApiResponse) {
+    option (google.api.http) = {
+      put: "/v1/apis/{id}/estado"
+      body: "*"
+    };
+  }
+
+  rpc EliminarApi (EliminarApiRequest) returns (EliminarApiResponse) {
+    option (google.api.http) = {
+      delete: "/v1/apis/{id}"
+    };
+  }
+}
+
+// API pública registrada sobre una tabla externa.
+message ApiPublicada {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string slug = 4;
+  string connection_id = 5;
+  string connection_name = 6;
+  string schema = 7;
+  string table = 8;
+  int32 max_rows = 9;
+  bool active = 10;
+  string api_key = 11;
+  string endpoint = 12;
+  string created_by = 13;
+  google.protobuf.Timestamp created_at = 14;
+}
+
+message CrearApiRequest {
+  string name = 1;
+  string description = 2;
+  string slug = 3;
+  string connection_id = 4;
+  string schema = 5;
+  string table = 6;
+  int32 max_rows = 7;
+}
+
+message ListarApisRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListarApisResponse {
+  repeated ApiPublicada apis = 1;
+  int64 total_records = 2;
+}
+
+message ObtenerApiRequest {
+  string id = 1;
+}
+
+message CambiarEstadoApiRequest {
+  string id = 1;
+  bool active = 2;
+}
+
+message EliminarApiRequest {
+  string id = 1;
+}
+
+message EliminarApiResponse {
+  string id = 1;
+  string accion = 2;
+}
+
+message ApiResponse {
+  ApiPublicada api = 1;
+}

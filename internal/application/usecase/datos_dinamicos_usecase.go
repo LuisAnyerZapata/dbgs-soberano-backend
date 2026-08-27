@@ -114,7 +114,7 @@ func (uc *datosDinamicosUseCase) CrearRegistro(ctx context.Context, input port.C
 
     nombreFisico := "dyn_" + input.NombreTabla
     createdBy := "system"
-    if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+    if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
         createdBy = usuarioCtx.Username
     }
 
@@ -133,7 +133,7 @@ func (uc *datosDinamicosUseCase) ActualizarRegistro(ctx context.Context, input p
 
     nombreFisico := "dyn_" + input.NombreTabla
     updatedBy := "system"
-    if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+    if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
         updatedBy = usuarioCtx.Username
     }
 

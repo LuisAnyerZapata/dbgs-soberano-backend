@@ -1,11 +1,13 @@
 package interceptors
 
-// contextKey es un tipo no exportado para evitar colisiones en context.WithValue
-type contextKey string
-
-const (
-	// KeyUsuario almacena el usuario autenticado en el contexto
-	KeyUsuario contextKey = "usuario_autenticado"
-	// KeyClienteIntegracion almacena el cliente de integración en el contexto
-	KeyClienteIntegracion contextKey = "cliente_integracion"
+import (
+	"DBGS_SOBERANO_BACKEND/internal/domain"
 )
+
+// KeyUsuario almacena el usuario autenticado en el contexto.
+// Es el MISMO valor y tipo que usa el dominio (domain.CtxKeyUsuario),
+// garantizando que interceptor y casos de uso compartan la misma clave.
+var KeyUsuario = domain.CtxKeyUsuario
+
+// KeyClienteIntegracion almacena el cliente de integración (API Key) en el contexto.
+var KeyClienteIntegracion = domain.CtxKeyClienteIntegracion

@@ -88,7 +88,7 @@ func (u *datasetUseCase) CrearDataset(ctx context.Context, dataset *entity.Conju
     
     // Extracción segura del usuario autenticado desde el contexto inyectado por el AuthInterceptor
     if dataset.CreatedBy == "" {
-        if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+        if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
             dataset.CreatedBy = usuarioCtx.Username
         } else {
             dataset.CreatedBy = "system"
@@ -131,7 +131,7 @@ func (u *datasetUseCase) ActualizarDataset(ctx context.Context, dataset *entity.
     dataset.UpdatedAt = time.Now()
     if dataset.UpdatedBy == "" {
         // Extracción segura del usuario autenticado desde el contexto
-        if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+        if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
             dataset.UpdatedBy = usuarioCtx.Username
         } else {
             dataset.UpdatedBy = existente.UpdatedBy

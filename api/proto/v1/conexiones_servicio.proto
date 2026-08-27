@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package dbgs.v1;
+
+option go_package = "DBGS_SOBERANO_BACKEND/api/proto/v1;dbgsv1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// Servicio gRPC para la administración de conexiones a bases de datos externas.
+// Permite registrar, probar y explorar fuentes de datos conectadas (PostgreSQL/MySQL).
+service ConexionesService {
+  rpc ProbarConexion (ProbarConexionRequest) returns (ProbarConexionResponse) {
+    option (google.api.http) = {
+      post: "/v1/connections/test"
+      body: "*"
+    };
+  }
+
+  rpc CrearConexion (CrearConexionRequest) returns (ConexionResponse) {
+    option (google.api.http) = {
+      post: "/v1/connections"
+      body: "*"
+    };
+  }
+
+  rpc ListarConexiones (ListarConexionesRequest) returns (ListarConexionesResponse) {
+    option (google.api.http) = {
+      get: "/v1/connections"
+    };
+  }
+
+  rpc ObtenerConexion (ObtenerConexionRequest) returns (ConexionResponse) {
+    option (google.api.http) = {
+      get: "/v1/connections/{id}"
+    };
+  }
+
+  rpc ActualizarConexion (ActualizarConexionRequest) returns (ConexionResponse) {
+    option (google.api.http) = {
+      put: "/v1/connections/{id}"
+      body: "*"
+    };
+  }
+
+  rpc EliminarConexion (EliminarConexionRequest) returns (EliminarConexionResponse) {
+    option (google.api.http) = {
+      delete: "/v1/connections/{id}"
+    };
+  }
+
+  rpc ListarEsquemas (ListarEsquemasRequest) returns (ListarEsquemasResponse) {
+    option (google.api.http) = {
+      get: "/v1/connections/{id}/schemas"
+    };
+  }
+
+  rpc ListarTablas (ListarTablasRequest) returns (ListarTablasResponse) {
+    option (google.api.http) = {
+      get: "/v1/connections/{id}/tables"
+    };
+  }
+
+  rpc ExplorarDatos (ExplorarDatosRequest) returns (ExplorarDatosResponse) {
+    option (google.api.http) = {
+      get: "/v1/connections/{id}/data"
+    };
+  }
+}
+
+enum MotorBaseDatos {
+  MOTOR_UNSPECIFIED = 0;
+  POSTGRESQL = 1;
+  MYSQL = 2;
+}
+
+// Conexión registrada a una base de datos externa.
+message Conexion {
+  string id = 1;
+  string name = 2;
+  MotorBaseDatos engine = 3;
+  string host = 4;
+  int32 port = 5;
+  string user = 6;
+  string database = 7;
+  string ssl_mode = 8;
+  bool read_only = 9;
+  string created_by = 10;
+  google.protobuf.Timestamp created_at = 11;
+}
+
+message ProbarConexionRequest {
+  string name = 1;
+  string engine = 2;
+  string host = 3;
+  int32 port = 4;
+  string user = 5;
+  string password = 6;
+  string database = 7;
+  string ssl_mode = 8;
+}
+
+message ProbarConexionResponse {
+  bool ok = 1;
+  string message = 2;
+  double latency_ms = 3;
+}
+
+message CrearConexionRequest {
+  string name = 1;
+  string engine = 2;
+  string host = 3;
+  int32 port = 4;
+  string user = 5;
+  string password = 6;
+  string database = 7;
+  string ssl_mode = 8;
+  bool read_only = 9;
+}
+
+message ListarConexionesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListarConexionesResponse {
+  repeated Conexion connections = 1;
+  int64 total_records = 2;
+}
+
+message ObtenerConexionRequest {
+  string id = 1;
+}
+
+message ActualizarConexionRequest {
+  string id = 1;
+  string name = 2;
+  string engine = 3;
+  string host = 4;
+  int32 port = 5;
+  string user = 6;
+  string password = 7;
+  string database = 8;
+  string ssl_mode = 9;
+  bool read_only = 10;
+}
+
+message EliminarConexionRequest {
+  string id = 1;
+}
+
+message EliminarConexionResponse {
+  string id = 1;
+  string accion = 2;
+}
+
+message ConexionResponse {
+  Conexion connection = 1;
+}
+
+message ListarEsquemasRequest {
+  string id = 1;
+}
+
+message ListarEsquemasResponse {
+  repeated string schemas = 1;
+}
+
+message ListarTablasRequest {
+  string id = 1;
+  string schema = 2;
+}
+
+message ListarTablasResponse {
+  repeated string tables = 1;
+}
+
+// Columna descubierta al explorar una tabla externa.
+message ColumnaExterna {
+  string name = 1;
+  string data_type = 2;
+  bool nullable = 3;
+  bool primary_key = 4;
+}
+
+message ExplorarDatosRequest {
+  string id = 1;
+  string schema = 2;
+  string table = 3;
+  int32 limit = 4;
+  int32 offset = 5;
+}
+
+message ExplorarDatosResponse {
+  repeated ColumnaExterna columns = 1;
+  repeated google.protobuf.Struct rows = 2;
+  int64 total_records = 3;
+}

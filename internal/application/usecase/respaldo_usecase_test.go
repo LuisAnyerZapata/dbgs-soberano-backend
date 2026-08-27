@@ -209,13 +209,13 @@ func nuevoUseCase(repo *stubRespaldoRepository, motor port.MotorRespaldo, dumpsD
 }
 
 func ctxAdmin() context.Context {
-	return context.WithValue(context.Background(), "user", &entity.Usuario{
+	return context.WithValue(context.Background(), domain.CtxKeyUsuario, &entity.Usuario{
 		ID: "u-1", Username: "admin", RolID: rolConPermisos,
 	})
 }
 
 func ctxAuditor() context.Context {
-	return context.WithValue(context.Background(), "user", &entity.Usuario{
+	return context.WithValue(context.Background(), domain.CtxKeyUsuario, &entity.Usuario{
 		ID: "u-2", Username: "auditor", RolID: rolSinPermisos,
 	})
 }

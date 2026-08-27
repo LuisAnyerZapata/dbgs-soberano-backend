@@ -85,7 +85,7 @@ func (u *catalogoUseCase) CrearCatalogo(ctx context.Context, catalogo *entity.Ca
     catalogo.Estado = true
     
     if catalogo.CreatedBy == "" {
-        if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+        if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
             catalogo.CreatedBy = usuarioCtx.Username
         } else {
             catalogo.CreatedBy = "system"
@@ -125,7 +125,7 @@ func (u *catalogoUseCase) ActualizarCatalogo(ctx context.Context, catalogo *enti
     catalogo.UpdatedAt = time.Now()
     if catalogo.UpdatedBy == "" {
         // Extracción segura del usuario autenticado desde el contexto
-        if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+        if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
             catalogo.UpdatedBy = usuarioCtx.Username
         } else {
             catalogo.UpdatedBy = existente.UpdatedBy

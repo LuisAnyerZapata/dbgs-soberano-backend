@@ -78,7 +78,7 @@ func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.Crear
 
     // 6. Extraer usuario que ejecuta la acción
     createdBy := "system"
-    if usuarioCtx, ok := ctx.Value("user").(*entity.Usuario); ok {
+    if usuarioCtx, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario); ok {
         createdBy = usuarioCtx.Username
     }
 
@@ -355,7 +355,7 @@ func (uc *coleccionUseCase) EliminarColeccion(ctx context.Context, input port.El
 
 // autorizar valida sesión y permiso granular.
 func (uc *coleccionUseCase) autorizar(ctx context.Context, permiso string) (*entity.Usuario, error) {
-    usuario, ok := ctx.Value("user").(*entity.Usuario)
+    usuario, ok := ctx.Value(domain.CtxKeyUsuario).(*entity.Usuario)
     if !ok || usuario == nil {
         return nil, fmt.Errorf("%w: el dominio de colecciones exige un usuario autenticado", domain.ErrAccesoNoAutorizado)
     }
