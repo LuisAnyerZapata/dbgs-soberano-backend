@@ -61,7 +61,7 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
                     return nil, status.Error(codes.PermissionDenied, "acceso de integración no autorizado (API Key inválida o inactiva)")
                 }
                 // Inyectamos el cliente de integración en el contexto para que los Use Cases lo sepan
-                newCtx := context.WithValue(ctx, "integracion_cliente", cliente)
+                newCtx := context.WithValue(ctx, KeyClienteIntegracion, cliente)
                 return handler(newCtx, req)
             }
         }
@@ -88,7 +88,7 @@ func (i *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
             return nil, status.Error(codes.PermissionDenied, "acceso denegado: cuenta inactiva o no registrada")
         }
 
-        newCtx := context.WithValue(ctx, "user", usuario)
+        newCtx := context.WithValue(ctx, KeyUsuario, usuario)
         return handler(newCtx, req)
     }
 }

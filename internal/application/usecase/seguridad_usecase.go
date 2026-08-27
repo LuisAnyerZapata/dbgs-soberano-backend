@@ -118,12 +118,21 @@ func (uc *seguridadUseCase) ValidarToken(ctx context.Context, tokenStr string) (
     }
 
     if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+        sub, _ := claims["sub"].(string)
+        username, _ := claims["username"].(string)
+        rol, _ := claims["rol"].(string)
+        exp, _ := claims["exp"].(float64)
+
+        if sub == "" || username == "" {
+            return nil, domain.ErrAccesoNoAutorizado
+        }
+
         return &port.TokenValidationResult{
             Valid:     true,
-            UserID:    claims["sub"].(string),
-            Username:  claims["username"].(string),
-            Rol:       claims["rol"].(string),
-            ExpiresAt: int64(claims["exp"].(float64)),
+            UserID:    sub,
+            Username:  username,
+            Rol:       rol,
+            ExpiresAt: int64(exp),
         }, nil
     }
 

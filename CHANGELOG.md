@@ -21,6 +21,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `colecciones`: reactivada la vinculación automática del trigger forense de auditoría en toda tabla dinámica creada por el motor DDL.
 - `auditoria`: migración `000008` con el trigger `trg_prohibir_modificacion` que bloquea `UPDATE`, `DELETE` y `TRUNCATE` sobre la bitácora a nivel de motor.
 - `docs`: actualización de README con estructura, servicios, endpoints y notas de los ocho dominios.
+- `domain`: sistema profesional de validación de datos y manejo de excepciones:
+  - Tipo `AppError` estructurado con código, campo, mensaje interno y mensaje seguro para el cliente.
+  - Códigos de error tipados (`ErrorCode`) con mapeo a HTTP y gRPC.
+  - Validadores reutilizables: `ValidateRequired`, `ValidateEmail`, `ValidateUUID`, `ValidatePassword`, `ValidateEnum`, `ValidateRange`, `ValidateCodigo`, `ValidateName`, `ValidateMinLength`, `ValidateMaxLength`, `ValidateNoSpaces`.
+  - `ValidationError` para acumulación de múltiples errores de validación.
+  - `PostgresErrorClassifier` para detectar códigos PostgreSQL (23505, 23503, 23502, 22P02, etc.) y mapearlos a errores de dominio.
+  - Handler `mapDomainErrorToGRPC` actualizado para usar `errors.As()` y sanitizar mensajes (nunca expone detalles internos).
+  - JWT claims parsing con type assertions seguras (previene panic).
+  - Context keys tipados para evitar colisiones.
 
 ### Fixed
 - `seguridad`: campo `description` en JSON de roles ahora acepta el nombre en inglés (`description` en vez de `descripcion`); alinear el proto con la API REST.
