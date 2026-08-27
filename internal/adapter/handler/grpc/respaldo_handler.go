@@ -6,6 +6,7 @@ import (
 
 	pb "DBGS_SOBERANO_BACKEND/api/proto/v1"
 	"DBGS_SOBERANO_BACKEND/internal/application/port"
+	"DBGS_SOBERANO_BACKEND/internal/domain"
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 )
 
@@ -19,6 +20,12 @@ func NewRespaldoHandler(uc port.RespaldoPort) *RespaldoHandler {
 }
 
 func (h *RespaldoHandler) CrearRespaldo(ctx context.Context, req *pb.CrearRespaldoRequest) (*pb.CrearRespaldoResponse, error) {
+	if req.GetTipo() != "" {
+		if err := domain.ValidateEnum("tipo", req.GetTipo(), []string{"FULL", "INCREMENTAL", "DIFF"}); err != nil {
+			return nil, mapDomainErrorToGRPC(err)
+		}
+	}
+
 	output, err := h.useCase.CrearRespaldo(ctx, port.CrearRespaldoInput{
 		Tipo:          req.GetTipo(),
 		RetencionDias: int(req.GetRetencionDias()),
@@ -31,6 +38,10 @@ func (h *RespaldoHandler) CrearRespaldo(ctx context.Context, req *pb.CrearRespal
 }
 
 func (h *RespaldoHandler) ObtenerRespaldo(ctx context.Context, req *pb.ObtenerRespaldoRequest) (*pb.ObtenerRespaldoResponse, error) {
+	if err := domain.ValidateUUID("id", req.GetId()); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	output, err := h.useCase.ObtenerRespaldo(ctx, req.GetId())
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
@@ -39,7 +50,12 @@ func (h *RespaldoHandler) ObtenerRespaldo(ctx context.Context, req *pb.ObtenerRe
 }
 
 func (h *RespaldoHandler) ListarRespaldos(ctx context.Context, req *pb.ListarRespaldosRequest) (*pb.ListarRespaldosResponse, error) {
-	output, err := h.useCase.ListarRespaldos(ctx, int(req.GetLimite()))
+	limite := int(req.GetLimite())
+	if limite <= 0 {
+		limite = 20
+	}
+
+	output, err := h.useCase.ListarRespaldos(ctx, limite)
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
 	}
@@ -52,6 +68,10 @@ func (h *RespaldoHandler) ListarRespaldos(ctx context.Context, req *pb.ListarRes
 }
 
 func (h *RespaldoHandler) DescargarRespaldo(ctx context.Context, req *pb.DescargarRespaldoRequest) (*pb.DescargarRespaldoResponse, error) {
+	if err := domain.ValidateUUID("id", req.GetId()); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	output, err := h.useCase.DescargarRespaldo(ctx, port.DescargarRespaldoInput{ID: req.GetId()})
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
@@ -64,6 +84,20 @@ func (h *RespaldoHandler) DescargarRespaldo(ctx context.Context, req *pb.Descarg
 }
 
 func (h *RespaldoHandler) RestaurarRespaldo(ctx context.Context, req *pb.RestaurarRespaldoRequest) (*pb.RestaurarRespaldoResponse, error) {
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateUUID("backup_id", req.GetBackupId()))
+	if !req.GetConfirmar() {
+		errs.Add(&domain.AppError{
+			Code:    domain.CodeInvalidArgument,
+			Field:   "confirmar",
+			Message: "la restauración requiere confirmación explícita (confirmar=true)",
+			Safe:    "Se requiere confirmación para restaurar",
+		})
+	}
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	output, err := h.useCase.RestaurarRespaldo(ctx, port.RestaurarBackupInput{
 		BackupID:  req.GetBackupId(),
 		Confirmar: req.GetConfirmar(),
@@ -75,6 +109,13 @@ func (h *RespaldoHandler) RestaurarRespaldo(ctx context.Context, req *pb.Restaur
 }
 
 func (h *RespaldoHandler) AplicarRetencion(ctx context.Context, req *pb.AplicarRetencionRequest) (*pb.AplicarRetencionResponse, error) {
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateRange("dias_retencion", int(req.GetDiasRetencion()), 1, 3650))
+	errs.Add(domain.ValidateRange("maximo_backups", int(req.GetMaximoBackups()), 1, 100))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	output, err := h.useCase.AplicarRetencion(ctx, port.RetencionInput{
 		DiasRetencion: int(req.GetDiasRetencion()),
 		MaximoBackups: int(req.GetMaximoBackups()),

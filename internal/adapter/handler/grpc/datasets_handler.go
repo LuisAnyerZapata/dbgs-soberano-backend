@@ -5,6 +5,7 @@ import (
 
 	dbgsv1 "DBGS_SOBERANO_BACKEND/api/proto/v1"
 	"DBGS_SOBERANO_BACKEND/internal/application/port"
+	"DBGS_SOBERANO_BACKEND/internal/domain"
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -48,6 +49,10 @@ func (h *DatasetsHandler) ListarDatasets(ctx context.Context, req *dbgsv1.Listar
 }
 
 func (h *DatasetsHandler) ObtenerDatasetPorID(ctx context.Context, req *dbgsv1.ObtenerDatasetPorIDRequest) (*dbgsv1.DatasetResponse, error) {
+	if err := domain.ValidateUUID("id", req.GetId()); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	dataset, err := h.useCase.ObtenerDatasetPorID(ctx, req.GetId())
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
@@ -57,10 +62,17 @@ func (h *DatasetsHandler) ObtenerDatasetPorID(ctx context.Context, req *dbgsv1.O
 }
 
 func (h *DatasetsHandler) CrearDataset(ctx context.Context, req *dbgsv1.CrearDatasetRequest) (*dbgsv1.DatasetResponse, error) {
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateRequired("nombre", req.GetNombre()))
+	errs.Add(domain.ValidateRequired("fuente_dato_id", req.GetFuenteDatoId()))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	dataset := &entity.ConjuntoDato{
-		FuenteDatoID: req.GetFuenteDatoId(),
-		Nombre:       req.GetNombre(),
-		Proposito:    req.GetProposito(),
+		FuenteDatoID:    req.GetFuenteDatoId(),
+		Nombre:          req.GetNombre(),
+		Proposito:       req.GetProposito(),
 		PropietarioDato: req.GetPropietarioDato(),
 		Clasificacion:   req.GetClasificacion().String(),
 	}
@@ -74,6 +86,13 @@ func (h *DatasetsHandler) CrearDataset(ctx context.Context, req *dbgsv1.CrearDat
 }
 
 func (h *DatasetsHandler) ActualizarDataset(ctx context.Context, req *dbgsv1.ActualizarDatasetRequest) (*dbgsv1.DatasetResponse, error) {
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateUUID("id", req.GetId()))
+	errs.Add(domain.ValidateRequired("nombre", req.GetNombre()))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	dataset := &entity.ConjuntoDato{
 		ID:            req.GetId(),
 		Nombre:        req.GetNombre(),
@@ -92,10 +111,10 @@ func (h *DatasetsHandler) ActualizarDataset(ctx context.Context, req *dbgsv1.Act
 
 func toDatasetProto(ds entity.ConjuntoDato) *dbgsv1.Dataset {
 	return &dbgsv1.Dataset{
-		Id:           ds.ID,
-		FuenteDatoId: ds.FuenteDatoID,
-		Nombre:       ds.Nombre,
-		Proposito:    ds.Proposito,
+		Id:              ds.ID,
+		FuenteDatoId:    ds.FuenteDatoID,
+		Nombre:          ds.Nombre,
+		Proposito:       ds.Proposito,
 		PropietarioDato: ds.PropietarioDato,
 		Clasificacion:   toProtoClasificacion(ds.Clasificacion),
 		Estado:          ds.Estado,

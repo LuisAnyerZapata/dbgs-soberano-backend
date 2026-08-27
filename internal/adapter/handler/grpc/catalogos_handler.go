@@ -6,6 +6,7 @@ import (
 
 	pb "DBGS_SOBERANO_BACKEND/api/proto/v1"
 	"DBGS_SOBERANO_BACKEND/internal/application/port"
+	"DBGS_SOBERANO_BACKEND/internal/domain"
 	"DBGS_SOBERANO_BACKEND/internal/domain/entity"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -58,6 +59,13 @@ func (h *CatalogoHandler) ListarCatalogos(ctx context.Context, req *pb.ListarCat
 }
 
 func (h *CatalogoHandler) CrearCatalogo(ctx context.Context, req *pb.CrearCatalogoRequest) (*pb.CatalogoResponse, error) {
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateCodigo("codigo", req.GetCodigo()))
+	errs.Add(domain.ValidateName("nombre", req.GetNombre()))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	catalogo := &entity.Catalogo{
 		Codigo:      req.GetCodigo(),
 		Nombre:      req.GetNombre(),
@@ -73,6 +81,10 @@ func (h *CatalogoHandler) CrearCatalogo(ctx context.Context, req *pb.CrearCatalo
 }
 
 func (h *CatalogoHandler) ObtenerCatalogoPorID(ctx context.Context, req *pb.ObtenerCatalogoPorIDRequest) (*pb.CatalogoResponse, error) {
+	if err := domain.ValidateUUID("id", req.GetId()); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	catalogo, err := h.useCase.ObtenerPorID(ctx, req.GetId())
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
@@ -82,6 +94,13 @@ func (h *CatalogoHandler) ObtenerCatalogoPorID(ctx context.Context, req *pb.Obte
 }
 
 func (h *CatalogoHandler) ActualizarCatalogo(ctx context.Context, req *pb.ActualizarCatalogoRequest) (*pb.CatalogoResponse, error) {
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateUUID("id", req.GetId()))
+	errs.Add(domain.ValidateName("nombre", req.GetNombre()))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	catalogo := &entity.Catalogo{
 		ID:          req.GetId(),
 		Codigo:      "",
@@ -99,6 +118,10 @@ func (h *CatalogoHandler) ActualizarCatalogo(ctx context.Context, req *pb.Actual
 }
 
 func (h *CatalogoHandler) EliminarCatalogo(ctx context.Context, req *pb.EliminarCatalogoRequest) (*pb.EliminarCatalogoResponse, error) {
+	if err := domain.ValidateUUID("id", req.GetId()); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
 	if err := h.useCase.EliminarCatalogo(ctx, req.GetId(), "system"); err != nil {
 		return nil, mapDomainErrorToGRPC(err)
 	}

@@ -19,10 +19,6 @@ func NewAuditoriaHandler(uc port.AuditoriaPort) *AuditoriaHandler {
 	}
 }
 
-// RegistrarEvento fue eliminado del contrato público (Dominio 7).
-// La escritura de eventos es exclusiva de los triggers de base de datos,
-// impidiendo que un cliente falsifique la bitácora.
-
 func (h *AuditoriaHandler) ConsultarEventos(ctx context.Context, req *dbgsv1.ConsultarEventosRequest) (*dbgsv1.ConsultarEventosResponse, error) {
 	var inicio *time.Time
 	var fin *time.Time

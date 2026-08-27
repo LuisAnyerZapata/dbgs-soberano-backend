@@ -1,138 +1,173 @@
 package grpc
 
 import (
-    "context"
+	"context"
 
-    dbgsv1 "DBGS_SOBERANO_BACKEND/api/proto/v1"
-    "DBGS_SOBERANO_BACKEND/internal/application/port"
+	dbgsv1 "DBGS_SOBERANO_BACKEND/api/proto/v1"
+	"DBGS_SOBERANO_BACKEND/internal/application/port"
+	"DBGS_SOBERANO_BACKEND/internal/domain"
 
-    "google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type DatosDinamicosHandler struct {
-    dbgsv1.UnimplementedDatosDinamicosServiceServer
-    useCase port.DatosDinamicosPort
+	dbgsv1.UnimplementedDatosDinamicosServiceServer
+	useCase port.DatosDinamicosPort
 }
 
 func NewDatosDinamicosHandler(uc port.DatosDinamicosPort) *DatosDinamicosHandler {
-    return &DatosDinamicosHandler{useCase: uc}
+	return &DatosDinamicosHandler{useCase: uc}
 }
 
-// mapToStruct convierte un mapa de Go genérico a un Struct de Protobuf de forma segura
 func mapToStruct(m map[string]interface{}) (*structpb.Struct, error) {
-    if m == nil {
-        return structpb.NewStruct(nil) // Se le pasa un mapa nulo para cumplir la firma
-    }
-    return structpb.NewStruct(m)
+	if m == nil {
+		return structpb.NewStruct(nil)
+	}
+	return structpb.NewStruct(m)
 }
 
-// mapsToStructs convierte un arreglo de mapas a un arreglo de Structs de Protobuf
 func mapsToStructs(maps []map[string]interface{}) ([]*structpb.Struct, error) {
-    structs := make([]*structpb.Struct, len(maps))
-    for i, m := range maps {
-        s, err := mapToStruct(m)
-        if err != nil {
-            return nil, err
-        }
-        structs[i] = s
-    }
-    return structs, nil
+	structs := make([]*structpb.Struct, len(maps))
+	for i, m := range maps {
+		s, err := mapToStruct(m)
+		if err != nil {
+			return nil, err
+		}
+		structs[i] = s
+	}
+	return structs, nil
 }
 
 func (h *DatosDinamicosHandler) ListarRegistros(ctx context.Context, req *dbgsv1.ListarRegistrosRequest) (*dbgsv1.ListarRegistrosResponse, error) {
-    input := port.ListarRegistrosInput{
-        NombreTabla: req.GetNombreTabla(),
-        Limite:      int(req.GetLimit()),
-        Offset:      int(req.GetOffset()),
-    }
+	if err := domain.ValidateRequired("nombre_tabla", req.GetNombreTabla()); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    output, err := h.useCase.ListarRegistros(ctx, input)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	input := port.ListarRegistrosInput{
+		NombreTabla: req.GetNombreTabla(),
+		Limite:      int(req.GetLimit()),
+		Offset:      int(req.GetOffset()),
+	}
 
-    structs, err := mapsToStructs(output.Registros)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	output, err := h.useCase.ListarRegistros(ctx, input)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    return &dbgsv1.ListarRegistrosResponse{
-        Registros: structs,
-        Total:     int32(output.Total),
-    }, nil
+	structs, err := mapsToStructs(output.Registros)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &dbgsv1.ListarRegistrosResponse{
+		Registros: structs,
+		Total:     int32(output.Total),
+	}, nil
 }
 
 func (h *DatosDinamicosHandler) ObtenerRegistro(ctx context.Context, req *dbgsv1.ObtenerRegistroRequest) (*dbgsv1.ObtenerRegistroResponse, error) {
-    input := port.ObtenerRegistroInput{
-        NombreTabla: req.GetNombreTabla(),
-        ID:          req.GetId(),
-    }
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateRequired("nombre_tabla", req.GetNombreTabla()))
+	errs.Add(domain.ValidateRequired("id", req.GetId()))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    registro, err := h.useCase.ObtenerRegistro(ctx, input)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	input := port.ObtenerRegistroInput{
+		NombreTabla: req.GetNombreTabla(),
+		ID:          req.GetId(),
+	}
 
-    s, err := mapToStruct(registro)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	registro, err := h.useCase.ObtenerRegistro(ctx, input)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    return &dbgsv1.ObtenerRegistroResponse{Registro: s}, nil
+	s, err := mapToStruct(registro)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &dbgsv1.ObtenerRegistroResponse{Registro: s}, nil
 }
 
 func (h *DatosDinamicosHandler) CrearRegistro(ctx context.Context, req *dbgsv1.CrearRegistroRequest) (*dbgsv1.CrearRegistroResponse, error) {
-    // Convertimos el Struct del Proto a un mapa Go usando el método nativo
-    datosMap := req.GetDatos().AsMap()
-    
-    input := port.CrearRegistroInput{
-        NombreTabla: req.GetNombreTabla(),
-        Datos:       datosMap,
-    }
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateRequired("nombre_tabla", req.GetNombreTabla()))
+	if req.GetDatos() == nil || len(req.GetDatos().AsMap()) == 0 {
+		errs.Add(domain.RequiredError("datos"))
+	}
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    nuevoID, err := h.useCase.CrearRegistro(ctx, input)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	datosMap := req.GetDatos().AsMap()
 
-    return &dbgsv1.CrearRegistroResponse{Id: nuevoID}, nil
+	input := port.CrearRegistroInput{
+		NombreTabla: req.GetNombreTabla(),
+		Datos:       datosMap,
+	}
+
+	nuevoID, err := h.useCase.CrearRegistro(ctx, input)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &dbgsv1.CrearRegistroResponse{Id: nuevoID}, nil
 }
 
 func (h *DatosDinamicosHandler) ActualizarRegistro(ctx context.Context, req *dbgsv1.ActualizarRegistroRequest) (*dbgsv1.ActualizarRegistroResponse, error) {
-    datosMap := req.GetDatos().AsMap()
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateRequired("nombre_tabla", req.GetNombreTabla()))
+	errs.Add(domain.ValidateRequired("id", req.GetId()))
+	if req.GetDatos() == nil || len(req.GetDatos().AsMap()) == 0 {
+		errs.Add(domain.RequiredError("datos"))
+	}
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    input := port.ActualizarRegistroInput{
-        NombreTabla: req.GetNombreTabla(),
-        ID:          req.GetId(),
-        Datos:       datosMap,
-    }
+	datosMap := req.GetDatos().AsMap()
 
-    registro, err := h.useCase.ActualizarRegistro(ctx, input)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	input := port.ActualizarRegistroInput{
+		NombreTabla: req.GetNombreTabla(),
+		ID:          req.GetId(),
+		Datos:       datosMap,
+	}
 
-    s, err := mapToStruct(registro)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	registro, err := h.useCase.ActualizarRegistro(ctx, input)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    return &dbgsv1.ActualizarRegistroResponse{Registro: s}, nil
+	s, err := mapToStruct(registro)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &dbgsv1.ActualizarRegistroResponse{Registro: s}, nil
 }
 
 func (h *DatosDinamicosHandler) EliminarRegistro(ctx context.Context, req *dbgsv1.EliminarRegistroRequest) (*dbgsv1.EliminarRegistroResponse, error) {
-    input := port.EliminarRegistroInput{
-        NombreTabla: req.GetNombreTabla(),
-        ID:          req.GetId(),
-    }
+	errs := domain.NewValidator()
+	errs.Add(domain.ValidateRequired("nombre_tabla", req.GetNombreTabla()))
+	errs.Add(domain.ValidateRequired("id", req.GetId()))
+	if err := errs.Validate(); err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
 
-    err := h.useCase.EliminarRegistro(ctx, input)
-    if err != nil {
-        return nil, mapDomainErrorToGRPC(err)
-    }
+	input := port.EliminarRegistroInput{
+		NombreTabla: req.GetNombreTabla(),
+		ID:          req.GetId(),
+	}
 
-    return &dbgsv1.EliminarRegistroResponse{
-        Exitoso: true,
-        Mensaje: "Registro eliminado correctamente",
-    }, nil
+	err := h.useCase.EliminarRegistro(ctx, input)
+	if err != nil {
+		return nil, mapDomainErrorToGRPC(err)
+	}
+
+	return &dbgsv1.EliminarRegistroResponse{
+		Exitoso: true,
+		Mensaje: "Registro eliminado correctamente",
+	}, nil
 }
