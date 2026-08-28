@@ -237,7 +237,7 @@ func mapearTipoPostgres(tipo entity.FieldType) (string, error) {
         return "UUID", nil
     case entity.FieldTypeJSON:
         return "JSONB", nil
-    case entity.FieldTypeDate:
+    case entity.FieldTypeDate, "DATE", "TIMESTAMP":
         return "TIMESTAMPTZ", nil
     default:
         return "", fmt.Errorf("tipo de dato no soportado para tablas dinámicas: %s", tipo)

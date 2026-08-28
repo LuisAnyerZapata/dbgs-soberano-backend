@@ -48,6 +48,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `seguridad`: autenticación JWT, hashing BCrypt y repositorio de seguridad.
 
 ### Changed
+- `colecciones`: al crear una tabla dinámica se ignoran silenciosamente los campos reservados por el sistema (`id`, `created_at`, `updated_at`, `created_by`, `updated_by`), evitando el error 500 cuando el Diseñador Visual envía su columna `id` predefinida. El motor sigue inyectando automáticamente `id UUID PRIMARY KEY`.
+- `colecciones`: `mapearTipoPostgres` acepta ahora los alias `DATE` y `TIMESTAMP` (usados por el Diseñador Visual) y los traduce a `TIMESTAMPTZ`, eliminando otro error 500 al crear tablas con columnas de fecha.
 - `seguridad`: el login (`POST /v1/seguridad/login`) recibe ahora `email` + `password` (campo `username` renombrado a `email` en `LoginRequest`); solo se acepta el correo electrónico, insensible a mayúsculas.
 - Soporte para ejecutar el backend en Windows: el Makefile es ahora portable (detección de `python3`/`python` y extensión `.exe` del binario en Windows; se ejecuta dentro de Git Bash).
 - El motor de respaldos es multiplataforma: en Unix sigue delegando en los scripts bash de `db/backup`, y en Windows invoca `pg_dump`/`pg_restore` directamente (sin depender de bash), replicando los mismos flags de los scripts.

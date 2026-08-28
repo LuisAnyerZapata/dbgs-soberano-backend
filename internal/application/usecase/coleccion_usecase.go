@@ -39,9 +39,19 @@ func (uc *coleccionUseCase) CrearColeccion(ctx context.Context, input port.Crear
     }
 
     // 1. Validaciones de negocio iniciales
-    if input.Nombre == "" || len(input.Campos) == 0 {
+    if input.Nombre == "" {
         return nil, domain.ErrDatosInvalidos
     }
+
+    // 1b. Filtrar campos reservados por el sistema. El motor inyecta automáticamente
+    // id (UUID PK), created_at, updated_at, created_by y updated_by, por lo que
+    // cualquier campo con esos nombres enviado por el cliente (p. ej. la columna
+    // 'id' predefinida del Diseñador Visual) se ignora para no duplicarlo ni fallar.
+    camposFiltrados := filtrarCamposReservados(input.Campos)
+    if len(camposFiltrados) == 0 {
+        return nil, domain.ErrDatosInvalidos
+    }
+    input.Campos = camposFiltrados
 
     // 2. Generar el DDL de la tabla de forma segura
     definicion := &entity.ColeccionDefinicion{
@@ -367,4 +377,21 @@ func (uc *coleccionUseCase) autorizar(ctx context.Context, permiso string) (*ent
         return nil, fmt.Errorf("%w: su rol no posee el permiso '%s'", domain.ErrAccesoNoAutorizado, permiso)
     }
     return usuario, nil
+}
+
+// filtarCamposReservados descarta los campos cuyo nombre coincide con las columnas
+// que el sistema inyecta automáticamente en toda tabla dinámica, evitando duplicados
+// y errores del Diseñador Visual que manda una columna 'id' de forma predeterminada.
+func filtrarCamposReservados(campos []entity.CampoDinamico) []entity.CampoDinamico {
+    reservados := map[string]bool{
+        "id": true, "created_at": true, "updated_at": true, "created_by": true, "updated_by": true,
+    }
+    filtrados := make([]entity.CampoDinamico, 0, len(campos))
+    for _, c := range campos {
+        if reservados[strings.ToLower(c.Nombre)] {
+            continue
+        }
+        filtrados = append(filtrados, c)
+    }
+    return filtrados
 }
