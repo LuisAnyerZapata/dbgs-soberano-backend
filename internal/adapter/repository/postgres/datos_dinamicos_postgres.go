@@ -173,24 +173,41 @@ func (r *datosDinamicosPostgresRepository) Actualizar(ctx context.Context, nombr
     valores = append(valores, id)
     idPosicion := len(valores)
 
-    query := fmt.Sprintf(`
-        SELECT row_to_json(t)::json 
-        FROM (SELECT * FROM %s.%s WHERE id = $%d) t`,
+    // Actualizamos la fecha de modificación y ejecutamos el UPDATE real
+    sets = append(sets, "updated_at = now()")
+    updateQuery := fmt.Sprintf(`
+        UPDATE %s.%s
+        SET %s
+        WHERE id = $%d`,
         DBGS_SCHEMA,
         pq.QuoteIdentifier(nombreFisico),
+        strings.Join(sets, ", "),
         idPosicion,
     )
 
-    row := r.db.QueryRowContext(ctx, query, valores...)
+    if _, err := r.db.ExecContext(ctx, updateQuery, valores...); err != nil {
+        log.Printf("ERROR EN BD (DatosDinamicos.Actualizar en %s): %v\nSQL: %s", nombreFisico, err, updateQuery)
+        if esErrorUnico(err) {
+            return nil, entity.ErrCodigoDuplicado
+        }
+        return nil, entity.ErrErrorInterno
+    }
+
+    // Recuperamos el registro ya actualizado en formato JSON (mismo patrón que ObtenerPorID)
+    selectQuery := fmt.Sprintf(`
+        SELECT row_to_json(t)::json
+        FROM (SELECT * FROM %s.%s WHERE id = $1) t`,
+        DBGS_SCHEMA,
+        pq.QuoteIdentifier(nombreFisico),
+    )
+
+    row := r.db.QueryRowContext(ctx, selectQuery, id)
     var jsonData []byte
     if err := row.Scan(&jsonData); err != nil {
         if err == sql.ErrNoRows {
             return nil, entity.ErrEntidadNoEncontrada
         }
-        log.Printf("ERROR EN BD (DatosDinamicos.Actualizar en %s): %v\nSQL: %s", nombreFisico, err, query)
-        if esErrorUnico(err) {
-            return nil, entity.ErrCodigoDuplicado
-        }
+        log.Printf("ERROR EN BD (DatosDinamicos.Actualizar select en %s): %v\nSQL: %s", nombreFisico, err, selectQuery)
         return nil, entity.ErrErrorInterno
     }
 

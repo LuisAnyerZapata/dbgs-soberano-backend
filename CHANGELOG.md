@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Context keys tipados para evitar colisiones.
 
 ### Fixed
+- `explorador` (datos dinámicos): el método `Actualizar` del repositorio solo construía un `SELECT` y nunca ejecutaba el cambio en base de datos, por lo que la edición de registros desde el Explorador de Datos (`PUT /v1/data/{tabla}/{id}`) devolvía siempre «Error interno del servidor» y no persistía. Ahora ejecuta un `UPDATE` real (incluye `updated_by` y `updated_at = now()`) y recupera el registro actualizado con un `SELECT row_to_json` (mismo patrón que `ObtenerPorID`).
 - `seguridad`: campo `description` en JSON de roles ahora acepta el nombre en inglés (`description` en vez de `descripcion`); alinear el proto con la API REST.
 - `seguridad`: endpoint `DELETE /v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}` ahora acepta el código del permiso (ej. `"datasets:leer"`) en vez del UUID interno; consistente con `VincularPermisoRol`.
 - `colecciones`: corregido `DROP TABLE` en `EliminarColeccion` — `nombre_fisico` ya contiene el schema, se eliminó la concatenación redundante que generaba un nombre inválido.
