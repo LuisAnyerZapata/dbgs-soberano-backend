@@ -50,10 +50,11 @@ func (r *seguridadPostgresRepository) AutenticarUsuario(ctx context.Context, use
 		return nil, entity.ErrDatosInvalidos
 	}
 
+	// El login se realiza únicamente por correo electrónico (insensible a mayúsculas).
 	query := `
 		SELECT id, username, email, password_hash, rol_id, es_tecnico, estado, created_at, updated_at
 		FROM dbgs_schema.usuarios
-		WHERE username = $1
+		WHERE LOWER(email) = LOWER($1)
 	`
 	row := r.db.QueryRowContext(ctx, query, username)
 

@@ -65,13 +65,13 @@ func (h *SeguridadHandler) CreateSetup(ctx context.Context, req *pb.CreateSetupR
 
 func (h *SeguridadHandler) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	errs := domain.NewValidator()
-	errs.Add(domain.ValidateRequired("username", req.GetUsername()))
+	errs.Add(domain.ValidateRequired("email", req.GetEmail()))
 	errs.Add(domain.ValidateRequired("password", req.GetPassword()))
 	if err := errs.Validate(); err != nil {
 		return nil, mapDomainErrorToGRPC(err)
 	}
 
-	result, err := h.seguridadUseCase.Login(ctx, req.Username, req.Password)
+	result, err := h.seguridadUseCase.Login(ctx, req.Email, req.Password)
 	if err != nil {
 		return nil, mapDomainErrorToGRPC(err)
 	}
