@@ -30,8 +30,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Handler `mapDomainErrorToGRPC` actualizado para usar `errors.As()` y sanitizar mensajes (nunca expone detalles internos).
   - JWT claims parsing con type assertions seguras (previene panic).
   - Context keys tipados para evitar colisiones.
+- `conexiones`: nuevo dominio para **conexiones a bases de datos externas (PostgreSQL y MySQL)**. Nuevo servicio gRPC/gateway `ConexionesService` con alta, listado, detalle, actualización, eliminación, prueba de conexión (`POST /v1/connections/test`) y exploración de esquemas/tablas/datos (`GET /v1/connections/{id}/schemas|tables|data`).
+- `conexiones`: adaptador real `conexion_externa_postgres.go` con conectividad a PostgreSQL y MySQL (go-sql-driver/mysql) y normalización de filas a JSON (UUID incluido).
+- `conexiones`: **cifrado AES-GCM** de las credenciales de las conexiones con clave derivada del `jwt_secret`; la contraseña nunca se serializa ni se expone al cliente.
+- `conexiones`: entidad `Conexion` con validación de negocio (`EsValido`): engine restringido a `postgresql|mysql` y puerto en rango 1–65535.
+- `apis`: nuevo dominio de **APIs públicas de solo lectura**. Nuevo servicio `ApisService`: publicar, listar, obtener, activar/desactivar (`PUT /v1/apis/{id}/estado`) y eliminar APIs sobre tablas conectadas.
+- `apis`: **generación automática de `api_key`** y endpoint público `/api/v1/public/{slug}` por API publicada; entidad `ApiPublicada` con campos `max_rows`, `active`, `connection_id`, `schema`, `table` y validación (`EsValido`).
+- `db`: migraciones `000010` (conexiones) y `000011` (apis_publicadas).
+- `docs`: `docs/AVANCES_PROYECTO.md` con el informe de avances del proyecto y actualización de README con los dominios de conexiones y APIs públicas.
 
 ### Fixed
+- `seguridad`/RBAC: se extrae el usuario autenticado mediante una clave tipada única del dominio (`CtxKeyUsuario`) en todos los casos de uso, corrigiendo el desfase que impedía la autorización granular; se añade el helper `isUniqueViolation` (23505) para conflictos de unicidad en el repositorio.
 - `explorador` (datos dinámicos): el método `Actualizar` del repositorio solo construía un `SELECT` y nunca ejecutaba el cambio en base de datos, por lo que la edición de registros desde el Explorador de Datos (`PUT /v1/data/{tabla}/{id}`) devolvía siempre «Error interno del servidor» y no persistía. Ahora ejecuta un `UPDATE` real (incluye `updated_by` y `updated_at = now()`) y recupera el registro actualizado con un `SELECT row_to_json` (mismo patrón que `ObtenerPorID`).
 - `seguridad`: campo `description` en JSON de roles ahora acepta el nombre en inglés (`description` en vez de `descripcion`); alinear el proto con la API REST.
 - `seguridad`: endpoint `DELETE /v1/seguridad/roles/{rol_id}/permisos/{permiso_codigo}` ahora acepta el código del permiso (ej. `"datasets:leer"`) en vez del UUID interno; consistente con `VincularPermisoRol`.

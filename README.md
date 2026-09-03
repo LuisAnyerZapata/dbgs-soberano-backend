@@ -1,7 +1,7 @@
 # DBGS Soberano Backend
 
 ## Visión general
-DBGS Soberano Backend es una aplicación de servicio desarrollada en Go para la gestión de auditoría, catálogos, conjuntos de datos, seguridad, integración, colecciones dinámicas y respaldos. Expone simultáneamente dos protocolos sobre los mismos contratos:
+DBGS Soberano Backend es una aplicación de servicio desarrollada en Go para la gestión de auditoría, catálogos, conjuntos de datos, seguridad, integración, colecciones dinámicas, respaldos, conexiones a bases de datos externas y APIs públicas. Expone simultáneamente dos protocolos sobre los mismos contratos:
 
 - **gRPC nativo** en el puerto `50051` (comunicación interna, móvil y escritorio).
 - **REST/JSON** mediante grpc-gateway en el puerto `8080` (aplicaciones web), con CORS habilitado.
@@ -169,6 +169,8 @@ Todos los servicios se consumen indistintamente por gRPC (`:50051`) o REST (`:80
 | ColeccionesService | `POST /v1/colecciones`, `GET /v1/colecciones` (motor DDL dinámico) | JWT / API Key |
 | DatosDinamicosService | CRUD genérico en `/v1/data/{nombre_tabla}` (motor soberano) | JWT / API Key |
 | RespaldoService | `POST /v1/backups`, `GET /v1/backups[/{id}][/contenido]`, `POST /v1/backups/{id}/restaurar`, `POST /v1/backups/retencion` | JWT / API Key + permisos `respaldo:ejecutar` / `restauracion:ejecutar` |
+| ConexionesService | `POST /v1/connections/test`, CRUD en `/v1/connections[/{id}]`, `GET /v1/connections/{id}/schemas`, `GET /v1/connections/{id}/tables`, `GET /v1/connections/{id}/data` | JWT / API Key |
+| ApisService | `POST /v1/apis`, `GET /v1/apis[/{id}]`, `PUT /v1/apis/{id}/estado`, `DELETE /v1/apis/{id}` (endpoints públicos `/api/v1/public/{slug}` en lectura) | JWT / API Key |
 
 ## Estructura del proyecto
 A continuación se detalla la estructura principal del repositorio. Esta organización refleja la arquitectura hexagonal y facilita la separación de responsabilidades.
@@ -184,8 +186,10 @@ DBGS_SOBERANO_BACKEND/
 │   │   │           └── http.proto
 │   │   └── v1/
 │   │       ├── auditoria_servicio.proto
+│   │       ├── apis_servicio.proto
 │   │       ├── catalogos_servicio.proto
 │   │       ├── colecciones_servicio.proto
+│   │       ├── conexiones_servicio.proto
 │   │       ├── datos_dinamicos_servicio.proto
 │   │       ├── datasets_servicio.proto
 │   │       ├── respaldo_servicio.proto
@@ -219,7 +223,9 @@ DBGS_SOBERANO_BACKEND/
 │   │   ├── 000008_auditoria_inmutable.up.sql
 │   │   ├── 000008_auditoria_inmutable.down.sql
 │   │   ├── 000009_add_respaldo_tables.up.sql
-│   │   └── 000009_add_respaldo_tables.down.sql
+│   │   ├── 000009_add_respaldo_tables.down.sql
+│   │   ├── 000010_add_conexiones.up.sql
+│   │   └── 000011_add_apis_publicadas.up.sql
 │   ├── seeds/
 │   │   ├── 01_catalogos_referencia.sql
 │   │   ├── 02_datos_prueba_sinteticos.sql
@@ -234,8 +240,10 @@ DBGS_SOBERANO_BACKEND/
 │   │   ├── handler/
 │   │   │   └── grpc/
 │   │   │       ├── auditoria_handler.go
+│   │   │       ├── apis_handler.go
 │   │   │       ├── catalogos_handler.go
 │   │   │       ├── colecciones_handler.go
+│   │   │       ├── conexiones_handler.go
 │   │   │       ├── datos_dinamicos_handler.go
 │   │   │       ├── datasets_handler.go
 │   │   │       ├── errors.go
@@ -251,8 +259,11 @@ DBGS_SOBERANO_BACKEND/
 │   │   └── repository/
 │   │       └── postgres/
 │   │           ├── auditoria_postgres.go
+│   │           ├── api_publicada_postgres.go
 │   │           ├── catalogo_postgres.go
 │   │           ├── coleccion_dinamica_postgres.go
+│   │           ├── conexion_externa_postgres.go
+│   │           ├── conexion_postgres.go
 │   │           ├── connection.go
 │   │           ├── datos_dinamicos_postgres.go
 │   │           ├── dataset_postgres.go
@@ -265,6 +276,7 @@ DBGS_SOBERANO_BACKEND/
 │   │   │   ├── auditoria_port.go
 │   │   │   ├── catalogo_port.go
 │   │   │   ├── coleccion_port.go
+│   │   │   ├── conexion_port.go
 │   │   │   ├── datos_dinamicos_port.go
 │   │   │   ├── dataset_port.go
 │   │   │   ├── integracion_port.go
@@ -275,6 +287,7 @@ DBGS_SOBERANO_BACKEND/
 │   │       ├── auditoria_usecase.go
 │   │       ├── catalogo_usecase.go
 │   │       ├── coleccion_usecase.go
+│   │       ├── conexion_usecase.go
 │   │       ├── datos_dinamicos_usecase.go
 │   │       ├── dataset_usecase.go
 │   │       ├── ddl_generator.go
@@ -287,6 +300,7 @@ DBGS_SOBERANO_BACKEND/
 │       │   ├── auditoria_evento.go
 │       │   ├── catalogo.go
 │       │   ├── coleccion_dinamica.go
+│       │   ├── conexion.go
 │       │   ├── fuente_dato.go
 │       │   ├── institucion.go
 │       │   ├── integracion.go
@@ -299,6 +313,7 @@ DBGS_SOBERANO_BACKEND/
 │           ├── auditoria_repository.go
 │           ├── catalogo_repository.go
 │           ├── coleccion_dinamica_repository.go
+│           ├── conexion_repository.go
 │           ├── datos_dinamicos_repository.go
 │           ├── dataset_repository.go
 │           ├── integracion_repository.go
@@ -329,4 +344,6 @@ DBGS_SOBERANO_BACKEND/
 - Los respaldos también pueden gestionarse por API (dominio de Respaldos): creación asíncrona con pg_dump, descarga del `.dump`, restauración confirmada vía pg_restore y política de retención. Cada operación queda registrada en la bitácora de la base de datos.
 - La bitácora de auditoría es inmutable a nivel de motor: un trigger bloquea `UPDATE`, `DELETE` y `TRUNCATE` sobre `auditoria_eventos`; solo se permite insertar eventos.
 - Toda tabla dinámica creada mediante `ColeccionesService` nace con columnas soberanas de trazabilidad (`created_by`, `created_at`, etc.) y con su trigger de auditoría ya vinculado.
+- El dominio de **conexiones externas** permite registrar, probar, explorar y consultar bases de datos **PostgreSQL y MySQL**; las credenciales se almacenan **cifradas con AES-GCM** (clave derivada del `jwt_secret`) y nunca se exponen al cliente. Sus endpoints de exploración son `/v1/connections/{id}/schemas`, `/v1/connections/{id}/tables` y `/v1/connections/{id}/data`.
+- El dominio de **APIs públicas** publica consultas de **solo lectura** sobre tablas/conexiones registradas; cada API genera automáticamente una `api_key` y un endpoint público `/api/v1/public/{slug}`, con control de activación/desactivación (`PUT /v1/apis/{id}/estado`).
 
